@@ -1,10 +1,9 @@
 # Context Report: an attested, re-derivable record of what an agent context artifact does
 
-Status: **skeleton — numbers pending** (2026-09-05). This document is the structure and argument of
-a measurement paper; every number it needs is a double-bracketed placeholder such as `[[N plugins]]`
-until the producer described in `plan/context-attestation.md` runs and lands results under
-`measurements/`.
-See `paper/README.md` for how the sections map to the workers producing those numbers.
+Status: **draft with dogfood numbers** (2026-09-05). Section 5 reports the first run of the reference
+producer over chock's own bundles, from `measurements/chock/`. The top-N catalog sample (§5.2) and the
+live-client side of the fault oracle (§5.3) have not been run and say so.
+See `paper/README.md` for how to regenerate the results.
 
 *What we measured, and what we are willing to say before we measure the rest.* open-coder-ai ·
 September 2026.
@@ -35,14 +34,16 @@ displayed as an author-reported claim, never as proof. The format states facts; 
 pass/fail verdict for the artifact as a whole, and an unmeasured row is never allowed to read as a
 pass.
 
-We report, once measurement lands: dogfood results against `[[N plugins]]` drawn from chock's own
-four-agent bundles; a fault-oracle comparison against `[[X% fail open on timeout]]` of the
-vendor-documented failure postures this paper cites, re-derived rather than assumed; a
-`[[median Y ms per tool call]]` added-latency figure for an installed guard hook, measured as a
-distribution rather than a mean; and a `[[mean context tokens added per artifact]]` figure from a
-named tokenizer approximation. Every numeric claim above is a placeholder. Every other claim in this
-document — the problem, the format, the method, and the threats to trusting either — is written to
-stand without them, so that landing the numbers is the only work left.
+We report a first dogfood run of the reference producer over 88 bundles built from chock's 22
+policies for four target agents. Sixteen bundles carry a hook. With the plugin-root variable the
+client sets, every hook resolves from all four working directories tested; without it, none does for
+three of the four agents, while the Copilot bundle exits 0 by design and so reads as reachable. All
+sixteen hooks exit 0 with no deny on stdout when fed malformed input, which the adapter's own source
+describes as a deliberate choice. Per-invocation latency of a guard hook, measured as a distribution
+with a realistic pre-tool payload, has a median p50 between 50 and 57 ms per target agent on the
+build machine, of which about 16 ms is the interpreter starting. The median bundle adds an estimated
+222 tokens of context under a named, deterministic approximation. The live-client side of the fault
+oracle was not measured: v0.1 does not drive a client, and the rows say so rather than pass.
 
 ## 1. Introduction
 
@@ -357,17 +358,20 @@ posture rather than standing alone.
 
 ## 4. Method
 
-This section states, for each row family, how v0.1 intends to produce it. `context-report`'s
-repository presently carries a schema, one worked example, and their tests — no reference producer
-or verifier exists yet, a fact stated in the repository's own README rather than inferred here.
-Everything below is therefore a plan for the producer, not a report of one running, and every detail
-this paper could not read directly from a source is marked.
+This section states, for each row family, how the v0.1 reference producer (`context-report
+produce`) measures it and what it declines to measure. The repository carries the schema, a worked
+example, the producer, and a verifier (`context-report verify`) that recomputes the re-derivable rows
+and emits an in-toto verification summary. Every row the producer cannot measure is emitted with a
+`reasoning` string; nothing below is inferred from the schema alone.
 
-**Reachability.** The producer installs the artifact using each target agent's own documented
-registration mechanism, then invokes a tool call from a small set of candidate working directories
-and checks whether the artifact's hook or configuration resolves in each. The worked example tests
-three candidate directories (`/`, `/src`, `/src/deep`) (§3.7).
-`[[confirm with W3/W4: canonical cwd set tested per target agent]]`
+**Reachability.** The producer runs the hook command exactly as registered from four working
+directories — the artifact root, a nested directory inside it (an existing one, or a temporary one
+created and removed), the parent, and a temporary directory outside the tree — feeding a realistic
+pre-tool payload for the target agent, and records per directory whether the command ran and the
+first line of its standard error. The environment variables the run was given (for example the
+client's plugin-root variable) are recorded on the row, because the dogfood showed reachability is a
+property of the variable, not of the script. The worked example's three directories (§3.7) are
+superseded by this set.
 
 **Decision replay.** For `hook` subjects, the producer replays the declared positive and negative
 cases from OpenAI's submission-contract shape [11] against the guard script under each target
@@ -387,11 +391,18 @@ paper draws on, blocked by inaccessible documentation [7]. v0.1's schema require
 string on any row whose `result` is `NotAvailable`, `Error`, or `NotApplicable`, so that a row the
 producer could not measure against a real client states, in that field, that it is instead citing
 this documented oracle rather than a witnessed run — the format's schema enforces the
-*distinction*, not which value was used for that run. **v0.1 does not drive a live client**, per the
-repository's own status; where this paper's method describes comparing measured behavior to the
-documented oracle, the "measured behavior" side of that comparison is future work, not something
-this paper can report today.
-`[[confirm with W3/W4: which fault rows need a live client vs. oracle-only, and the sandboxing approach]]`
+*distinction*, not which value was used for that run. **v0.1 does not drive a live client.** Of the four
+conditions, one is measured without a client: `fault.malformedOutput` runs the hook against three
+malformed stdin cases (unparseable JSON, empty input, a null tool input) plus a benign well-formed
+control, and records the exit code and any decision word found in stdout JSON, since the hook-JSON
+protocols carry the deny in stdout and not in the exit code. The other three — `fault.scriptMissing`,
+`fault.interpreterMissing`, `fault.timeout` — are emitted as `NotAvailable`, and their `reasoning`
+quotes the documented vendor posture with its basis (`vendor-docs, NOT measured`). The hook runs as
+an ordinary subprocess through the shell in the artifact directory with a per-run scoped environment
+and a timeout; there is no filesystem or network isolation, which §6 lists as a threat. Before every
+producer runs, the producer digests the subject, and after they finish it digests it again; a
+mismatch refuses the statement, so a hook that writes into its own bundle cannot produce a report
+bound to the wrong bytes.
 
 **Cost — latency.** The producer times `n` tool-call invocations with the artifact installed, using
 a monotonic clock, and reports the distribution — `unit`, `n`, `percentiles`, `min`, `max`, `mean`,
@@ -399,9 +410,14 @@ a monotonic clock, and reports the distribution — `unit`, `n`, `percentiles`, 
 schema [20]. The row is marked `environmentSensitive`, and the `environment` object records enough
 about the runner (at minimum, per the worked example, the runner image and CPU architecture) that a
 vendor compares like with like rather than treating a re-derived distribution as a byte-for-byte
-match (candidate mechanism: Python's `perf_counter`, referenced in the plan only as something
-chock's own source does not currently use).
-`[[confirm with W3/W4: timing mechanism, n, and environment fields recorded]]`
+match The producer times each `subprocess.run` of the registered command with Python's `perf_counter`,
+wall-clock, with the payload on stdin; `n` defaults to 50 and is recorded in the row's `conditions`
+along with `warmup_excluded: false`. The `environment` object records the platform string, the
+Python version, the CPU count, and the variables the run was given. A run that times out aborts the
+measurement, and a measurement in which no run exits 0 is emitted as `Error` with the numbers kept
+for inspection: a benign payload should be allowed, so those runs timed the failure path, not the
+hook. The first dogfood produced a confident 16 ms "latency" for a hook whose script could not be
+found before this rule existed.
 
 **Cost — context tokens.** The producer estimates the tokens an artifact adds to a session's context
 window at start, using a named tokenizer approximation rather than a model provider's exact
@@ -410,8 +426,13 @@ tokenizers are not uniformly known to the producer. This is the same order of co
 already documents at the session level — one industry figure cited in the prior-art sweep puts a
 seven-server session at 67,300 tokens before the first user message, and a peer-reviewed estimate
 puts per-turn MCP overhead at 10,000–60,000 tokens [29] — which this row is designed to attribute
-back to the single artifact responsible, rather than leave as an undifferentiated session total.
-`[[confirm with W3/W4: tokenizer approximation used and its disclosed error bound]]`
+back to the single artifact responsible, rather than leave as an undifferentiated session total. The approximation is named
+`approx-regex-v1`: each maximal run of word characters is one token and each remaining
+non-whitespace character is one token, summed over the files the target agent injects at session
+start for the artifact's kind (skill and instruction files, a plugin's manifest, a subagent's
+definition). It is deterministic, so the row re-derives exactly. Its error against any provider's
+tokenizer has not been measured; the row's `conditions.method` names the approximation so a reader
+can discount it, and §6 lists the missing bound.
 
 **Interference.** For an artifact declared alongside other installed artifacts, the producer checks
 for shadowed or contradicting rules, extending chock's existing ambient-rule conflict check from
@@ -435,40 +456,75 @@ repository already asserts both rules).
 
 ## 5. Results
 
-*To be filled from `measurements/` once the producers land. Every row below is a placeholder; no
-number in this section has been measured.*
+The numbers below are from `measurements/chock/`, produced by the reference producer on
+2026-09-05 with `n = 20` latency samples per hook bundle, on a four-CPU Linux build machine. Every
+statement validates against the v0.1 schema and is bound to the digest of the bundle it measured.
 
 ### 5.1 Dogfood: chock's own bundles
 
-| Artifact | Target agent | `conformance` | `reachability` | `fault.timeout` | `cost.latency_ms` (p50/p95) | `cost.context_tokens` |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `[[artifact one]]` | `[[target agent]]` | `[[result]]` | `[[result]]` | `[[result]]` | `[[latency p50]]` / `[[latency p95]]` | `[[mean tokens]]` |
-| `[[artifact two]]` | `[[target agent]]` | `[[result]]` | `[[result]]` | `[[result]]` | `[[latency p50]]` / `[[latency p95]]` | `[[mean tokens]]` |
+chock builds each of its 22 policies into a plugin bundle for four target agents, 88 bundles in all.
+Four policies carry a pre-tool hook (`block-destructive-commands`, `block-no-verify`,
+`protect-agent-config`, `protect-commit-privacy`), so 16 bundles have something to execute. Each hook
+bundle was measured twice: with the plugin-root variable the client would set (`resolved`) and
+without it (`unresolved`).
 
-`[[N dogfood bundles measured]]` bundles across `[[N target agents]]` target agents.
+| Target agent | Bundles | With hook | Reachable, resolved | Reachable, unresolved | Exit 0 and no deny on malformed stdin | Latency p50 / p95 ms, median over hook bundles | Context tokens, median per bundle |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Claude Code | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 56.9 / 61.9 | 222 |
+| Codex CLI | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 52.1 / 54.3 | 222 |
+| GitHub Copilot | 22 | 4 | 4 of 4 | 4 of 4 | 4 of 4 | 49.6 / 53.2 | 222 |
+| Cursor | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 49.9 / 52.8 | 222 |
+
+Three findings, stated as the rows state them.
+
+*Reachability is a property of the client's variable, not the script.* Each bundle's registered
+command resolves its script through the client's plugin-root variable (`CLAUDE_PLUGIN_ROOT`,
+`PLUGIN_ROOT`, `CURSOR_PLUGIN_ROOT`). With the variable set, every hook ran from all four working
+directories. Without it, none ran for three agents — the interpreter reported it could not open
+`/scripts/<agent>.py`, and the latency row for those runs is `Error`, not a number. The Copilot
+bundle reads as reachable in both conditions because its command is written to exit 0 when the
+variable is unset, by chock's design; the row records that exit, and a consumer that wants to
+distinguish "ran the guard" from "exited quietly" has the benign control case in
+`fault.malformedOutput` to compare against.
+
+*Every hook exits 0 with no deny on malformed input.* Fed unparseable JSON, empty stdin, or a null
+tool input, all 16 hooks exit 0 and write nothing to stdout, so under each agent's protocol the tool
+call proceeds. This is not an accident the format caught: the adapter that chock generates, from the
+agentseam runtime template, comments the branch "malformed input is not the agent's fault to pay
+for: allow, stay silent." The row states the fact and the design rationale sits in the adapter; which
+of the two a catalog acts on is the catalog's threshold, which is the division of labor §7 argues for.
+
+*Latency is a distribution with a knowable floor.* Per invocation with a realistic pre-tool payload,
+the median hook bundle has a p50 between 49.6 and 56.9 ms depending on the target's adapter, with
+p95 within 6 ms of p50 on this machine. The `Error` rows from the unresolved condition, which time
+the interpreter starting and failing to open a file, cluster at 16 ms; that is the floor a Python
+hook pays before any policy code runs. The rows are `environmentSensitive`, and the environment
+object on each records the platform, Python version, and CPU count.
+
+The context-token estimate under `approx-regex-v1` is 222 tokens for the median bundle, which
+carries one skill file; hook bundles, which add a manifest and a script-bearing hooks file, range
+from 288 to 646.
 
 ### 5.2 Top-N catalog plugins
 
-| Rank | Plugin | Catalog | `reachability` | `fault` (worst-case oracle match) | `cost.latency_ms` p50 | `interference` |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | `[[plugin name]]` | `[[catalog name]]` | `[[result]]` | `[[result]]` | `[[latency p50]]` | `[[result]]` |
-| 2 | `[[plugin name]]` | `[[catalog name]]` | `[[result]]` | `[[result]]` | `[[latency p50]]` | `[[result]]` |
-
-Sampled from `[[N catalog plugins]]` across `[[catalog list]]`, selection method
-`[[sampling method]]`.
+Not run in this revision. The producer's dogfood subject is the author's own bundles, and a sample
+of third-party catalog plugins is the first measurement a reader should ask for before trusting the
+findings above to generalise. §8 lists it as the next measurement.
 
 ### 5.3 The fault oracle versus documentation
 
-| Target agent | Failure kind | Documented posture | Measured posture | Match? |
-| :--- | :--- | :--- | :--- | :--- |
-| Claude Code | timeout | proceeds, output discarded | `[[measured posture]]` | `[[match or mismatch]]` |
-| GitHub Copilot | `preToolUse` crash | fail-closed | `[[measured posture]]` | `[[match or mismatch]]` |
-| GitHub Copilot | timeout | fail-open (documented as always) | `[[measured posture]]` | `[[match or mismatch]]` |
-| Cursor | script error, `failClosed` unset | fail-open (default) | `[[measured posture]]` | `[[match or mismatch]]` |
-| Codex CLI | any | unconfirmed in sources | `[[measured posture]]` | `[[match or mismatch]]` |
+| Target agent | Failure kind | Documented posture | Measured posture |
+| :--- | :--- | :--- | :--- |
+| Claude Code | timeout | proceeds, output discarded | not measured: v0.1 does not drive a client |
+| GitHub Copilot | `preToolUse` crash | fail-closed | not measured: v0.1 does not drive a client |
+| GitHub Copilot | timeout | fail-open (documented as always) | not measured: v0.1 does not drive a client |
+| Cursor | script error, `failClosed` unset | fail-open (default) | not measured: v0.1 does not drive a client |
+| Codex CLI | any | unconfirmed in sources | not measured: v0.1 does not drive a client |
 
-`[[X% fail open on timeout]]` of the fault rows measured against the documented oracle in this
-table.
+No row in this table has a measured side. The producer emits `fault.scriptMissing`,
+`fault.interpreterMissing`, and `fault.timeout` as `NotAvailable` with the documented posture quoted
+in `reasoning` and labelled `vendor-docs, NOT measured`; the schema forces the label, and this table
+reproduces it rather than promoting documentation to observation.
 
 ## 6. Threats to validity
 
@@ -481,9 +537,9 @@ row inherits that uncertainty [8].
 
 **Tokenizer approximation versus a model's real tokenizer.** `cost.context_tokens` is estimated
 with a named approximation rather than each target agent's exact tokenizer, because the producer
-cannot always know which model a given agent session is running. The size of the resulting error,
-and whether it is disclosed per row, is unresolved in this draft — see the method-section
-placeholder above.
+cannot always know which model a given agent session is running. The approximation is named in the row, so
+it re-derives exactly, but its error against a provider tokenizer has not been measured; until it
+is, the 222-token figure in §5 is an ordering, not a cost.
 
 **Documented versus measured, for fault rows.** Where v0.1 does not drive a live client, a
 `fault.*` row's `reasoning` can only state that it matches a documented vendor posture, not that it
@@ -491,6 +547,18 @@ was witnessed. A documented posture can itself be stale — vendor fail-posture 
 been observed to change within the same survey window in this project's own prior work [6] — and a
 row citing documentation rather than a live run should be read with that in mind until a producer
 exists that drives a real client.
+
+**The dogfood subject is the author's own artifact.** Every bundle in §5 was built by chock and
+measured by a producer written alongside it, on one machine, on one day. The findings are stated as
+the rows state them and are re-derivable from the committed statements, but nothing in §5 is
+evidence that the format's rows discriminate among third-party artifacts; §5.2 is where that
+evidence would come from, and it is empty.
+
+**The hook runs unsandboxed.** The producer executes the registered command as an ordinary
+subprocess with a timeout, in the artifact directory, with only the environment variables it was
+given. A hostile hook can read and write what the producer's user can. The digest-before-and-after
+guard refuses a statement when the subject changed, and the CLI refuses to write the report inside
+the subject, but neither is isolation; a producer run on untrusted artifacts belongs in a container.
 
 **The runner is untrusted unless builder identity is verified.** A `context-report` predicate is
 only as credible as the identity of whoever produced it. The format's own standards review states
@@ -542,5 +610,9 @@ author believes it does, what does it cost on every tool call, and does it do an
 Every vendor catalog surveyed says, in one form or another, that it does not check. This paper
 describes a format built to close that gap without asking any vendor to adopt anyone else's test
 suite: a signed, per-target-agent report whose rows state what was measured and whether the
-measurement can be redone by someone other than the artifact's author. The format is finished enough
-to validate against; what remains is running it, and reporting, honestly, what comes back.
+measurement can be redone by someone other than the artifact's author. The reference producer has
+run once, over the author's own 88 bundles, and the rows it emitted are committed with the bundle
+digests they bind to. Two measurements come next, in order: a sample of third-party catalog plugins
+(§5.2), which is the first evidence that the rows discriminate among artifacts nobody here wrote, and
+a producer that drives a live client for the three fault rows v0.1 marks `NotAvailable` (§5.3), so
+that the documented postures in that table acquire a measured column.
