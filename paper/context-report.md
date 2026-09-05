@@ -1,7 +1,8 @@
 # Context Report: an attested, re-derivable record of what an agent context artifact does
 
 Status: **draft with dogfood numbers** (2026-09-05). Section 5 reports the first run of the reference
-producer over chock's own bundles, from `measurements/chock/`. The top-N catalog sample (§5.2) and the
+producer over chock's own bundles; the statements live with the artifact they measure, in
+`open-coder-ai/chock-catalog`, under `measurements/context-report/`. The top-N catalog sample (§5.2) and the
 live-client side of the fault oracle (§5.3) have not been run and say so.
 See `paper/README.md` for how to regenerate the results.
 
@@ -456,9 +457,12 @@ repository already asserts both rules).
 
 ## 5. Results
 
-The numbers below are from `measurements/chock/`, produced by the reference producer on
+The numbers below were produced by the reference producer on
 2026-09-05 with `n = 20` latency samples per hook bundle, on a four-CPU Linux build machine. Every
 statement validates against the v0.1 schema and is bound to the digest of the bundle it measured.
+The statements, the inventory and the script that produced them live with the artifacts, in
+`open-coder-ai/chock-catalog`, under `measurements/context-report/`: the format's own repository carries no measurement of any
+particular product, which is the arrangement the format asks of every author.
 
 ### 5.1 Dogfood: chock's own bundles
 

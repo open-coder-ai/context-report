@@ -15,7 +15,7 @@ PAPER_TEXT = PAPER.read_text(encoding="utf-8")
 REFERENCES_TEXT = REFERENCES.read_text(encoding="utf-8")
 
 # Every `[[...]]` placeholder that currently appears in the paper. A new placeholder must be added
-# here and a number landing under `measurements/` removes its entry in the same change, so this set
+# here and a number landing in the paper removes its entry in the same change, so this set
 # can never silently drift ahead of or behind the document.
 PLACEHOLDERS: set[str] = set()  # dogfood numbers landed 2026-09-05; §5.2 is stated as not run
 
