@@ -92,8 +92,12 @@ the fuller trace; `evidence` here is the per-row pointer).
 
 **result semantics**: `PASSED` — every declared case replayed to its declared outcome.
 `FAILED` — at least one case replayed to a different outcome than declared; `reasoning` SHOULD
-name which case. `WARNED` — replayed correctly, but a declared case's justification (e.g.
-`destructiveHint`) does not match the observed behaviour.
+name which case.
+
+**Proposed in v0.1, not yet exercised by any producer:** `WARNED` — replayed correctly, but a
+declared case's justification (e.g. `destructiveHint`) does not match the observed behaviour.
+This mirrors OpenAI's submission contract, where a reviewer rejects when an annotation does not
+match behaviour; no producer has exercised this path yet.
 
 **since**: v0.1
 
@@ -317,8 +321,11 @@ stochastic by construction; the schema enforces `basis: "claimed"` for this attr
 `re-derivable` outright. A `claimed` efficacy row is never proof and MUST be read as author-reported
 (see README, `basis`).
 
-**inputHash**: not applicable — `claimed` rows do not carry `inputHash`. `conditions` stands in
-its place, and MUST bind the claim to the specific run it came from.
+**inputHash**: not required — `basis`, not `inputHash`, is what makes a row re-derivable, and a
+verifier MUST NOT recompute this row regardless of whether one is present. A producer MAY still
+carry an `inputHash` over `(model, date, nPerArm, scenario set)` for provenance or deduplication
+(e.g. to skip re-running an ablation whose exact inputs were already measured). `conditions` is
+what MUST bind the claim to the specific run it came from, with or without an `inputHash`.
 
 **Shape**: `conditions` — `{ablation, model, measuredOn, nPerArm}` at minimum (an ablation design
 name, the exact model string, the measurement date, and the per-arm sample size); `estimate` —

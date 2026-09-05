@@ -108,12 +108,13 @@ Every row declares whether a verifier can check it or must trust it:
   that reruns the check and gets a matching `inputHash` has *cached* the row; a verifier that
   reruns it and gets a different result has caught a rejected submission.
 - **`claimed`** — stochastic or otherwise not cheaply recomputable; author-reported. A `claimed`
-  row MUST NOT carry `inputHash` implying recomputability it does not have, and a consumer MUST
-  NOT treat a `claimed` row as proof of anything: it is a labeled claim, bound to the model and
-  date under which it was produced (recorded in `conditions`, see `efficacy` in
-  [attributes.md](attributes.md)), to be displayed as author-reported and never merged into a
-  trust decision the way a matched `re-derivable` recomputation can be. `efficacy` MUST always be
-  `claimed` — it is stochastic by construction and the schema enforces this.
+  row MAY carry an `inputHash` for provenance or deduplication. Its presence does not make the
+  row re-derivable; only `basis` does, and a verifier MUST NOT recompute a `claimed` row
+  regardless. A consumer MUST NOT treat a `claimed` row as proof of anything: it is a labeled
+  claim, bound to the model and date under which it was produced (recorded in `conditions`, see
+  `efficacy` in [attributes.md](attributes.md)), to be displayed as author-reported and never
+  merged into a trust decision the way a matched `re-derivable` recomputation can be. `efficacy`
+  MUST always be `claimed` — it is stochastic by construction and the schema enforces this.
 
 ### `result`
 
