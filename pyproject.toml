@@ -17,6 +17,9 @@ dev = ["pytest>=8", "ruff>=0.6"]
 [project.urls]
 Specification = "https://open-coder-ai.github.io/context-report/attestation/v0.1/"
 
+[project.scripts]
+context-report = "context_report.cli:main"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/context_report"]
 
