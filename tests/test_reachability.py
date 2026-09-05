@@ -108,3 +108,10 @@ def test_timeout_is_reported_as_error_not_a_result(tmp_path: Path) -> None:
     assert row.result == rows.ERROR
     assert row.reasoning
     assert _validated(row, tmp_path) == []
+
+
+def test_created_nested_dir_is_removed_afterwards(tmp_path):
+    """When no nested dir exists the producer makes one; it must not leave it in the artifact."""
+    (tmp_path / "gate.py").write_text("import sys; sys.stdin.read(); sys.exit(0)\n")
+    reachability_row(f'python3 "{tmp_path}/gate.py"', tmp_path)
+    assert not (tmp_path / "_context_report_tmp").exists()

@@ -14,36 +14,10 @@ REFERENCES = ROOT / "paper" / "references.md"
 PAPER_TEXT = PAPER.read_text(encoding="utf-8")
 REFERENCES_TEXT = REFERENCES.read_text(encoding="utf-8")
 
-# Every `[[...]]` placeholder that currently appears in the paper. A number landing under
-# `measurements/` should replace the placeholder text *and* remove its entry here in the same
-# change, so this set can never silently drift ahead of or behind the document.
-PLACEHOLDERS = {
-    "[[N catalog plugins]]",
-    "[[N dogfood bundles measured]]",
-    "[[N plugins]]",
-    "[[N target agents]]",
-    "[[X% fail open on timeout]]",
-    "[[artifact one]]",
-    "[[artifact two]]",
-    "[[catalog list]]",
-    "[[catalog name]]",
-    "[[confirm with W3/W4: canonical cwd set tested per target agent]]",
-    "[[confirm with W3/W4: timing mechanism, n, and environment fields recorded]]",
-    "[[confirm with W3/W4: tokenizer approximation used and its disclosed error bound]]",
-    "[[confirm with W3/W4: which fault rows need a live client vs. oracle-only, and the sandboxing "
-    "approach]]",
-    "[[latency p50]]",
-    "[[latency p95]]",
-    "[[match or mismatch]]",
-    "[[mean context tokens added per artifact]]",
-    "[[mean tokens]]",
-    "[[measured posture]]",
-    "[[median Y ms per tool call]]",
-    "[[plugin name]]",
-    "[[result]]",
-    "[[sampling method]]",
-    "[[target agent]]",
-}
+# Every `[[...]]` placeholder that currently appears in the paper. A new placeholder must be added
+# here and a number landing in the paper removes its entry in the same change, so this set
+# can never silently drift ahead of or behind the document.
+PLACEHOLDERS: set[str] = set()  # dogfood numbers landed 2026-09-05; §5.2 is stated as not run
 
 BANNED_PHRASES = ("revolutionary", "first-ever", "nobody has ever", "game-changing")
 

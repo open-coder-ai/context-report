@@ -6,6 +6,7 @@ import json
 import subprocess
 from pathlib import Path
 
+from context_report.produce import payloads
 from context_report.rows import (
     ERROR,
     NOT_AVAILABLE,
@@ -48,11 +49,27 @@ DOCUMENTED_FAULT_BEHAVIOUR: dict[str, str] = {
 }
 
 
-def malformed_output_row(command: str, artifact_root: Path, *, timeout_s: float = 10.0) -> Row:
-    """Run the guard script against malformed stdin; this one we CAN measure without a client."""
+def malformed_output_row(
+    command: str,
+    artifact_root: Path,
+    *,
+    timeout_s: float = 10.0,
+    target: str = "claude_code",
+    control_payload: dict | None = None,
+) -> Row:
+    """Run the guard against malformed stdin -- measurable without a client.
+
+    `would_allow` is exit 0 AND no deny word on stdout: hook_json adapters carry the decision in
+    stdout, not the exit code. A benign well-formed `control_benign` case is run alongside so a
+    reader can see whether the hook engaged at all; under `bare_allow: silent` protocols a silent
+    exit 0 there is expected and is not itself evidence of an early exit.
+    """
     artifact_root = Path(artifact_root)
     values: dict[str, dict[str, object]] = {}
-    for case, stdin_text in _MALFORMED_STDIN_CASES.items():
+    cases = dict(_MALFORMED_STDIN_CASES)
+    if control_payload is not None:
+        cases["control_benign"] = json.dumps(control_payload)
+    for case, stdin_text in cases.items():
         try:
             proc = subprocess.run(  # noqa: S602 -- command is the hook string as registered
                 command,
@@ -69,20 +86,24 @@ def malformed_output_row(command: str, artifact_root: Path, *, timeout_s: float 
                 MALFORMED_OUTPUT_ATTRIBUTE,
                 ERROR,
                 f"case {case!r} raised {exc!r}",
-                inputs=(command, list(_MALFORMED_STDIN_CASES.values())),
+                inputs=(command, list(cases.values()), target),
             )
         stderr = proc.stderr or ""
+        stdout = proc.stdout or ""
+        decision = payloads.stdout_decision(target, stdout)
         values[case] = {
             "exit": proc.returncode,
-            "would_allow_if_exit0_means_allow": proc.returncode == 0,
+            "stdout_decision": decision,
+            "would_allow": proc.returncode == 0 and not payloads.is_deny(target, decision),
             "stderr_first_line": stderr.splitlines()[0] if stderr else "",
+            "stdout_first_line": stdout.splitlines()[0] if stdout else "",
         }
     return Row(
         attribute=MALFORMED_OUTPUT_ATTRIBUTE,
         basis=RE_DERIVABLE,
         result=PASSED,
-        input_hash=input_hash(command, list(_MALFORMED_STDIN_CASES.values())),
-        conditions={"cwd": "root", "command": command, "cases": list(_MALFORMED_STDIN_CASES)},
+        input_hash=input_hash(command, list(cases.values()), target),
+        conditions={"cwd": "root", "command": command, "cases": list(cases), "target": target},
         values=values,
         reasoning=_MALFORMED_OUTPUT_REASONING,
     )

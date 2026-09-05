@@ -80,6 +80,18 @@ def test_latency_rows_mixed_exit_codes_stays_passed(tmp_path):
     assert row.values["exit_codes"] == [0, 127]
 
 
+def test_latency_rows_that_never_exit_zero_is_an_error_with_numbers_kept():
+    # A script the shell finds but python cannot open exits 2 on every run: the hook never made
+    # a decision, so the timing is of the failure path. Found in the first dogfood, where an
+    # unresolved plugin-root variable produced a confident 16 ms "latency".
+    cmd = f'{sys.executable} -c "import sys; sys.stdin.read(); sys.exit(2)"'
+    row = latency_rows(cmd, pretooluse_payload(), n=3)
+    assert row.result == rows.ERROR
+    assert "no run exited 0" in row.reasoning and "[2]" in row.reasoning
+    assert row.measurement.n == 3, "the numbers stay for inspection; the result does not vouch"
+    assert row.values["exit_codes"] == [2]
+
+
 def test_latency_rows_reports_timeout():
     row = latency_rows(SLEEP_CMD, pretooluse_payload(), n=3, timeout_s=0.5)
     assert row.result == rows.ERROR

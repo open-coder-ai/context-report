@@ -1,0 +1,61 @@
+{
+  "_comment": "Per-target PreToolUse-equivalent payload shapes and where a deny appears in stdout. Facts, not behaviour: sourced from agentseam 0.2.1 data/vendors/*.json on 2026-09-05; `basis` is agentseam's own evidence grade for that vendor's fields/events. A probe payload that lacks the event key hits the adapter's silent 'not my event' exit and measures nothing -- found live while dogfooding chock's bundles.",
+  "targets": {
+    "claude_code": {
+      "family": "hook_json",
+      "event_key": "hook_event_name",
+      "event_name": "PreToolUse",
+      "tool_key": "tool_name",
+      "tool_value": "Bash",
+      "command_path": ["tool_input", "command"],
+      "cwd_key": "cwd",
+      "session_key": "session_id",
+      "deny_paths": [["hookSpecificOutput", "permissionDecision"], ["decision"]],
+      "deny_words": ["deny", "block", "ask"],
+      "bare_allow": "silent",
+      "basis": "live-run"
+    },
+    "codex_cli": {
+      "family": "hook_json",
+      "event_key": "hook_event_name",
+      "event_name": "PreToolUse",
+      "tool_key": "tool_name",
+      "tool_value": "Bash",
+      "command_path": ["tool_input", "command"],
+      "cwd_key": "cwd",
+      "session_key": "session_id",
+      "deny_paths": [["hookSpecificOutput", "permissionDecision"], ["decision"]],
+      "deny_words": ["deny", "block"],
+      "bare_allow": "silent",
+      "basis": "live-run-partial"
+    },
+    "copilot": {
+      "family": "hook_json",
+      "event_key": "hook_event_name",
+      "event_name": "PreToolUse",
+      "tool_key": "tool_name",
+      "tool_value": "Bash",
+      "command_path": ["tool_input", "command"],
+      "cwd_key": "cwd",
+      "session_key": "session_id",
+      "deny_paths": [["hookSpecificOutput", "permissionDecision"], ["decision"]],
+      "deny_words": ["deny", "block", "ask"],
+      "bare_allow": "silent",
+      "basis": "live-run-partial"
+    },
+    "cursor": {
+      "family": "cursor",
+      "event_key": "hook_event_name",
+      "event_name": "beforeShellExecution",
+      "tool_key": null,
+      "tool_value": null,
+      "command_path": ["command"],
+      "cwd_key": "cwd",
+      "session_key": "conversation_id",
+      "deny_paths": [["permission"]],
+      "deny_words": ["deny", "ask"],
+      "bare_allow": "required",
+      "basis": "live-run-partial"
+    }
+  }
+}
