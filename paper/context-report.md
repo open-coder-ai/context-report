@@ -41,8 +41,8 @@ client sets, every hook resolves from all four working directories tested; witho
 three of the four agents, while the Copilot bundle exits 0 by design and so reads as reachable. All
 sixteen hooks exit 0 with no deny on stdout when fed malformed input, which the adapter's own source
 describes as a deliberate choice. Per-invocation latency of a guard hook, measured as a distribution
-with a realistic pre-tool payload, has a median p50 between 50 and 57 ms per target agent on the
-build machine, of which about 16 ms is the interpreter starting. The median bundle adds an estimated
+with a realistic pre-tool payload, has a median p50 between 42 and 47 ms per target agent on the
+build machine, of which about 13 ms is the interpreter starting. The median bundle adds an estimated
 222 tokens of context under a named, deterministic approximation. The live-client side of the fault
 oracle was not measured: v0.1 does not drive a client, and the rows say so rather than pass.
 
@@ -418,7 +418,8 @@ Python version, the CPU count, and the variables the run was given. A run that t
 measurement, and a measurement in which no run exits 0 is emitted as `Error` with the numbers kept
 for inspection: a benign payload should be allowed, so those runs timed the failure path, not the
 hook. The first dogfood produced a confident 16 ms "latency" for a hook whose script could not be
-found before this rule existed.
+found before this rule existed. (That run was on a busier machine; the committed run's floor is
+13 ms.)
 
 **Cost — context tokens.** The producer estimates the tokens an artifact adds to a session's context
 window at start, using a named tokenizer approximation rather than a model provider's exact
@@ -474,10 +475,10 @@ without it (`unresolved`).
 
 | Target agent | Bundles | With hook | Reachable, resolved | Reachable, unresolved | Exit 0 and no deny on malformed stdin | Latency p50 / p95 ms, median over hook bundles | Context tokens, median per bundle |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Claude Code | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 56.9 / 61.9 | 222 |
-| Codex CLI | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 52.1 / 54.3 | 222 |
-| GitHub Copilot | 22 | 4 | 4 of 4 | 4 of 4 | 4 of 4 | 49.6 / 53.2 | 222 |
-| Cursor | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 49.9 / 52.8 | 222 |
+| Claude Code | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 46.6 / 51.7 | 222 |
+| Codex CLI | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 44.5 / 46.6 | 222 |
+| GitHub Copilot | 22 | 4 | 4 of 4 | 4 of 4 | 4 of 4 | 42.0 / 43.4 | 222 |
+| Cursor | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 43.7 / 45.9 | 222 |
 
 Three findings, stated as the rows state them.
 
@@ -499,9 +500,9 @@ for: allow, stay silent." The row states the fact and the design rationale sits 
 of the two a catalog acts on is the catalog's threshold, which is the division of labor §7 argues for.
 
 *Latency is a distribution with a knowable floor.* Per invocation with a realistic pre-tool payload,
-the median hook bundle has a p50 between 49.6 and 56.9 ms depending on the target's adapter, with
-p95 within 6 ms of p50 on this machine. The `Error` rows from the unresolved condition, which time
-the interpreter starting and failing to open a file, cluster at 16 ms; that is the floor a Python
+the median hook bundle has a p50 between 42.0 and 46.6 ms depending on the target's adapter, and
+the median p95 per target is within 5 ms of its p50; single bundles reach 58 and 61 ms at p95. The `Error` rows from the unresolved condition, which time
+the interpreter starting and failing to open a file, sit at 13 ms; that is the floor a Python
 hook pays before any policy code runs. The rows are `environmentSensitive`, and the environment
 object on each records the platform, Python version, and CPU count.
 
