@@ -57,7 +57,9 @@ def digest_path(path: str | Path) -> str:
         raise FileNotFoundError(path)
     lines = []
     for f in sorted(x for x in p.rglob("*") if x.is_file() and ".git" not in x.parts):
-        lines.append(f"{f.relative_to(p).as_posix()}\0{hashlib.sha256(f.read_bytes()).hexdigest()}\n")
+        lines.append(
+            f"{f.relative_to(p).as_posix()}\0{hashlib.sha256(f.read_bytes()).hexdigest()}\n"
+        )
     return hashlib.sha256("".join(lines).encode("utf-8")).hexdigest()
 
 
@@ -65,7 +67,7 @@ def now_utc() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def statement(
+def statement(  # noqa: PLR0913 -- keyword-only; the predicate's fields are the API
     *,
     subject_name: str,
     subject_sha256: str,
@@ -95,9 +97,15 @@ def statement(
         "producer": producer.to_dict(),
         "attributes": [r.to_dict() for r in rows],
     }
-    metadata = {k: v for k, v in {
-        "invocationId": invocation_id, "startedOn": started_on, "finishedOn": finished_on,
-    }.items() if v}
+    metadata = {
+        k: v
+        for k, v in {
+            "invocationId": invocation_id,
+            "startedOn": started_on,
+            "finishedOn": finished_on,
+        }.items()
+        if v
+    }
     if metadata:
         predicate["metadata"] = metadata
     if configuration:

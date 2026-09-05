@@ -1,9 +1,10 @@
-"""One row of a context-report: an attribute assertion with a basis, built so invalid rows fail early."""
+"""One row of a context-report: an attribute assertion with a basis; invalid rows fail early."""
 
 from __future__ import annotations
 
 import hashlib
 import json
+import math
 import statistics
 from dataclasses import dataclass, field
 from typing import Any
@@ -35,14 +36,14 @@ PERCENTILES = (50, 95, 99)
 
 
 def input_hash(*parts: object) -> str:
-    """Glama-style inputHash: sha256 over the canonical JSON of the exact inputs, order-sensitive."""
+    """Glama-style inputHash: sha256 over canonical JSON of the exact inputs; order-sensitive."""
     blob = json.dumps(parts, sort_keys=True, separators=(",", ":"), default=str)
     return "sha256:" + hashlib.sha256(blob.encode("utf-8")).hexdigest()
 
 
 def _percentile(sorted_samples: list[float], pct: float) -> float:
-    """Nearest-rank percentile; deterministic and free of interpolation choices."""
-    rank = max(1, round(pct / 100 * len(sorted_samples)))
+    """Nearest-rank percentile (ceil), deterministic and free of interpolation choices."""
+    rank = max(1, math.ceil(pct / 100 * len(sorted_samples)))
     return float(sorted_samples[rank - 1])
 
 
@@ -74,10 +75,17 @@ class Measurement:
         )
 
     def to_dict(self) -> dict[str, Any]:
-        return _drop_none({
-            "unit": self.unit, "n": self.n, "percentiles": self.percentiles or None,
-            "min": self.min, "max": self.max, "mean": self.mean, "stddev": self.stddev,
-        })
+        return _drop_none(
+            {
+                "unit": self.unit,
+                "n": self.n,
+                "percentiles": self.percentiles or None,
+                "min": self.min,
+                "max": self.max,
+                "mean": self.mean,
+                "stddev": self.stddev,
+            }
+        )
 
 
 @dataclass(frozen=True)
@@ -91,20 +99,22 @@ class Estimate:
     standard_error: float | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return _drop_none({
-            "pointEstimate": self.point_estimate,
-            "standardError": self.standard_error,
-            "confidenceInterval": {
-                "confidenceLevel": self.confidence_level,
-                "lowerBound": self.lower_bound,
-                "upperBound": self.upper_bound,
-            },
-        })
+        return _drop_none(
+            {
+                "pointEstimate": self.point_estimate,
+                "standardError": self.standard_error,
+                "confidenceInterval": {
+                    "confidenceLevel": self.confidence_level,
+                    "lowerBound": self.lower_bound,
+                    "upperBound": self.upper_bound,
+                },
+            }
+        )
 
 
 @dataclass(frozen=True)
 class Row:
-    """An attribute assertion. The schema's invariants are enforced here so a bad row never leaves."""
+    """An attribute assertion. Schema invariants are enforced here, so a bad row never leaves."""
 
     attribute: str
     basis: str
@@ -134,24 +144,32 @@ class Row:
             raise ValueError("efficacy is stochastic by construction; it is always claimed")
 
     def to_dict(self) -> dict[str, Any]:
-        return _drop_none({
-            "attribute": self.attribute,
-            "basis": self.basis,
-            "result": self.result,
-            "inputHash": self.input_hash,
-            "environmentSensitive": self.environment_sensitive,
-            "environment": self.environment,
-            "conditions": self.conditions,
-            "values": self.values,
-            "measurement": self.measurement.to_dict() if self.measurement else None,
-            "estimate": self.estimate.to_dict() if self.estimate else None,
-            "evidence": list(self.evidence) or None,
-            "reasoning": self.reasoning,
-        })
+        return _drop_none(
+            {
+                "attribute": self.attribute,
+                "basis": self.basis,
+                "result": self.result,
+                "inputHash": self.input_hash,
+                "environmentSensitive": self.environment_sensitive,
+                "environment": self.environment,
+                "conditions": self.conditions,
+                "values": self.values,
+                "measurement": self.measurement.to_dict() if self.measurement else None,
+                "estimate": self.estimate.to_dict() if self.estimate else None,
+                "evidence": list(self.evidence) or None,
+                "reasoning": self.reasoning,
+            }
+        )
 
 
-def not_measured(attribute: str, result: str, reasoning: str, *, basis: str = RE_DERIVABLE,
-                 inputs: tuple[object, ...] = ()) -> Row:
+def not_measured(
+    attribute: str,
+    result: str,
+    reasoning: str,
+    *,
+    basis: str = RE_DERIVABLE,
+    inputs: tuple[object, ...] = (),
+) -> Row:
     """The honest row for a check that could not run: never silent, never a pass."""
     if result not in NOT_MEASURED:
         raise ValueError(f"not_measured needs one of {sorted(NOT_MEASURED)}, not {result!r}")
