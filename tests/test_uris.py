@@ -7,7 +7,6 @@ import re
 from pathlib import Path
 
 import pytest
-import tomllib
 
 from context_report.rows import PREDICATE_TYPE
 
@@ -51,9 +50,11 @@ def test_example_predicate_type_matches():
 
 
 def test_pyproject_specification_url_starts_with_predicate_type():
-    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text())
-    spec_url = pyproject["project"]["urls"]["Specification"]
-    assert spec_url.startswith(PREDICATE_TYPE)
+    # tomllib is 3.11+; this project supports 3.10, so read the one key by regex.
+    text = (ROOT / "pyproject.toml").read_text()
+    match = re.search(r'^Specification\s*=\s*"([^"]+)"', text, re.MULTILINE)
+    assert match, "pyproject.toml has no [project.urls] Specification entry"
+    assert match.group(1).startswith(PREDICATE_TYPE)
 
 
 @pytest.mark.parametrize("path", [SPEC_INDEX, V01_INDEX])
