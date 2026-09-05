@@ -29,6 +29,7 @@ verifier are not yet. Per in-toto convention, `0.X` versions are major: fields m
 - Schema: [`spec/attestation/v0.1/schema.json`](spec/attestation/v0.1/schema.json)
 - Example: [`spec/attestation/v0.1/examples/plugin-copilot.json`](spec/attestation/v0.1/examples/plugin-copilot.json)
 - Predicate type: `https://open-coder-ai.github.io/context-report/attestation/v0.1`
+- Hosted: https://open-coder-ai.github.io/context-report/attestation/v0.1/ (schema.json alongside)
 
 ## Rows in v0.1
 
