@@ -24,6 +24,13 @@ from context_report.rows import (
 
 TOKEN_RE = re.compile(r"\w+|[^\w\s]")
 
+# Shell exit codes meaning the command never actually ran: 127 is "not found", 126 is "found but
+# not executable". If every run hits one of these, the hook was never invoked and there is
+# nothing to time.
+_NOT_EXECUTABLE = 126
+_NOT_FOUND = 127
+_NEVER_STARTED_CODES = frozenset({_NOT_EXECUTABLE, _NOT_FOUND})
+
 
 def pretooluse_payload(tool: str = "Bash", command: str = "ls") -> dict:
     """A PreToolUse-shaped stdin payload: {"tool_name": ..., "tool_input": {"command": ...}}."""
@@ -42,9 +49,12 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
     """Run `command` n times, feeding it `payload` on stdin, and time each run in milliseconds.
 
     Each run is `subprocess.run(command, shell=True, input=json.dumps(payload), ...)`, timed
-    wall-clock with `time.perf_counter`. A run that cannot start or that times out aborts the
-    whole measurement -- there is no partial, silently-truncated result -- and is reported as an
-    honest `not_measured` row instead of a fabricated number.
+    wall-clock with `time.perf_counter`. A run that times out aborts the whole measurement --
+    there is no partial, silently-truncated result -- and is reported as an honest `not_measured`
+    row instead of a fabricated number.
+
+    Error only when the command never started (all runs 126/127, timeout, or bad cwd); a hook
+    that runs and exits non-zero is still timed.
     """
     stdin_blob = json.dumps(payload)
     samples_ms: list[float] = []
@@ -68,6 +78,22 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
             )
         samples_ms.append((time.perf_counter() - started) * 1000)
         exit_codes.append(proc.returncode)
+
+    codes_seen = sorted(set(exit_codes))
+    if codes_seen and set(codes_seen) <= _NEVER_STARTED_CODES:
+        if len(codes_seen) == 1:
+            code = codes_seen[0]
+            reason = "not found" if code == _NOT_FOUND else "not executable"
+            detail = f"shell exit {code} ({reason})"
+        else:
+            detail = f"shell exits {codes_seen} (not found / not executable)"
+        return not_measured(
+            "cost.latency_ms",
+            ERROR,
+            reasoning=f"command never started: {detail} on all {n} runs; nothing to time",
+            inputs=(command, payload, n),
+        )
+
     return Row(
         attribute="cost.latency_ms",
         basis=RE_DERIVABLE,

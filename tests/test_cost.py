@@ -42,19 +42,42 @@ def test_latency_rows_passes_and_validates(tmp_path):
 
 
 def test_latency_rows_reports_command_that_cannot_start(tmp_path):
-    # With shell=True an unresolvable command is *not* a start failure: the shell itself starts
-    # fine and reports "command not found" as a nonzero exit code (see test below). A genuine
-    # start failure is something the shell can't even attempt, e.g. a cwd that doesn't exist.
+    # With shell=True, subprocess.run itself refuses to even attempt the run for things the
+    # shell can't do anything about, e.g. a cwd that doesn't exist -- that's an OSError before
+    # any process exists. This is distinct from the shell running and reporting "not found" as
+    # exit 127 (see test_latency_rows_reports_command_never_started below).
     missing_cwd = str(tmp_path / "does-not-exist")
     row = latency_rows(NOOP_CMD, pretooluse_payload(), n=3, cwd=missing_cwd)
     assert row.result == rows.ERROR
     assert row.reasoning
 
 
-def test_latency_rows_records_nonzero_exit_code_for_unknown_command():
-    row = latency_rows(BAD_CMD, pretooluse_payload(), n=2)
+def test_latency_rows_reports_command_never_started():
+    # cost.latency_ms measures the hook's latency. If every run exits 127 (shell "not found"),
+    # the hook never ran, so a PASSED measurement here would be timing the shell's failure, not
+    # the hook -- exactly the misleading number this format exists to prevent.
+    row = latency_rows(BAD_CMD, pretooluse_payload(), n=3)
+    assert row.result == rows.ERROR
+    assert "never started" in row.reasoning
+    assert "127" in row.reasoning
+
+
+def test_latency_rows_mixed_exit_codes_stays_passed(tmp_path):
+    # A command that sometimes exits 127 and sometimes 0 is a real, if strange, measurement --
+    # not a "never started" case -- so it stays PASSED with both codes recorded.
+    marker = tmp_path / "seen"
+    script = (
+        "import sys, pathlib; "
+        f"p = pathlib.Path({str(marker)!r}); "
+        "code = 0 if p.exists() else 127; "
+        "p.touch(); "
+        "sys.stdin.read(); "
+        "sys.exit(code)"
+    )
+    cmd = f'{sys.executable} -c "{script}"'
+    row = latency_rows(cmd, pretooluse_payload(), n=3)
     assert row.result == rows.PASSED
-    assert row.values["exit_codes"] == [127]
+    assert row.values["exit_codes"] == [0, 127]
 
 
 def test_latency_rows_reports_timeout():
