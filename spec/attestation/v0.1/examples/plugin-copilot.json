@@ -1,0 +1,88 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "my-plugin",
+      "uri": "pkg:generic/acme/my-plugin@1.4.0",
+      "digest": {"sha256": "3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855e"}
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {"name": "copilot", "annotations": {"clientVersion": "1.104"}},
+    "producer": {
+      "id": "https://github.com/acme/my-plugin/.github/workflows/context-report.yml@refs/tags/v1.4.0",
+      "version": {"context-report": "0.1.0"}
+    },
+    "metadata": {
+      "invocationId": "https://github.com/acme/my-plugin/actions/runs/123456",
+      "startedOn": "2026-09-05T10:00:00Z",
+      "finishedOn": "2026-09-05T10:12:00Z"
+    },
+    "configuration": [
+      {"name": "context-report.config.json", "digest": {"sha256": "aa0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8000"}}
+    ],
+    "resolvedDependencies": [
+      {"uri": "pkg:pypi/context-report@0.1.0", "digest": {"sha256": "bb0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8001"}}
+    ],
+    "attributes": [
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:cc0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8002",
+        "conditions": {"cwdTested": ["/", "/src", "/src/deep"]},
+        "evidence": [{"name": "reachability.log", "digest": {"sha256": "dd0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8003"}}]
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:ee0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8004",
+        "values": {"failMode": "fail-closed"}
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:ff0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8005",
+        "values": {"failMode": "fail-open"},
+        "reasoning": "Copilot documents timeouts as always fail-open; measured behaviour matched the documentation."
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:110c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8006",
+        "environmentSensitive": true,
+        "environment": {"runner": "ubuntu-24.04", "cpu": "x86_64"},
+        "measurement": {"unit": "ms", "n": 200, "percentiles": {"50": 143, "95": 210, "99": 380}, "min": 98, "max": 512, "mean": 151, "stddev": 44}
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:220c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8007",
+        "measurement": {"unit": "tokens", "n": 1, "mean": 1840}
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:330c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8008",
+        "reasoning": "No co-installed artifacts were declared for this run."
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "PASSED",
+        "conditions": {"ablation": "with-vs-without", "model": "example-model-2026-08", "measuredOn": "2026-09-05", "nPerArm": 35},
+        "estimate": {"pointEstimate": 0.31, "standardError": 0.066, "confidenceInterval": {"confidenceLevel": 0.95, "lowerBound": 0.18, "upperBound": 0.44}}
+      }
+    ],
+    "byproducts": [
+      {"name": "replay-trace.jsonl", "digest": {"sha256": "440c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8009"}}
+    ]
+  }
+}

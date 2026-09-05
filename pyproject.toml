@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "context-report"
+version = "0.1.0"
+description = "An open, signed report format for whether an agent context artifact actually works: an in-toto predicate, per target agent, with re-derivable rows."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+dependencies = ["jsonschema>=4.18,<5"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.urls]
+Specification = "https://open-coder-ai.github.io/context-report/attestation/v0.1/"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/context_report"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C90", "S", "BLE", "FBT", "T20", "SIM", "RET", "ARG", "ERA", "PIE", "PL", "TRY", "RUF"]
+ignore = ["TRY003", "S101"]
