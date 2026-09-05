@@ -53,8 +53,9 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
     there is no partial, silently-truncated result -- and is reported as an honest `not_measured`
     row instead of a fabricated number.
 
-    Error only when the command never started (all runs 126/127, timeout, or bad cwd); a hook
-    that runs and exits non-zero is still timed.
+    Error when the command never started (all runs 126/127, timeout, or bad cwd) and when no run
+    exited 0 -- a benign payload should be allowed, so that timed the failure path. In the second
+    case the numbers are kept for inspection; the result just does not vouch for them.
     """
     stdin_blob = json.dumps(payload)
     samples_ms: list[float] = []
@@ -94,10 +95,19 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
             inputs=(command, payload, n),
         )
 
+    # A benign payload should be allowed, i.e. exit 0. If no run did, the numbers time the
+    # failure path (a missing script, a crashing interpreter), not the hook's decision path.
+    never_succeeded = 0 not in exit_codes
     return Row(
         attribute="cost.latency_ms",
         basis=RE_DERIVABLE,
-        result=PASSED,
+        result=ERROR if never_succeeded else PASSED,
+        reasoning=(
+            f"no run exited 0 with a benign payload (exit codes {codes_seen}); the timing is "
+            "of the failure path, not the hook, and is kept only for inspection"
+            if never_succeeded
+            else None
+        ),
         input_hash=input_hash("cost.latency_ms", command, payload, n),
         environment_sensitive=True,
         environment={

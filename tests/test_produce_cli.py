@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -171,3 +172,23 @@ def test_producing_leaves_the_subject_byte_identical(hook_dir: Path) -> None:
     )
     assert digest_path(hook_dir) == before
     assert stmt["subject"][0]["digest"]["sha256"] == before
+
+
+def test_env_does_not_leak_between_runs(hook_dir: Path) -> None:
+    """The resolved run must not make the unresolved run reachable. Found in the first dogfood."""
+    cmd = 'python3 "$LEAK_ROOT/.hooks/gate.py"'
+    assert "LEAK_ROOT" not in os.environ
+    resolved = produce_statement(
+        subject=hook_dir,
+        subject_kind="hook",
+        target="cursor",
+        hook_command=cmd,
+        env={"LEAK_ROOT": str(hook_dir)},
+        n=2,
+    )
+    assert "LEAK_ROOT" not in os.environ, "produce_statement leaked its --env into the process"
+    unresolved = produce_statement(
+        subject=hook_dir, subject_kind="hook", target="cursor", hook_command=cmd, n=2
+    )
+    assert _rows(resolved)["reachability"]["result"] == PASSED
+    assert _rows(unresolved)["reachability"]["result"] != PASSED

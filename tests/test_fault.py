@@ -50,7 +50,7 @@ def test_malformed_output_records_exit_0_as_fail_open(tmp_path: Path) -> None:
     assert row.basis == rows.RE_DERIVABLE
     for case in ("on_malformed_json", "on_empty_stdin", "on_null_tool_input"):
         assert row.values[case]["exit"] == 0
-        assert row.values[case]["would_allow_if_exit0_means_allow"] is True
+        assert row.values[case]["would_allow"] is True
     assert "fails open" in row.reasoning
     assert _validated(row, tmp_path) == []
 
@@ -65,7 +65,7 @@ def test_malformed_output_records_exit_2_as_fail_closed(tmp_path: Path) -> None:
     assert row.result == rows.PASSED
     for case in ("on_malformed_json", "on_empty_stdin", "on_null_tool_input"):
         assert row.values[case]["exit"] == 2
-        assert row.values[case]["would_allow_if_exit0_means_allow"] is False
+        assert row.values[case]["would_allow"] is False
     assert _validated(row, tmp_path) == []
 
 

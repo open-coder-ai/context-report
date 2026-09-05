@@ -3,21 +3,19 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import dataclasses
 import hashlib
 import json
 import os
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
 from context_report import __version__
-from context_report.produce.cost import (
-    context_tokens_row,
-    injected_text_paths,
-    latency_rows,
-    pretooluse_payload,
-)
+from context_report.produce import payloads
+from context_report.produce.cost import context_tokens_row, injected_text_paths, latency_rows
 from context_report.produce.fault import client_dependent_rows, malformed_output_row
 from context_report.produce.reachability import reachability_row
 from context_report.rows import (
@@ -51,11 +49,31 @@ EXEC_ATTRIBUTES = (
 _ORDER = {name: i for i, name in enumerate(ATTRIBUTES)}
 
 
+@contextlib.contextmanager
+def _scoped_environ(env: dict[str, str]) -> Iterator[None]:
+    """Set variables for the producers' subprocesses, then restore -- never leak between runs."""
+    saved = {k: os.environ.get(k) for k in env}
+    os.environ.update(env)
+    try:
+        yield
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+
+
 def _with_environment(row: Row, env: dict[str, str]) -> Row:
     """Record the variables the command was run under; a hook's reachability depends on them."""
     if not env:
         return row
     return dataclasses.replace(row, environment={**(row.environment or {}), "env": dict(env)})
+
+
+def _with_payload(row: Row, provenance: dict[str, Any]) -> Row:
+    """Record which payload shape probed the hook; a generic shape may have hit an early exit."""
+    return dataclasses.replace(row, conditions={**(row.conditions or {}), "payload": provenance})
 
 
 def _unmeasured_exec_rows(subject_kind: str, target: str) -> list[Row]:
@@ -87,18 +105,41 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
     env = dict(env or {})
     started = now_utc()
     digest_before = digest_path(subject)  # the artifact as the user has it, before anything runs
-    os.environ.update(env)  # producers spawn via the shell and inherit this; recorded per row
-
     rows: list[Row] = []
     if hook_command:
-        rows.append(_with_environment(reachability_row(hook_command, subject), env))
-        rows.append(_with_environment(malformed_output_row(hook_command, subject), env))
-        payload = pretooluse_payload("Bash", "true")
-        rows.append(
-            latency_rows(
-                hook_command, payload, n=n, cwd=str(subject), env_note={"env": env} if env else None
+        payload, provenance = payloads.pre_tool_payload(target, "true", cwd=str(subject))
+        with _scoped_environ(env):  # subprocesses inherit this; it is recorded on each row
+            rows.append(
+                _with_environment(
+                    _with_payload(
+                        reachability_row(hook_command, subject, payload=payload), provenance
+                    ),
+                    env,
+                )
             )
-        )
+            rows.append(
+                _with_environment(
+                    _with_payload(
+                        malformed_output_row(
+                            hook_command, subject, target=target, control_payload=payload
+                        ),
+                        provenance,
+                    ),
+                    env,
+                )
+            )
+            rows.append(
+                _with_payload(
+                    latency_rows(
+                        hook_command,
+                        payload,
+                        n=n,
+                        cwd=str(subject),
+                        env_note={"env": env} if env else None,
+                    ),
+                    provenance,
+                )
+            )
         rows.extend(client_dependent_rows(target))
     else:
         rows.extend(_unmeasured_exec_rows(subject_kind, target))
