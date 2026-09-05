@@ -96,36 +96,40 @@ class Recomputer(Protocol):
 class Diff:
     """A re-derivable row as the author reported it, next to what a Recomputer reproduced.
 
-    `claimed_row` here means "as reported by the author" in the everyday sense, not `basis:
-    claimed` -- this Diff is only ever built for `re-derivable` rows; see recompute_rows.
+    Only ever built for `re-derivable` rows (see recompute_rows); `claimed` rows have nothing a
+    verifier can reproduce.
     """
 
     attribute: str
-    claimed_row: dict[str, Any]
+    reported_row: dict[str, Any]
     recomputed_row: dict[str, Any]
     matches: bool
 
 
-def _rows_match(reported: dict[str, Any], recomputed: dict[str, Any]) -> bool:
-    """Compare only what a recomputation can promise: result, values, and a measurement's shape.
+def _measurements_match(reported: dict[str, Any], recomputed: dict[str, Any]) -> bool:
+    """Exact match, unless the row is environmentSensitive: then unit and n >= 1 on both sides."""
+    reported_m, recomputed_m = reported.get("measurement"), recomputed.get("measurement")
+    if reported_m is None or recomputed_m is None:
+        return False
+    if reported.get("environmentSensitive") is not True:
+        return reported_m == recomputed_m
+    same_unit = reported_m.get("unit") == recomputed_m.get("unit")
+    return same_unit and reported_m.get("n", 0) >= 1 and recomputed_m.get("n", 0) >= 1
 
-    A measurement's own numbers (latency, tokens) can legitimately differ run to run on a
-    re-derivable row marked `environmentSensitive` -- the schema's OPEN QUESTION for v0.1. So a
-    measurement row is compared on `unit` and `n >= 1` only, never on the sampled values.
+
+def _rows_match(reported: dict[str, Any], recomputed: dict[str, Any]) -> bool:
+    """Compare what a recomputation can promise: result, values, and the measurement.
+
+    A row marked `environmentSensitive` (latency) re-derives to a comparable distribution, not the
+    same numbers, so its measurement is compared on `unit` and `n >= 1` only. Any other measurement
+    (a token count) must match exactly: the spec's "Re-derivable is not identical" rule.
     """
     if reported.get("result") != recomputed.get("result"):
         return False
     if reported.get("values") != recomputed.get("values"):
         return False
-    has_measurement = "measurement" in reported or "measurement" in recomputed
-    if has_measurement:
-        reported_m, recomputed_m = reported.get("measurement"), recomputed.get("measurement")
-        if reported_m is None or recomputed_m is None:
-            return False
-        if reported_m.get("unit") != recomputed_m.get("unit"):
-            return False
-        if not (reported_m.get("n", 0) >= 1 and recomputed_m.get("n", 0) >= 1):
-            return False
+    if "measurement" in reported or "measurement" in recomputed:
+        return _measurements_match(reported, recomputed)
     return True
 
 
@@ -147,7 +151,7 @@ def recompute_rows(
                 diffs.append(
                     Diff(
                         attribute=row.get("attribute", ""),
-                        claimed_row=row,
+                        reported_row=row,
                         recomputed_row=recomputed,
                         matches=_rows_match(row, recomputed),
                     )

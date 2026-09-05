@@ -42,3 +42,41 @@ def test_every_attribute_row_field_is_documented() -> None:
 def test_required_phrases_are_present() -> None:
     for phrase in ("MUST NOT be read as a pass", "re-derivable", "claimed", "0.X"):
         assert phrase in README, f"README.md is missing required phrase: {phrase!r}"
+
+
+APPLICABILITY = json.loads(
+    (ROOT / "src" / "context_report" / "data" / "applicability-v0.1.json").read_text(
+        encoding="utf-8"
+    )
+)["notApplicable"]
+KINDS = set(SCHEMA["$defs"]["predicate"]["properties"]["subjectKind"]["enum"])
+
+
+def _schema_not_applicable() -> dict[str, set[str]]:
+    """The (kind -> excluded attributes) table as the predicate-level conditionals encode it."""
+    table: dict[str, set[str]] = {k: set() for k in KINDS}
+    for clause in SCHEMA["$defs"]["predicate"].get("allOf", []):
+        kind = clause["if"]["properties"]["subjectKind"]["const"]
+        inner = clause["then"]["properties"]["attributes"]["items"]
+        assert inner["then"]["properties"]["result"]["const"] == "NotApplicable"
+        table[kind] |= set(inner["if"]["properties"]["attribute"]["enum"])
+    return table
+
+
+def _prose_not_applicable() -> dict[str, set[str]]:
+    """The same table as attributes.md states it: each section's '`NotApplicable` for `k`, `k`'."""
+    table: dict[str, set[str]] = {k: set() for k in KINDS}
+    sections = re.split(r"^## ", ATTRIBUTES_MD, flags=re.MULTILINE)[1:]
+    for section in sections:
+        name = section.split("\n", 1)[0].strip()
+        m = re.search(r"`NotApplicable`\s+for\s+((?:`[a-z-]+`(?:,\s+)?)+)", section)
+        for kind in re.findall(r"`([a-z-]+)`", m.group(1)) if m else []:
+            table[kind].add(name)
+    return table
+
+
+def test_applicability_table_agrees_across_data_schema_and_prose() -> None:
+    data = {k: set(v) for k, v in APPLICABILITY.items()}
+    assert set(data) == KINDS, "every subjectKind needs an entry, even an empty one"
+    assert data == _schema_not_applicable(), "schema conditionals drifted from the data file"
+    assert data == _prose_not_applicable(), "attributes.md 'Applies to' drifted from the data file"

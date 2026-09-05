@@ -102,11 +102,15 @@ Every row declares whether a verifier can check it or must trust it:
 - **`re-derivable`** — deterministic; a verifier can recompute the row from the subject plus the
   recorded `configuration[]` and `resolvedDependencies[]`. A `re-derivable` row MUST carry an
   `inputHash`: a `sha256:`-prefixed hex digest (Glama TDQS's convention) over the exact inputs the
-  row was computed from — at minimum the subject digest, the target and its `clientVersion`, and
-  every file referenced from `configuration[]` that could change the row's outcome. `inputHash` is
-  what turns "re-derivable" into a checkable claim instead of an assertion of intent: a verifier
-  that reruns the check and gets a matching `inputHash` has *cached* the row; a verifier that
-  reruns it and gets a different result has caught a rejected submission.
+  row was computed from. The convention is fixed so a third-party verifier can recompute it: the
+  digest is SHA-256 of the canonical JSON (keys sorted, separators `,` and `:`, non-JSON values
+  stringified) of the array `[subject sha256, target.name, target.annotations.clientVersion or
+  null, attribute, ...row inputs]`, where the row inputs for each attribute are listed under
+  "inputHash MUST cover" in [attributes.md](attributes.md). The three leading elements bind the row
+  to this subject and this target; two statements about different bundles can never share a hash.
+  `inputHash` is what turns "re-derivable" into a checkable claim instead of an assertion of
+  intent: a verifier that reruns the check and gets a matching `inputHash` has *cached* the row; a
+  verifier that reruns it and gets a different result has caught a rejected submission.
 - **`claimed`** — stochastic or otherwise not cheaply recomputable; author-reported. A `claimed`
   row MAY carry an `inputHash` for provenance or deduplication. Its presence does not make the
   row re-derivable; only `basis` does, and a verifier MUST NOT recompute a `claimed` row
@@ -131,7 +135,9 @@ per-attribute rule.
 
 ### Other row fields
 
-- **`environmentSensitive`** / **`environment`** — see the open question below.
+- **`environmentSensitive`** / **`environment`** — marks a re-derivable row whose values depend on
+  the runner; see "Re-derivable is not identical" below. MUST be `true`, with `environment`
+  recorded, on a measured `cost.latency_ms` row; the schema enforces this.
 - **`conditions`** — a free-form object recording what was held fixed for this measurement (e.g.
   `efficacy`'s `{ablation, model, measuredOn, nPerArm}`, or `reachability`'s
   `{cwdTested: [...]}`). Producer-defined; consumers MUST ignore keys they do not recognize.
@@ -150,18 +156,28 @@ per-attribute rule.
 
 ## Re-derivable is not identical
 
-**OPEN in v0.1.** Some `re-derivable` rows recompute to the exact same value on any runner:
+**Decided in v0.1.** Some `re-derivable` rows recompute to the exact same value on any runner:
 `reachability`'s "does this cwd resolve the hook" is a yes/no fact of the bundle and the agent,
-independent of hardware. Others recompute to a *comparable distribution*, not the same number:
-`cost.latency_ms` measured on a laptop and measured on a CI runner will differ in absolute value
-while describing the same underlying behaviour. The standards review surfaced this and it was not
-settled before v0.1 shipped. The schema's stopgap is the `environmentSensitive` boolean: a
-producer SHOULD set it `true` on a `re-derivable` row whose value depends on the runner, and
-SHOULD record `environment` (e.g. `{runner, cpu}`) so a verifier compares like with like rather
-than treating a different p50 as a mismatched recomputation. Whether this deserves a third `basis`
-value instead of a flag on `re-derivable` is left for a future minor version; producers MUST NOT
-rely on `environmentSensitive` being present today to distinguish the two cases for rows that
-predate this stopgap.
+independent of hardware; `cost.context_tokens` under a named tokenizer is one number. Others
+recompute to a *comparable distribution*, not the same number: `cost.latency_ms` measured on a
+laptop and on a CI runner differ in absolute value while describing the same behaviour. v0.1 keeps
+two `basis` values and marks the second case on the row: `environmentSensitive: true` with
+`environment` recorded (at least the platform and CPU count, so a verifier compares like with
+like). The schema requires both on a measured `cost.latency_ms` row. A verifier recomputing a row
+compares the full `measurement` exactly unless the row is `environmentSensitive`, in which case it
+compares `unit` and that both sides have `n >= 1`, and leaves the numbers to the consumer's own
+threshold. A third `basis` value was considered and rejected: the procedure is re-derivable; only
+the numbers are not, and that is a property of the row, not of the trust model.
+
+## Applicability by `subjectKind`
+
+Not every attribute applies to every kind: a prose `instruction-file` has nothing to execute, a
+`hook` script's own text is not injected into the context window. Each section of
+[attributes.md](attributes.md) states its "Applies to" list, and the schema enforces the same table
+at the predicate level: for a `(subjectKind, attribute)` pair the registry excludes, the row MUST be
+present with `result: "NotApplicable"` and a `reasoning`, never omitted and never `PASSED`. The
+table is also shipped as data with the reference producer (`applicability-v0.1.json`) so a producer
+emits those rows without reading the prose.
 
 ## What the verifier emits
 

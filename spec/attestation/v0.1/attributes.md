@@ -7,7 +7,9 @@ schema entry, or a schema entry without a matching section, is a bug caught by
 [`../../../plan/context-attestation.md`](../../../../plan/context-attestation.md) (Subject
 section) — reproduced per attribute below. A `subjectKind` for which an attribute does not apply
 MUST get a row with `result: "NotApplicable"` and `reasoning` naming the kind, never a silently
-omitted row and never a `PASSED` standing in for "nothing to check".
+omitted row and never a `PASSED` standing in for "nothing to check". The schema enforces this table
+at the predicate level, and the reference producer ships it as `applicability-v0.1.json`;
+`tests/test_spec_prose.py` holds the three in agreement.
 
 Vendor behaviour cited below as a check's oracle is attributed with `basis: vendor-docs` in this
 document's own sense (chock's tested/witnessed/vendor-docs evidence grading) — this is a
@@ -60,9 +62,10 @@ deterministic fact of the artifact and the agent's documented resolution order.
 **inputHash MUST cover**: the subject digest, `target.name` and `target.annotations.clientVersion`,
 and the list of working directories tested (recorded in `conditions.cwdTested`).
 
-**Shape**: `conditions.cwdTested` (an array of the working directories exercised, e.g.
-`["/", "/src", "/src/deep"]`); `evidence` pointing at a reachability log. No `measurement`/
-`estimate`.
+**Shape**: `conditions.cwdTested` (an array of the working directories exercised, either paths
+such as `["/", "/src", "/src/deep"]` or stable labels such as `["root", "nested", "parent",
+"outside"]` when the paths are temporary); `evidence` MAY point at a reachability log. No
+`measurement`/`estimate`.
 
 **result semantics**: `PASSED` — resolves from every tested `cwd`. `FAILED` — fails to resolve
 from at least one tested `cwd`; `values` or `reasoning` SHOULD name which. `NotApplicable` never
@@ -241,10 +244,11 @@ under test, and the malformed payload used to trigger the condition.
 **Applies to**: `plugin`, `hook`, `mcp-server`. `NotApplicable` for `instruction-file`, `skill`,
 `subagent` — nothing is invoked per tool call.
 
-**basis**: `re-derivable`, and `environmentSensitive: true` SHOULD be set: the measurement
-procedure is deterministic, but the millisecond values it produces depend on the runner (see
-README's "Re-derivable is not identical"). `environment` (e.g. `{runner, cpu}`) SHOULD be recorded
-so a verifier compares a re-run's distribution to this one rather than expecting the same numbers.
+**basis**: `re-derivable`, and `environmentSensitive: true` MUST be set on a measured row: the
+measurement procedure is deterministic, but the millisecond values it produces depend on the runner
+(see README's "Re-derivable is not identical"). `environment` (at least the platform and CPU count)
+MUST be recorded so a verifier compares a re-run's distribution to this one rather than expecting
+the same numbers. The schema enforces both.
 
 **inputHash MUST cover**: the subject digest, `target` and its `clientVersion`, and the number and
 shape of the sampled tool calls (`measurement.n`).

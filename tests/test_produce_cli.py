@@ -44,7 +44,44 @@ def test_hook_subject_yields_every_attribute_and_validates(hook_dir: Path) -> No
     for attr in ("fault.scriptMissing", "fault.interpreterMissing", "fault.timeout"):
         assert rows[attr]["result"] == NOT_AVAILABLE
         assert "requires driving" in rows[attr]["reasoning"]
-    assert rows["efficacy"]["basis"] == CLAIMED and rows["efficacy"]["result"] == NOT_AVAILABLE
+    # efficacy does not apply to a hook (attributes.md): NotApplicable, still claimed.
+    assert rows["efficacy"]["basis"] == CLAIMED and rows["efficacy"]["result"] == NOT_APPLICABLE
+    assert "does not apply to subjectKind hook" in rows["efficacy"]["reasoning"]
+    assert rows["cost.context_tokens"]["result"] == NOT_APPLICABLE
+
+
+def test_mcp_server_marks_decision_and_interference_not_applicable(tmp_path: Path) -> None:
+    (tmp_path / "server.json").write_text('{"tools": [{"name": "t", "description": "does x"}]}')
+    stmt = produce_statement(subject=tmp_path, subject_kind="mcp-server", target="claude_code")
+    assert validate(stmt) == []
+    rows = _rows(stmt)
+    for attr in ("decision", "interference"):
+        assert rows[attr]["result"] == NOT_APPLICABLE
+        assert "does not apply to subjectKind mcp-server" in rows[attr]["reasoning"]
+    assert rows["efficacy"]["result"] == NOT_AVAILABLE, "efficacy still applies to an mcp-server"
+
+
+def test_input_hashes_are_bound_to_subject_and_target(tmp_path: Path) -> None:
+    """Two statements about different bundles, or different targets, never share an inputHash."""
+    a, b = tmp_path / "a", tmp_path / "b"
+    for d, text in ((a, "- Rule one.\n"), (b, "- Rule two.\n")):
+        d.mkdir()
+        (d / "AGENTS.md").write_text(text)
+
+    def hashes(subject: Path, target: str) -> dict[str, str]:
+        stmt = produce_statement(subject=subject, subject_kind="instruction-file", target=target)
+        return {
+            r["attribute"]: r["inputHash"]
+            for r in stmt["predicate"]["attributes"]
+            if "inputHash" in r
+        }
+
+    same = hashes(a, "devin")
+    assert same == hashes(a, "devin"), "the convention is deterministic"
+    other_subject, other_target = hashes(b, "devin"), hashes(a, "cursor")
+    for attr, h in same.items():
+        assert other_subject[attr] != h, f"{attr}: hash did not change with the subject"
+        assert other_target[attr] != h, f"{attr}: hash did not change with the target"
 
 
 def test_env_is_recorded_on_the_rows_that_ran_under_it(hook_dir: Path) -> None:

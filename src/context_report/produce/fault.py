@@ -49,13 +49,14 @@ DOCUMENTED_FAULT_BEHAVIOUR: dict[str, str] = {
 }
 
 
-def malformed_output_row(
+def malformed_output_row(  # noqa: PLR0913 -- keyword-only; the probe's whole configuration
     command: str,
     artifact_root: Path,
     *,
     timeout_s: float = 10.0,
     target: str = "claude_code",
     control_payload: dict | None = None,
+    binding: tuple[object, ...] = (),
 ) -> Row:
     """Run the guard against malformed stdin -- measurable without a client.
 
@@ -87,6 +88,7 @@ def malformed_output_row(
                 ERROR,
                 f"case {case!r} raised {exc!r}",
                 inputs=(command, list(cases.values()), target),
+                binding=binding,
             )
         stderr = proc.stderr or ""
         stdout = proc.stdout or ""
@@ -102,14 +104,16 @@ def malformed_output_row(
         attribute=MALFORMED_OUTPUT_ATTRIBUTE,
         basis=RE_DERIVABLE,
         result=PASSED,
-        input_hash=input_hash(command, list(cases.values()), target),
+        input_hash=input_hash(
+            *binding, MALFORMED_OUTPUT_ATTRIBUTE, command, list(cases.values()), target
+        ),
         conditions={"cwd": "root", "command": command, "cases": list(cases), "target": target},
         values=values,
         reasoning=_MALFORMED_OUTPUT_REASONING,
     )
 
 
-def client_dependent_rows(target: str) -> list[Row]:
+def client_dependent_rows(target: str, *, binding: tuple[object, ...] = ()) -> list[Row]:
     """The honest NotAvailable rows for the three faults that require driving a real client.
 
     v0.1 never drives a real agent client, so scriptMissing/interpreterMissing/timeout can only
@@ -129,6 +133,6 @@ def client_dependent_rows(target: str) -> list[Row]:
             f"vendor-docs, NOT measured): {oracle}"
         )
     return [
-        not_measured(attribute, NOT_AVAILABLE, reasoning)
+        not_measured(attribute, NOT_AVAILABLE, reasoning, inputs=(target,), binding=binding)
         for attribute in CLIENT_DEPENDENT_ATTRIBUTES
     ]

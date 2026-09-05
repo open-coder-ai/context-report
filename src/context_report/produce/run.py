@@ -24,6 +24,7 @@ from context_report.rows import (
     NOT_APPLICABLE,
     NOT_AVAILABLE,
     Row,
+    not_applicable_for,
     not_measured,
 )
 from context_report.statement import (
@@ -76,16 +77,39 @@ def _with_payload(row: Row, provenance: dict[str, Any]) -> Row:
     return dataclasses.replace(row, conditions={**(row.conditions or {}), "payload": provenance})
 
 
-def _unmeasured_exec_rows(subject_kind: str, target: str) -> list[Row]:
+def _unmeasured_exec_rows(subject_kind: str, binding: tuple[object, ...]) -> list[Row]:
     why = (
         f"subjectKind {subject_kind} has nothing to execute"
         if subject_kind not in EXECUTABLE_KINDS
         else "no hook command was declared for this artifact"
     )
     return [
-        not_measured(attr, NOT_APPLICABLE, why, inputs=(subject_kind, target))
+        not_measured(attr, NOT_APPLICABLE, why, inputs=(subject_kind,), binding=binding)
         for attr in EXEC_ATTRIBUTES
     ]
+
+
+def _apply_applicability(
+    rows: list[Row], subject_kind: str, binding: tuple[object, ...]
+) -> list[Row]:
+    """A (kind, attribute) pair the spec lists as not applicable is a NotApplicable row, always."""
+    excluded = not_applicable_for(subject_kind)
+    out = []
+    for row in rows:
+        if row.attribute not in excluded or row.result == NOT_APPLICABLE:
+            out.append(row)
+            continue
+        out.append(
+            not_measured(
+                row.attribute,
+                NOT_APPLICABLE,
+                f"{row.attribute} does not apply to subjectKind {subject_kind} in v0.1",
+                basis=row.basis,
+                inputs=(subject_kind,),
+                binding=binding,
+            )
+        )
+    return out
 
 
 def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's flags
@@ -105,6 +129,8 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
     env = dict(env or {})
     started = now_utc()
     digest_before = digest_path(subject)  # the artifact as the user has it, before anything runs
+    # Every inputHash starts with these three, so a row is bound to this subject and this target.
+    binding: tuple[object, ...] = (digest_before, target, client_version)
     rows: list[Row] = []
     if hook_command:
         payload, provenance = payloads.pre_tool_payload(target, "true", cwd=str(subject))
@@ -112,7 +138,8 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
             rows.append(
                 _with_environment(
                     _with_payload(
-                        reachability_row(hook_command, subject, payload=payload), provenance
+                        reachability_row(hook_command, subject, payload=payload, binding=binding),
+                        provenance,
                     ),
                     env,
                 )
@@ -121,7 +148,11 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
                 _with_environment(
                     _with_payload(
                         malformed_output_row(
-                            hook_command, subject, target=target, control_payload=payload
+                            hook_command,
+                            subject,
+                            target=target,
+                            control_payload=payload,
+                            binding=binding,
                         ),
                         provenance,
                     ),
@@ -136,22 +167,24 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
                         n=n,
                         cwd=str(subject),
                         env_note={"env": env} if env else None,
+                        binding=binding,
                     ),
                     provenance,
                 )
             )
-        rows.extend(client_dependent_rows(target))
+        rows.extend(client_dependent_rows(target, binding=binding))
     else:
-        rows.extend(_unmeasured_exec_rows(subject_kind, target))
+        rows.extend(_unmeasured_exec_rows(subject_kind, binding))
 
-    rows.append(context_tokens_row(injected_text_paths(subject, subject_kind)))
-    inputs = (subject_kind, target)
+    rows.append(context_tokens_row(injected_text_paths(subject, subject_kind), binding=binding))
+    inputs = (subject_kind,)
     rows.append(
         not_measured(
             "conformance",
             NOT_AVAILABLE,
             "v0.1 producer does not validate the bundle against the target agent's plugin schema",
             inputs=inputs,
+            binding=binding,
         )
     )
     rows.append(
@@ -160,6 +193,7 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
             NOT_AVAILABLE,
             "no declared positive/negative cases were supplied; v0.1 has no decision replay",
             inputs=inputs,
+            binding=binding,
         )
     )
     rows.append(
@@ -168,6 +202,7 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
             NOT_AVAILABLE,
             "no co-installed artifacts were declared; v0.1 producer does not measure interference",
             inputs=inputs,
+            binding=binding,
         )
     )
     rows.append(
@@ -178,6 +213,7 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
             basis=CLAIMED,
         )
     )
+    rows = _apply_applicability(rows, subject_kind, binding)
     rows.sort(key=lambda r: _ORDER.get(r.attribute, len(_ORDER)))
 
     if (

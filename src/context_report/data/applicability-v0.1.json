@@ -1,0 +1,39 @@
+{
+  "_comment": "Which attributes do not apply to which subjectKind in v0.1. A (kind, attribute) pair listed here MUST be a NotApplicable row with reasoning; never omitted, never PASSED. Mirrors the 'Applies to' line of each section in spec/attestation/v0.1/attributes.md and the predicate-level conditionals in schema.json; tests/test_spec_prose.py holds the three together.",
+  "notApplicable": {
+    "plugin": [],
+    "instruction-file": [
+      "decision",
+      "fault.scriptMissing",
+      "fault.interpreterMissing",
+      "fault.timeout",
+      "fault.malformedOutput",
+      "cost.latency_ms"
+    ],
+    "skill": [
+      "decision",
+      "fault.scriptMissing",
+      "fault.interpreterMissing",
+      "fault.timeout",
+      "fault.malformedOutput",
+      "cost.latency_ms"
+    ],
+    "subagent": [
+      "decision",
+      "fault.scriptMissing",
+      "fault.interpreterMissing",
+      "fault.timeout",
+      "fault.malformedOutput",
+      "cost.latency_ms",
+      "interference"
+    ],
+    "mcp-server": [
+      "decision",
+      "interference"
+    ],
+    "hook": [
+      "cost.context_tokens",
+      "efficacy"
+    ]
+  }
+}

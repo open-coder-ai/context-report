@@ -7,6 +7,7 @@ import json
 import math
 import statistics
 from dataclasses import dataclass, field
+from importlib.resources import files
 from typing import Any
 
 STATEMENT_TYPE = "https://in-toto.io/Statement/v1"
@@ -36,7 +37,11 @@ PERCENTILES = (50, 95, 99)
 
 
 def input_hash(*parts: object) -> str:
-    """Glama-style inputHash: sha256 over canonical JSON of the exact inputs; order-sensitive."""
+    """Glama-style inputHash: sha256 over canonical JSON of the exact inputs; order-sensitive.
+
+    Convention (spec README, `basis`): parts are [subject sha256, target name, clientVersion or
+    None, attribute, *row-specific inputs]. Producers receive the first three as `binding`.
+    """
     blob = json.dumps(parts, sort_keys=True, separators=(",", ":"), default=str)
     return "sha256:" + hashlib.sha256(blob.encode("utf-8")).hexdigest()
 
@@ -162,19 +167,26 @@ class Row:
         )
 
 
-def not_measured(
+def not_measured(  # noqa: PLR0913 -- keyword-only; binding is the spec's inputHash convention
     attribute: str,
     result: str,
     reasoning: str,
     *,
     basis: str = RE_DERIVABLE,
     inputs: tuple[object, ...] = (),
+    binding: tuple[object, ...] = (),
 ) -> Row:
     """The honest row for a check that could not run: never silent, never a pass."""
     if result not in NOT_MEASURED:
         raise ValueError(f"not_measured needs one of {sorted(NOT_MEASURED)}, not {result!r}")
-    ih = input_hash(attribute, *inputs) if basis == RE_DERIVABLE else None
+    ih = input_hash(*binding, attribute, *inputs) if basis == RE_DERIVABLE else None
     return Row(attribute=attribute, basis=basis, result=result, reasoning=reasoning, input_hash=ih)
+
+
+def not_applicable_for(subject_kind: str) -> frozenset[str]:
+    """Attributes the spec says do not apply to this kind; each MUST be a NotApplicable row."""
+    blob = files("context_report.data").joinpath("applicability-v0.1.json").read_text("utf-8")
+    return frozenset(json.loads(blob)["notApplicable"].get(subject_kind, ()))
 
 
 def _drop_none(d: dict[str, Any]) -> dict[str, Any]:
