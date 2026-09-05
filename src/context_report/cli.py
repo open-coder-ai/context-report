@@ -1,4 +1,4 @@
-"""`context-report verify`: report facts about a statement, never a verdict about the artifact."""
+"""`context-report produce|verify`: statements of fact about artifacts, never verdicts on them."""
 
 from __future__ import annotations
 
@@ -9,12 +9,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from context_report.produce.run import add_produce_parser, run_produce
 from context_report.verify import Verification, verify_statement
 
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="context-report")
     subparsers = parser.add_subparsers(dest="command", required=True)
+    add_produce_parser(subparsers)
 
     verify_parser = subparsers.add_parser(
         "verify",
@@ -63,9 +65,14 @@ def main(argv: list[str] | None = None) -> int:
     except SystemExit as exc:
         return int(exc.code) if isinstance(exc.code, int) else 2
 
+    if args.command == "produce":
+        return run_produce(args)
     if args.command != "verify":
         return 2
+    return _run_verify(args)
 
+
+def _run_verify(args: argparse.Namespace) -> int:
     try:
         stmt = _load_json(args.statement)
     except (OSError, json.JSONDecodeError) as exc:

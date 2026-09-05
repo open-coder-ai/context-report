@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import shlex
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -87,7 +88,32 @@ def reachability_row(
     resolved_payload = payload if payload is not None else DEFAULT_PAYLOAD
     payload_json = json.dumps(resolved_payload)
     nested_dir, nested_dir_source = _find_or_make_nested_dir(artifact_root)
+    try:
+        return _measure(
+            command=command,
+            artifact_root=artifact_root,
+            nested_dir=nested_dir,
+            nested_dir_source=nested_dir_source,
+            payload_json=payload_json,
+            resolved_payload=resolved_payload,
+            timeout_s=timeout_s,
+        )
+    finally:
+        # A measurement must not alter the artifact it measures: remove what we created.
+        if nested_dir_source == "created":
+            shutil.rmtree(artifact_root / "_context_report_tmp", ignore_errors=True)
 
+
+def _measure(  # noqa: PLR0913 -- the run loop, split out so cleanup is a single finally
+    *,
+    command: str,
+    artifact_root: Path,
+    nested_dir: Path,
+    nested_dir_source: str,
+    payload_json: str,
+    resolved_payload: dict[str, Any],
+    timeout_s: float,
+) -> Row:
     with tempfile.TemporaryDirectory(prefix="context-report-reachability-") as outside_dir:
         cwds = {
             "root": artifact_root,
