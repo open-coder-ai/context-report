@@ -34,7 +34,7 @@ def test_example_validates() -> None:
 
 
 def test_example_covers_every_v01_attribute_family() -> None:
-    """The example is the spec's worked case; a family missing from it is a family nobody has tried."""
+    """The example is the spec's worked case; a family missing from it is one nobody has tried."""
     names = {a["attribute"].split(".")[0] for a in EXAMPLE["predicate"]["attributes"]}
     assert {"reachability", "fault", "cost", "interference", "efficacy"} <= names
 
@@ -47,7 +47,7 @@ def test_rederivable_row_without_inputhash_is_rejected() -> None:
 
 
 def test_unmeasured_row_must_say_why() -> None:
-    """Monotonic principle: an unmeasured row may never be read as a pass, and must explain itself."""
+    """Monotonic principle: an unmeasured row is never a pass, and must explain itself."""
     bad = copy.deepcopy(EXAMPLE)
     del row(bad, "interference")["reasoning"]
     assert any("reasoning" in e for e in errors(bad))
@@ -90,7 +90,10 @@ def test_subject_requires_a_digest() -> None:
     assert errors(bad)
 
 
-@pytest.mark.parametrize("kind", ["plugin", "instruction-file", "skill", "hook", "mcp-server", "subagent"])
+KINDS = ["plugin", "instruction-file", "skill", "hook", "mcp-server", "subagent"]
+
+
+@pytest.mark.parametrize("kind", KINDS)
 def test_every_subject_kind_is_accepted(kind: str) -> None:
     ok = copy.deepcopy(EXAMPLE)
     ok["predicate"]["subjectKind"] = kind
