@@ -121,9 +121,9 @@ def _no_backend_row(  # noqa: PLR0913 -- keyword-only; these are the row's own c
         measured_on=measured_on,
         n_per_arm=n_per_arm,
         transcripts=0,
+        unexercised=unexercised,
     )
-    row = dataclasses.replace(row, reasoning=f"no backend for provider {model.provider!r} in v0.1")
-    return dataclasses.replace(row, values={**row.values, "unexercised": list(unexercised)})
+    return dataclasses.replace(row, reasoning=f"no backend for provider {model.provider!r} in v0.1")
 
 
 def _row_summary(
@@ -198,8 +198,8 @@ def _run_model(  # noqa: PLR0913, PLR0917 -- one (subject, model) pair needs all
         n_per_arm=n_per_arm,
         tokens_per_arm=rec.tokens_per_arm,
         transcripts=transcripts,
+        unexercised=unexercised,
     )
-    row = dataclasses.replace(row, values={**row.values, "unexercised": list(unexercised)})
     stmt = produce_statement(
         subject=subject.path,
         subject_kind=subject.kind,

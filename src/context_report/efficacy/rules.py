@@ -119,18 +119,35 @@ def _skip_reason(text: str) -> str | None:
     return None
 
 
+_SLUG_WORDS = 6
+_SLUG_CHARS = 48
+
+
+def slug(text: str) -> str:
+    """A stable rule id from the rule's own words: "Never commit secrets." -> never-commit-secrets.
+
+    A line number would change on every edit above the rule; the words change only when the
+    rule does, which is when its measurements stop applying anyway.
+    """
+    words = re.findall(r"[a-z0-9]+", text.lower())[:_SLUG_WORDS]
+    return "-".join(words)[:_SLUG_CHARS].rstrip("-") or "rule"
+
+
 def extract(path: str | Path) -> Extraction:
     """Blocks that read as rules, plus a tally of what was passed over and why."""
     file = Path(path)
-    stem = file.name
     rules: list[Rule] = []
     skipped: dict[str, int] = {}
+    seen: dict[str, int] = {}
     for number, text in _blocks(file.read_text(encoding="utf-8")):
         reason = _skip_reason(text)
         if reason is not None:
             skipped[reason] = skipped.get(reason, 0) + 1
             continue
-        rules.append(Rule(id=f"{stem}:{number}", text=text, source=str(file), line=number))
+        base = slug(text)
+        seen[base] = seen.get(base, 0) + 1
+        rule_id = base if seen[base] == 1 else f"{base}-{seen[base]}"
+        rules.append(Rule(id=rule_id, text=text, source=str(file), line=number))
     return Extraction(rules=rules, skipped=skipped)
 
 

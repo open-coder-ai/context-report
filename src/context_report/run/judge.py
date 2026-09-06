@@ -11,7 +11,7 @@ from typing import Any
 
 from context_report.efficacy.backends import Asker, AskerJudge
 from context_report.efficacy.grade import grade
-from context_report.efficacy.row import efficacy_row
+from context_report.efficacy.row import VALUES_UNEXERCISED, efficacy_row
 from context_report.efficacy.transcripts import Bundle, MissingTranscriptError, ReplayRunner
 from context_report.run.cards import cards_for
 from context_report.run.manifest import Manifest
@@ -111,10 +111,8 @@ def _judge_one(
         n_per_arm=manifest.arms.n_per_arm,
         tokens_per_arm=existing_values.get("tokensPerArm"),
         transcripts=sum(1 for _ in transcripts_dir.glob("*.json")),
+        unexercised=existing_values.get(VALUES_UNEXERCISED) or (),  # a fact about the subject
     )
-    if "unexercised" in existing_values:  # a fact about the subject, not about this grading pass
-        unexercised = existing_values["unexercised"]
-        row = dataclasses.replace(row, values={**row.values, "unexercised": unexercised})
 
     judged_stmt = copy.deepcopy(stmt)
     attrs = judged_stmt["predicate"]["attributes"]

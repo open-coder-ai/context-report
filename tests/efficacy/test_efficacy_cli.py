@@ -4,6 +4,7 @@ import json
 
 from context_report.cli import main
 from context_report.efficacy import cli as efficacy_cli
+from context_report.efficacy import rules
 
 INSTRUCTIONS = """# Rules
 
@@ -52,9 +53,14 @@ def test_no_instruction_files_is_an_error(tmp_path, monkeypatch, capsys):
     assert "no instruction files" in capsys.readouterr().err
 
 
+def _ids(project):
+    return [r.id for r in rules.extract(project / "CLAUDE.md").rules]
+
+
 def test_only_filters_to_named_rules(tmp_path, capsys, monkeypatch):
     monkeypatch.chdir(_project(tmp_path))
-    main(["efficacy", "--dry-run", "--only", "CLAUDE.md:3"])
+    ids = [r.id for r in rules.extract("CLAUDE.md").rules]
+    main(["efficacy", "--dry-run", "--only", ids[0]])
     out = capsys.readouterr().out
     assert "1 candidate rule(s)" in out
     assert "Never use field injection" in out
@@ -74,7 +80,8 @@ def test_json_run_reports_a_row_per_rule(tmp_path, capsys, monkeypatch):
 def test_hand_written_scenarios_skip_generation(tmp_path, capsys, monkeypatch):
     project = _project(tmp_path)
     (project / "scen.json").write_text(
-        json.dumps({"CLAUDE.md:3": ["task a"], "CLAUDE.md:4": ["task b"]}), encoding="utf-8"
+        json.dumps(dict(zip(_ids(project), (["task a"], ["task b"]), strict=True))),
+        encoding="utf-8",
     )
     monkeypatch.chdir(project)
     asker = ScriptedAsker()

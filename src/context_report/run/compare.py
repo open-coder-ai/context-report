@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from context_report.efficacy.row import VALUES_UNEXERCISED
+
 BY_MODEL = "model"
 BY_SUBJECT = "subject"
 
@@ -89,7 +91,7 @@ def _rule_lists(cells: list[Cell]) -> dict[str, tuple[set[str], set[str]]]:
         values = cell.row.get("values") or {}
         ungraded, unexercised = out.setdefault(cell.subject_id, (set(), set()))
         ungraded.update(values.get("ungraded") or ())
-        unexercised.update(values.get("unexercised") or ())
+        unexercised.update(values.get(VALUES_UNEXERCISED) or ())
     return out
 
 

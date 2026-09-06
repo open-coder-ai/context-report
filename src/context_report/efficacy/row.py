@@ -11,6 +11,7 @@ from context_report.rows import CLAIMED, FAILED, NOT_AVAILABLE, PASSED, WARNED, 
 
 ATTRIBUTE = "efficacy"
 CONFIDENCE = 0.95
+VALUES_UNEXERCISED = "unexercised"  # rule ids no task exercised: a fact about the subject
 # v0.1's ablation: the rule text is prepended to the task prompt. It is not a client install,
 # and the row says so, so nobody reads a prompt-prefix result as an installed-plugin result.
 ABLATION_PROMPT_PREFIX = "prompt-prefix-v1"
@@ -53,8 +54,9 @@ def efficacy_row(  # noqa: PLR0913 -- keyword-only; these are the conditions the
     measured_on: str,
     n_per_arm: int,
     ablation: str = ABLATION_PROMPT_PREFIX,
-    tokens_per_arm: dict[str, int] | None = None,
+    tokens_per_arm: dict[str, Any] | None = None,
     transcripts: int = 0,
+    unexercised: list[str] | tuple[str, ...] = (),
 ) -> Row:
     """Always `claimed`; with nothing graded it is NotAvailable and says what was recorded."""
     conditions: dict[str, Any] = {
@@ -71,6 +73,8 @@ def efficacy_row(  # noqa: PLR0913 -- keyword-only; these are the conditions the
     }
     if tokens_per_arm is not None:
         values["tokensPerArm"] = dict(tokens_per_arm)
+    if unexercised:
+        values[VALUES_UNEXERCISED] = list(unexercised)
     if not graded.reports:
         why = (
             f"no rule could be graded: {len(graded.ungraded)} rule(s) have a prose criterion and "

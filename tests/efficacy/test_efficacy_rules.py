@@ -8,6 +8,7 @@ from context_report.efficacy.rules import (
     extract,
     extract_all,
     is_directive,
+    slug,
 )
 
 SAMPLE = """# Project
@@ -70,8 +71,8 @@ def test_descriptive_prose_is_not_a_rule(tmp_path):
 def test_ids_carry_file_and_line(tmp_path):
     rules = extract(_write(tmp_path, "CLAUDE.md", SAMPLE)).rules
     first = rules[0]
-    assert first.id.startswith("CLAUDE.md:")
-    assert first.line == int(first.id.split(":")[1])
+    assert first.id == slug(first.text), "the id is the rule's own words"
+    assert first.line >= 1 and first.source.endswith("CLAUDE.md")
     assert SAMPLE.splitlines()[first.line - 1].endswith(first.text)
 
 
