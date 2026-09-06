@@ -12,17 +12,20 @@ from context_report.run import compare, judge
 
 def add_judge_parser(subparsers: Any) -> None:
     p = subparsers.add_parser("judge", help="grade recorded transcripts with a judge model")
-    p.add_argument("out", help="the run's output directory")
+    p.add_argument("out", help="the manifest's `out` directory (or one run directory)")
     p.add_argument("--judge", required=True, help="provider/id of the judge model")
+    p.add_argument("--run", default=None, help="run id under out/runs/ (default: the latest)")
 
 
 def add_compare_parser(subparsers: Any) -> None:
     p = subparsers.add_parser("compare", help="table of efficacy across models or subjects")
-    p.add_argument("out", help="the run's output directory")
+    p.add_argument("out", help="the manifest's `out` directory (or one run directory)")
     p.add_argument("--by", choices=(compare.BY_MODEL, compare.BY_SUBJECT), default=compare.BY_MODEL)
     p.add_argument(
         "--judged", action="store_true", help="prefer *.judged.json, falling back where absent"
     )
+    p.add_argument("--run", default=None, help="run id under out/runs/ (default: the latest)")
+    p.add_argument("--history", action="store_true", help="every run of this manifest side by side")
 
 
 def _outcome_line(outcome: judge.JudgeOutcome) -> str:
@@ -44,7 +47,7 @@ def _outcome_line(outcome: judge.JudgeOutcome) -> str:
 
 def run_judge(args: argparse.Namespace) -> int:
     try:
-        outcomes, code = judge.judge_out(Path(args.out), args.judge)
+        outcomes, code = judge.judge_out(Path(args.out), args.judge, run_id=args.run)
     except (OSError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
@@ -61,7 +64,14 @@ def run_judge(args: argparse.Namespace) -> int:
 
 def run_compare(args: argparse.Namespace) -> int:
     try:
-        print(compare.render_table(Path(args.out), by=args.by, judged=args.judged))
+        if args.history:
+            print(compare.render_history(Path(args.out)))
+        else:
+            print(
+                compare.render_table(
+                    Path(args.out), by=args.by, judged=args.judged, run_id=args.run
+                )
+            )
     except (OSError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

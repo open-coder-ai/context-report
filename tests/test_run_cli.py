@@ -11,10 +11,12 @@ import pytest
 from context_report import statement as statement_mod
 from context_report.efficacy.transcripts import Bundle
 from context_report.rows import CLAIMED, NOT_AVAILABLE
+from context_report.run import cli as cli_mod
+from context_report.run import compare, layout
 from context_report.run import manifest as m
 from context_report.run.cards import cards_for
 from context_report.run.cli import add_run_parser, run_run
-from context_report.run.runner import run
+from context_report.run.runner import RunError, run
 
 PRINT_RULE_TEXT = "No print statements in shipped code."
 SECRET_RULE_TEXT = "Never commit secrets to the repository."  # noqa: S105 -- rule text, not a secret
@@ -97,9 +99,9 @@ def _build_manifest(tmp_path: Path, *, provider: str = "anthropic") -> m.Manifes
 def test_output_layout_and_statements_validate(tmp_path: Path) -> None:
     manifest = _build_manifest(tmp_path)
     askers: list[FakeAsker] = []
-    run(manifest, asker_factory=_fake_asker_factory(askers))
+    out = run(manifest, asker_factory=_fake_asker_factory(askers))
 
-    out = manifest.out
+    assert out == manifest.out / "runs" / out.name  # every run gets its own directory
     assert (out / "manifest.json").is_file()
     assert (out / "SUMMARY.md").is_file()
     stmt_path = out / "house-rules" / "anthropic--claude-sonnet-5.json"
@@ -146,13 +148,13 @@ def test_non_anthropic_provider_yields_not_available_row_and_no_transcripts(
     tmp_path: Path,
 ) -> None:
     manifest = _build_manifest(tmp_path, provider="openai")
-    run(manifest, asker_factory=_fake_asker_factory([]))
-    stmt_path = manifest.out / "house-rules" / "openai--claude-sonnet-5.json"
+    out = run(manifest, asker_factory=_fake_asker_factory([]))
+    stmt_path = out / "house-rules" / "openai--claude-sonnet-5.json"
     stmt = json.loads(stmt_path.read_text())
     efficacy = next(r for r in stmt["predicate"]["attributes"] if r["attribute"] == "efficacy")
     assert efficacy["result"] == NOT_AVAILABLE
     assert "no backend" in efficacy["reasoning"]
-    assert not (manifest.out / "house-rules" / "openai--claude-sonnet-5" / "transcripts").exists()
+    assert not (out / "house-rules" / "openai--claude-sonnet-5" / "transcripts").exists()
 
 
 def test_leave_one_out_exits_2_with_no_asker_calls(tmp_path: Path) -> None:
@@ -183,10 +185,8 @@ def test_claude_cli_provider_runs_the_arms(tmp_path: Path) -> None:
     """`claude-cli/<alias>` is a real backend: arms run, transcripts recorded, row measured."""
     manifest = _build_manifest(tmp_path, provider="claude-cli")
     askers: list[FakeAsker] = []
-    run(manifest, asker_factory=_fake_asker_factory(askers))
-    stmt = json.loads(
-        (manifest.out / "house-rules" / "claude-cli--claude-sonnet-5.json").read_text()
-    )
+    out = run(manifest, asker_factory=_fake_asker_factory(askers))
+    stmt = json.loads((out / "house-rules" / "claude-cli--claude-sonnet-5.json").read_text())
     efficacy = next(a for a in stmt["predicate"]["attributes"] if a["attribute"] == "efficacy")
     assert efficacy["conditions"]["model"] == "claude-cli/claude-sonnet-5"
     assert efficacy["result"] != "NotAvailable" or "no backend" not in efficacy["reasoning"]
@@ -197,21 +197,21 @@ def test_resume_keeps_finished_pairs_and_only_fills_the_gaps(tmp_path: Path) -> 
     """A killed run is picked up where it stopped: no model call for what is already on disk."""
     manifest = _build_manifest(tmp_path)
     askers: list[FakeAsker] = []
-    run(manifest, asker_factory=_fake_asker_factory(askers))
+    out = run(manifest, asker_factory=_fake_asker_factory(askers))
     first_calls = sum(a.calls for a in askers)
-    stmt_path = manifest.out / "house-rules" / "anthropic--claude-sonnet-5.json"
+    stmt_path = out / "house-rules" / "anthropic--claude-sonnet-5.json"
     before = stmt_path.read_text()
-    summary_before = (manifest.out / "SUMMARY.md").read_text()
+    summary_before = (out / "SUMMARY.md").read_text()
 
     askers.clear()
-    run(manifest, asker_factory=_fake_asker_factory(askers), resume=True)
+    assert run(manifest, asker_factory=_fake_asker_factory(askers), resume=True) == out
     assert sum(a.calls for a in askers) == 0
     assert stmt_path.read_text() == before
-    assert (manifest.out / "SUMMARY.md").read_text() == summary_before
+    assert (out / "SUMMARY.md").read_text() == summary_before
 
     # A pair with transcripts but no statement re-runs, reusing what matches on disk.
     stmt_path.unlink()
-    transcripts_dir = manifest.out / "house-rules" / "anthropic--claude-sonnet-5" / "transcripts"
+    transcripts_dir = out / "house-rules" / "anthropic--claude-sonnet-5" / "transcripts"
     recorded = sorted(transcripts_dir.glob("*.json"))
     recorded[-1].unlink()
     askers.clear()
@@ -227,3 +227,46 @@ def test_run_cli_accepts_resume() -> None:
     add_run_parser(parser.add_subparsers(dest="command"))
     args = parser.parse_args(["run", "run.json", "--resume"])
     assert args.resume is True
+
+
+def test_every_run_is_kept_and_laid_side_by_side(tmp_path: Path) -> None:
+    """Two runs of one manifest: two directories, an index, and a history table across both."""
+    manifest = _build_manifest(tmp_path)
+    first = run(manifest, asker_factory=_fake_asker_factory([]), run_id="r1")
+    second = run(manifest, asker_factory=_fake_asker_factory([]), run_id="r2")
+    assert first != second and first.is_dir() and second.is_dir()
+    assert layout.run_ids(manifest.out) == ["r1", "r2"]
+
+    index = json.loads((manifest.out / "runs.json").read_text())
+    assert [e["runId"] for e in index] == ["r1", "r2"]
+    assert index[0]["rows"][0]["subject"] == "house-rules"
+    history = (manifest.out / "SUMMARY.md").read_text()
+    assert "| r1 | r2 |" in history and "house-rules" in history
+    assert compare.render_history(manifest.out) == history
+
+    with pytest.raises(RunError, match="already exists"):
+        run(manifest, asker_factory=_fake_asker_factory([]), run_id="r2")
+    assert layout.resolve_run_dir(manifest.out) == second  # the latest, by id order
+    assert layout.resolve_run_dir(manifest.out, "r1") == first
+    assert "anthropic/claude-sonnet-5" in compare.render_table(manifest.out, run_id="r1")
+
+
+def test_a_flat_pre_history_layout_still_reads_as_one_run(tmp_path: Path) -> None:
+    flat = tmp_path / "flat"
+    flat.mkdir()
+    (flat / "manifest.json").write_text("{}")
+    assert layout.resolve_run_dir(flat) == flat
+    with pytest.raises(ValueError, match="no run found"):
+        layout.resolve_run_dir(tmp_path / "nowhere")
+
+
+def test_run_cli_reports_the_run_directory(tmp_path: Path) -> None:
+    manifest = _build_manifest(tmp_path)
+    parser = argparse.ArgumentParser()
+    add_run_parser(parser.add_subparsers(dest="command"))
+    args = parser.parse_args(["run", str(tmp_path / "run.json"), "--run-id", "smoke"])
+    assert args.run_id == "smoke" and args.resume is False
+    (manifest.out / "runs" / "smoke").mkdir(parents=True)
+    (manifest.out / "runs" / "smoke" / "SUMMARY.md").write_text("| table |\n")
+    text = cli_mod._report(manifest.out / "runs" / "smoke", manifest.out)
+    assert text.startswith("run smoke: ") and "| table |" in text

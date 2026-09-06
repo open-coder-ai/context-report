@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from context_report.efficacy.row import VALUES_UNEXERCISED
+from context_report.run import layout
 
 BY_MODEL = "model"
 BY_SUBJECT = "subject"
@@ -100,10 +101,22 @@ def _rule_lists(cells: list[Cell]) -> dict[str, tuple[set[str], set[str]]]:
     return out
 
 
-def render_table(out: Path, *, by: str = BY_MODEL, judged: bool = False) -> str:
-    """The comparison table, then each subject's ungraded/unexercised rule ids, if any."""
+def render_history(out: Path) -> str:
+    """Every run of the manifest under `out`, side by side: the table `out/SUMMARY.md` holds."""
+    return layout.history_markdown(layout.load_index(Path(out)))
+
+
+def render_table(
+    out: Path, *, by: str = BY_MODEL, judged: bool = False, run_id: str | None = None
+) -> str:
+    """One run's comparison table (the latest under `out` unless `run_id`), then each subject's
+    ungraded/unexercised rule ids, if any."""
     if by not in (BY_MODEL, BY_SUBJECT):
         raise ValueError(f"--by must be 'model' or 'subject', not {by!r}")
+    try:
+        out = layout.resolve_run_dir(Path(out), run_id)
+    except ValueError:
+        return "no recorded statements found under " + str(out)
     cells = gather(out, judged=judged)
     if not cells:
         return "no recorded statements found under " + str(out)
