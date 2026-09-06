@@ -1,0 +1,179 @@
+"""`context-report run`: the fixed output layout, end to end, against a fake backend."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+import pytest
+
+from context_report import statement as statement_mod
+from context_report.efficacy.transcripts import Bundle
+from context_report.rows import CLAIMED, NOT_AVAILABLE
+from context_report.run import manifest as m
+from context_report.run.cards import cards_for
+from context_report.run.cli import add_run_parser, run_run
+from context_report.run.runner import run
+
+PRINT_RULE_TEXT = "No print statements in shipped code."
+SECRET_RULE_TEXT = "Never commit secrets to the repository."  # noqa: S105 -- rule text, not a secret
+WITH_MARKER = "Follow this rule strictly:"
+
+
+class FakeAsker:
+    """Canned outputs keyed on the arm; a call is never sent to a real model."""
+
+    def __init__(self) -> None:
+        self.calls = 0
+        self.last_usage = {"inputTokens": 10, "outputTokens": 20}
+
+    def ask(self, prompt: str) -> str:
+        self.calls += 1
+        if prompt.startswith(WITH_MARKER):
+            rule_part = prompt.split("Task:", maxsplit=1)[0].lower()
+            if "print" in rule_part:
+                return "```python\ndef f():\n    logging.info('done')\n```"  # obeys
+            return "```python\ndef f():\n    print('leaked')\n```"  # never actually judged
+        return "```python\ndef f():\n    print('debug')\n```"  # without-arm: model already prints
+
+
+def _fake_asker_factory(askers: list[FakeAsker]):
+    def factory(model, *, effort=None):  # noqa: ARG001 -- Asker factory contract
+        asker = FakeAsker()
+        askers.append(asker)
+        return asker
+
+    return factory
+
+
+def _write_subject(tmp_path: Path) -> None:
+    (tmp_path / "AGENTS.md").write_text(f"- {PRINT_RULE_TEXT}\n- {SECRET_RULE_TEXT}\n")
+
+
+def _base_doc() -> dict:
+    return {
+        "contextReportRun": "v0.1",
+        "subjects": [{"id": "house-rules", "path": "./AGENTS.md", "kind": "instruction-file"}],
+        "target": {"name": "claude_code", "clientVersion": "2.1.0"},
+        "models": [{"provider": "anthropic", "id": "claude-sonnet-5"}],
+        "tasks": "tasks.json",
+        "arms": {"nPerArm": 2, "seed": 1, "mode": "isolated"},
+        "judge": None,
+        "out": "out",
+    }
+
+
+def _rule_ids(tmp_path: Path) -> list[str]:
+    """Extraction order of AGENTS.md's two bullets: [print-rule, secrets-rule]."""
+    _write_subject(tmp_path)
+    probe_tasks = {"tasks": [{"id": "probe", "prompt": "Ship."}]}
+    (tmp_path / "tasks.json").write_text(json.dumps(probe_tasks))
+    (tmp_path / "run.json").write_text(json.dumps(_base_doc()))
+    probe = m.load(tmp_path / "run.json")
+    return [c.id for c in cards_for(probe, probe.subject("house-rules"))]
+
+
+def _build_manifest(tmp_path: Path, *, provider: str = "anthropic") -> m.Manifest:
+    print_id, _secret_id = _rule_ids(tmp_path)
+    tasks = {
+        "tasks": [
+            {
+                "id": "no-print-task",
+                "prompt": "Write a debug helper function.",
+                "rules": [print_id],
+                "criteria": {print_id: PRINT_RULE_TEXT},
+            },
+            {"id": "general-task", "prompt": "Refactor the module for clarity."},
+        ]
+    }
+    (tmp_path / "tasks.json").write_text(json.dumps(tasks))
+    doc = _base_doc()
+    doc["models"] = [{"provider": provider, "id": "claude-sonnet-5"}]
+    (tmp_path / "run.json").write_text(json.dumps(doc))
+    return m.load(tmp_path / "run.json")
+
+
+def test_output_layout_and_statements_validate(tmp_path: Path) -> None:
+    manifest = _build_manifest(tmp_path)
+    askers: list[FakeAsker] = []
+    run(manifest, asker_factory=_fake_asker_factory(askers))
+
+    out = manifest.out
+    assert (out / "manifest.json").is_file()
+    assert (out / "SUMMARY.md").is_file()
+    stmt_path = out / "house-rules" / "anthropic--claude-sonnet-5.json"
+    assert stmt_path.is_file()
+    transcripts_dir = out / "house-rules" / "anthropic--claude-sonnet-5" / "transcripts"
+    assert transcripts_dir.is_dir()
+    assert list(transcripts_dir.glob("*.json")), "expected recorded transcripts"
+
+    manifest_doc = json.loads((out / "manifest.json").read_text())
+    assert manifest_doc["subjects"][0]["path"] == str(manifest.subjects[0].path)
+    assert manifest_doc["arms"] == {"nPerArm": 2, "seed": 1, "mode": "isolated"}
+
+    stmt = json.loads(stmt_path.read_text())
+    assert statement_mod.validate(stmt) == []
+    rows = {r["attribute"]: r for r in stmt["predicate"]["attributes"]}
+    efficacy = rows["efficacy"]
+    assert efficacy["basis"] == CLAIMED
+    assert efficacy["conditions"]["model"] == "anthropic/claude-sonnet-5"
+    assert efficacy["conditions"]["judgeModel"] is None
+    assert "tokensPerArm" in efficacy["values"]
+    assert efficacy["values"]["tokensPerArm"]["with"]["inputTokens"] > 0
+
+    byproducts = stmt["predicate"]["byproducts"]
+    assert byproducts[0]["digest"]["sha256"] == Bundle(transcripts_dir).digest()
+
+    assert askers, "the fake asker factory should have been used"
+
+
+def test_dry_run_makes_zero_asker_calls_and_prints_budget(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    _build_manifest(tmp_path)  # writes run.json/tasks.json as a side effect
+    parser = argparse.ArgumentParser()
+    sub = parser.add_subparsers(dest="command")
+    add_run_parser(sub)
+    args = parser.parse_args(["run", str(tmp_path / "run.json"), "--dry-run"])
+    assert run_run(args) == 0
+    out = capsys.readouterr().out
+    assert "model call(s)" in out
+    assert "judge: none" in out
+
+
+def test_non_anthropic_provider_yields_not_available_row_and_no_transcripts(
+    tmp_path: Path,
+) -> None:
+    manifest = _build_manifest(tmp_path, provider="openai")
+    run(manifest, asker_factory=_fake_asker_factory([]))
+    stmt_path = manifest.out / "house-rules" / "openai--claude-sonnet-5.json"
+    stmt = json.loads(stmt_path.read_text())
+    efficacy = next(r for r in stmt["predicate"]["attributes"] if r["attribute"] == "efficacy")
+    assert efficacy["result"] == NOT_AVAILABLE
+    assert "no backend" in efficacy["reasoning"]
+    assert not (manifest.out / "house-rules" / "openai--claude-sonnet-5" / "transcripts").exists()
+
+
+def test_leave_one_out_exits_2_with_no_asker_calls(tmp_path: Path) -> None:
+    manifest = _build_manifest(tmp_path)
+    doc = json.loads((tmp_path / "run.json").read_text())
+    doc["arms"]["mode"] = "leave-one-out"
+    (tmp_path / "run.json").write_text(json.dumps(doc))
+
+    parser = argparse.ArgumentParser()
+    sub = parser.add_subparsers(dest="command")
+    add_run_parser(sub)
+    args = parser.parse_args(["run", str(tmp_path / "run.json")])
+    assert run_run(args) == 2
+    assert not manifest.out.exists()
+
+
+def test_invalid_manifest_exits_2(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    (tmp_path / "run.json").write_text(json.dumps({"contextReportRun": "v0.1"}))
+    parser = argparse.ArgumentParser()
+    sub = parser.add_subparsers(dest="command")
+    add_run_parser(sub)
+    args = parser.parse_args(["run", str(tmp_path / "run.json")])
+    assert run_run(args) == 2
+    assert "error:" in capsys.readouterr().err

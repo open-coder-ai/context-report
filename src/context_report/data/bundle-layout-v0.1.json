@@ -1,0 +1,25 @@
+{
+  "_comment": "Per-target plugin bundle layout: where the hooks file lives inside a plugin bundle, and which environment variable the client sets to the plugin's root before running a hook. Facts, not behaviour. Sourced from the bundles chock builds (observed 2026-09-05) and agentseam's vendor facts; `basis` names that observation, not a live measurement of the client itself.",
+  "targets": {
+    "claude_code": {
+      "hooks_file": "hooks/hooks.json",
+      "root_var": "CLAUDE_PLUGIN_ROOT",
+      "basis": "chock-bundle-observed"
+    },
+    "codex_cli": {
+      "hooks_file": "hooks/hooks.json",
+      "root_var": "PLUGIN_ROOT",
+      "basis": "chock-bundle-observed"
+    },
+    "copilot": {
+      "hooks_file": "com.github.copilot/hooks/hooks.json",
+      "root_var": "PLUGIN_ROOT",
+      "basis": "chock-bundle-observed"
+    },
+    "cursor": {
+      "hooks_file": "hooks/hooks.json",
+      "root_var": "CURSOR_PLUGIN_ROOT",
+      "basis": "chock-bundle-observed"
+    }
+  }
+}

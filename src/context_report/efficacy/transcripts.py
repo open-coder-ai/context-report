@@ -102,16 +102,21 @@ class RecordingRunner:
         self._tasks, self._rules = _index(cards)
         self._trials: dict[tuple[str, str, str], int] = {}
         self.tokens: dict[str, int] = {"inputTokens": 0, "outputTokens": 0}
+        self.tokens_per_arm: dict[str, dict[str, int]] = {
+            ARM_WITH: {"inputTokens": 0, "outputTokens": 0},
+            ARM_WITHOUT: {"inputTokens": 0, "outputTokens": 0},
+        }
 
     def run(self, task: str, rule: str | None) -> str:
         output = self.inner.run(task, rule)
         usage = getattr(self.inner, "last_usage", None)
+        arm = ARM_WITHOUT if rule is None else ARM_WITH
         if usage:
             for k in self.tokens:
                 self.tokens[k] += int(usage.get(k, 0))
+                self.tokens_per_arm[arm][k] += int(usage.get(k, 0))
         task_id = self._tasks.get(task, _safe(task)[:40])
         rule_id = CONTROL_RULE if rule is None else self._rules.get(rule, _safe(rule)[:40])
-        arm = ARM_WITHOUT if rule is None else ARM_WITH
         key = (task_id, rule_id, arm)
         trial = self._trials.get(key, 0)
         self._trials[key] = trial + 1

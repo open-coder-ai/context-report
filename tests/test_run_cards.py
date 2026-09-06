@@ -5,8 +5,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from context_report.run import manifest as m
 from context_report.run.cards import cards_for, unexercised_rules
+from context_report.run.manifest import ManifestError
 
 
 def _manifest(tmp_path: Path, tasks: list[dict]) -> m.Manifest:
@@ -54,3 +57,17 @@ def test_task_naming_a_rule_and_a_criterion_binds_only_that_rule(tmp_path: Path)
     assert [c.id for c in cards] == [rule_ids[0]]
     assert cards[0].scenarios[0].rule_applies == "No key appears in a committed file."
     assert unexercised_rules(mf, mf.subject("rules")) == [rule_ids[1]]
+
+
+def test_task_naming_a_rule_the_subject_lacks_is_an_error(tmp_path: Path):
+    mf = _manifest(tmp_path, [{"id": "t1", "prompt": "Ship it.", "rules": ["no-such-rule"]}])
+    with pytest.raises(ManifestError, match="no-such-rule"):
+        cards_for(mf, mf.subject("rules"))
+
+
+def test_rule_ids_are_the_rules_own_words(tmp_path: Path):
+    mf = _manifest(tmp_path, [{"id": "t1", "prompt": "Ship it."}])
+    assert [c.id for c in cards_for(mf, mf.subject("rules"))] == [
+        "never-commit-secrets-to-the-repository",
+        "always-run-the-tests-before-pushing",
+    ]

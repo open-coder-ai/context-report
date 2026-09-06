@@ -64,12 +64,29 @@ and the list of working directories tested (recorded in `conditions.cwdTested`).
 
 **Shape**: `conditions.cwdTested` (an array of the working directories exercised, either paths
 such as `["/", "/src", "/src/deep"]` or stable labels such as `["root", "nested", "parent",
-"outside"]` when the paths are temporary); `evidence` MAY point at a reachability log. No
-`measurement`/`estimate`.
+"outside"]` when the paths are temporary); `evidence` MAY point at a reachability log. For a
+multi-hook `plugin` (see below), `conditions.hooks` and `values.{reachable_from,unreachable_from,
+perHook,skippedHooks}` are also present. No `measurement`/`estimate`.
 
-**result semantics**: `PASSED` — resolves from every tested `cwd`. `FAILED` — fails to resolve
-from at least one tested `cwd`; `values` or `reasoning` SHOULD name which. `NotApplicable` never
-applies here in v0.1.
+**Multi-hook plugins.** A plugin's hooks are discovered from the plugin's own hooks manifest at the
+target agent's own hook-registration location — never supplied by the caller, since only the
+plugin itself can say what it registers. v0.1 measures reachability of the target agent's pre-tool
+event only; every other hook the plugin declares is recorded, unmeasured, in
+`values.skippedHooks` (an array of hook ids). Each measured hook gets its own entry in
+`values.perHook`, keyed by hook id `"<event>:<index>"` (e.g. `"PreToolUse:0"` for the first
+pre-tool hook) — a plugin with exactly one hook still gets exactly one key here, so a consumer
+never has to special-case the single-hook shape. The row's own top-level `values.reachable_from` is
+the **intersection** of every measured hook's reachable set (a `cwd` counts only if every hook
+resolves from it) and `values.unreachable_from` is the **union** (any one hook failing from a `cwd`
+is enough to put it there). `conditions.hooks` lists the id and command of every hook the plugin
+declares, measured or skipped, so a reader can see what was and was not exercised. `result` is
+`FAILED` if any measured hook fails to resolve from any tested `cwd` — a plugin is only as
+reachable as its least-reachable hook.
+
+**result semantics**: `PASSED` — resolves from every tested `cwd` (every measured hook, for a
+multi-hook subject). `FAILED` — fails to resolve from at least one tested `cwd`, or any measured
+hook fails anywhere (see Multi-hook plugins above); `values` or `reasoning` SHOULD name which.
+`NotApplicable` never applies here in v0.1.
 
 **since**: v0.1
 
@@ -216,9 +233,21 @@ outcome is deterministic and replayable.
 **inputHash MUST cover**: the subject digest, `target` and its `clientVersion`, the hook event
 under test, and the malformed payload used to trigger the condition.
 
-**Shape**: `values.failMode`: `"fail-open"` or `"fail-closed"`.
+**Shape**: `values.failMode`: `"fail-open"` or `"fail-closed"`. For a multi-hook `plugin` (see
+below), `conditions.hooks` and `values.{perHook,skippedHooks,wouldAllowAny}` are also present.
 
-**result semantics**: `PASSED` means "measured; see `values.failMode`", never a judgment call.
+**Multi-hook plugins.** As with `reachability`, a plugin's hooks come from its own hooks manifest,
+never the caller, and v0.1 exercises only the target's pre-tool event; every other declared hook is
+named, unmeasured, in `values.skippedHooks`. Each measured hook's own `failMode` is recorded under
+`values.perHook`, keyed by hook id `"<event>:<index>"` — one key even for a single hook, so the
+shape never changes between a one-hook and a many-hook plugin. `conditions.hooks` lists every
+declared hook's id and command. The row adds `values.wouldAllowAny`: `true` if *any* measured
+hook's malformed-output behaviour is fail-open, even when others are fail-closed — the fact a
+consumer actually needs, since one fail-open hook is enough to let a malformed guard through no
+matter what its siblings do.
+
+**result semantics**: `PASSED` means "measured; see `values.failMode`" (or, for a multi-hook
+subject, `values.perHook`), never a judgment call.
 
 **Vendor oracle** (`basis: vendor-docs`, from the prior-art record):
 
@@ -254,11 +283,25 @@ the same numbers. The schema enforces both.
 shape of the sampled tool calls (`measurement.n`).
 
 **Shape**: `measurement` — `unit: "ms"`, `n` (sample count), `percentiles` (at least `"50"`,
-`"95"`, `"99"`), `min`, `max`, `mean`, `stddev`. No `values`/`estimate`.
+`"95"`, `"99"`), `min`, `max`, `mean`, `stddev`. `values` is present only for a multi-hook subject
+(see below); no `estimate`.
+
+**Multi-hook plugins.** A plugin's declared hooks are discovered the same way as for
+`reachability` and `fault.malformedOutput`; v0.1 measures the target's pre-tool event only, with
+every other declared hook named, unmeasured, in `values.skippedHooks`, and `conditions.hooks`
+listing every declared hook's id and command. The row's top-level `measurement` is the
+**per-tool-call total**: the sum, across every measured hook, of that hook's own latency for one
+tool call — `conditions.aggregation: "sum-across-hooks"` records which rule produced it, since a
+sum is not the only aggregation a future version might choose. Each hook's own distribution lives
+under `values.perHook`, keyed by hook id `"<event>:<index>"` (one key even for a single hook), in
+the same `measurement` shape as the row's own top-level one. If any one hook's latency cannot be
+measured, the whole row is `Error`, and `reasoning` names which hook failed — a partial sum would
+understate the artifact's true cost.
 
 **result semantics**: `PASSED` means "measured; see `measurement`" — a distribution is not
 inherently a pass or fail; a consumer applies its own latency budget. `Error` — the measurement
-run itself failed to complete (e.g. the harness crashed mid-sampling), with `reasoning`.
+run itself failed to complete (e.g. the harness crashed mid-sampling, or one hook's own latency
+could not be measured in a multi-hook subject), with `reasoning` naming the hook if applicable.
 
 **since**: v0.1
 
@@ -331,15 +374,68 @@ carry an `inputHash` over `(model, date, nPerArm, scenario set)` for provenance 
 (e.g. to skip re-running an ablation whose exact inputs were already measured). `conditions` is
 what MUST bind the claim to the specific run it came from, with or without an `inputHash`.
 
-**Shape**: `conditions` — `{ablation, model, measuredOn, nPerArm}` at minimum (an ablation design
-name, the exact model string, the measurement date, and the per-arm sample size); `estimate` —
-`pointEstimate`, `confidenceInterval` (`confidenceLevel`, `lowerBound`, `upperBound`), and
-`standardError` after Criterion.rs/CycloneDX. No `measurement`/`values`.
+**Two models, not one.** An efficacy row can name up to two different models, and they play
+different roles. The **subject model** (`conditions.model`) is the model under test: it runs both
+arms — once with the rule prepended to the task prompt, once without — and its behaviour is what
+the row reports on. The **judge model** (`conditions.judgeModel`) never performs a task; it only
+reads a recorded transcript afterwards and decides whether that arm met the rule's criterion. The
+two are recorded separately because they answer different questions: swapping the subject model
+asks "does this rule change behaviour on a *different* model"; swapping the judge model only
+changes how strictly compliance is graded. A fair comparison across subject models — the reason a
+manifest names several `models` at once — holds the judge fixed: one `judgeModel` grading every
+arm is what makes the resulting lifts comparable to each other at all.
 
-**result semantics**: `PASSED` — the ablation found a statistically meaningful effect in the
-declared direction; `reasoning` SHOULD note the ablation design if non-obvious. `WARNED` — an
-effect was found but the interval is wide relative to the point estimate. `FAILED` — no
-distinguishable effect from the control arm. None of these is a claim the artifact is "good"; a
-consumer decides what lift, at what confidence, clears its own bar.
+**`judge: "deterministic"` vs `judge: "model"`.** A rule whose criterion is machine-checkable is
+graded by code, never by a model, and `conditions.judge` records `"deterministic"` for that grading
+path regardless of whether a `judgeModel` happens to be configured. `conditions.judge` is
+`"model"` only once at least one rule in this row was actually graded by the configured judge. A
+rule with a prose-only criterion and no judge model configured is never guessed at: its id is
+listed in `values.ungraded` and it contributes nothing to the row's pooled lift. This is what keeps
+a `claimed` row honest about *how* each piece of it was graded, not just that it was.
+
+**The ablation.** v0.1 names its ablation `prompt-prefix-v1` (`conditions.ablation`): the rule's own
+text is prepended to the task prompt for the "with" arm and omitted for the "without" arm —
+nothing more. This is a prompt-level ablation, not an installed-plugin one: it never loads the
+plugin, registers a hook, or calls an MCP tool. A `prompt-prefix-v1` result says "this rule's
+*text*, placed in front of the model, changes its behaviour"; it says nothing about whether the
+artifact's actual packaging (a hook, a tool description) delivers that text faithfully in a real
+install — `reachability` and `conformance` are the rows that speak to that. A reader who sees a
+`PASSED` `efficacy` row and assumes the plugin itself was installed and exercised has misread it.
+
+**Transcripts.** Every arm's raw output is recorded once, before any grading happens, so grading is
+a separate and repeatable step from running the model. The statement's `byproducts` MUST list the
+recorded transcripts as a `resourceDescriptor` with `mediaType:
+"application/vnd.context-report.transcripts+json"`, bound by digest — never inlined, since a run
+can record many transcripts. A verifier or a later re-grading step reads the same transcripts
+rather than re-running the subject model.
+
+**Shape**: `conditions` — `{ablation, model, judgeModel, judge, measuredOn, nPerArm}`: `ablation`
+is the ablation design name (`"prompt-prefix-v1"` in v0.1, see above); `model` is the exact subject
+model string under test; `judgeModel` is the judge's model string, or `null` when no judge model
+was configured; `judge` is `"deterministic"` or `"model"` (see above); `measuredOn` is the
+measurement date; `nPerArm` is the per-arm sample size. `values` — `{perRule, ungraded,
+tokensPerArm, unexercised}`: `perRule` is an array with one entry per graded rule, each `{ruleId,
+lift, liftCI,
+adherenceWith, adherenceWithout, observationsPerArm, verdict, confirmed}` (`verdict` is one of
+`"keep"`, `"dead-weight"`, `"ineffective"`, `"weak"`; `confirmed` says whether enough observations
+exist to act on that verdict — a verdict without `confirmed` is a hint, not a recommendation);
+`ungraded` is the rule ids no judge could grade, never silently dropped; `unexercised` (optional)
+is the rule ids the subject carries that no task exercised — a fact about the task set, reported so
+a reader knows which rules the estimate says nothing about; `tokensPerArm` (optional) is
+`{with: {inputTokens, outputTokens}, without: {inputTokens, outputTokens}}`, present only when the
+run recorded token usage — never a price, only counts a catalog can price however it likes. `estimate` — `pointEstimate`,
+`confidenceInterval` (`confidenceLevel`, `lowerBound`, `upperBound`), and `standardError` after
+Criterion.rs/CycloneDX, computed over the pooled lift across every graded rule. No `measurement`.
+
+**result semantics**: `PASSED` — the pooled lift's 95% Newcombe interval excludes zero and its
+width does not exceed the point estimate. `WARNED` — the interval excludes zero but is wide
+relative to the point estimate (width greater than the lift itself): a real effect, not yet pinned
+down tightly. `FAILED` — the interval's lower bound is at or below zero: no effect distinguishable
+from the control arm in the declared direction. `NotAvailable` — nothing could be graded: every
+rule with a prose criterion had no judge model to grade it against, and none of the subject's rules
+had a machine-checkable criterion either; `reasoning` states how many paired transcripts were still
+recorded, so a `NotAvailable` row is not a dead end — the raw material to grade later is right
+there under `byproducts`. None of these is a claim the artifact is "good"; a consumer decides what
+lift, at what confidence, clears its own bar.
 
 **since**: v0.1

@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from context_report import __version__
-from context_report.produce import payloads
+from context_report.produce import aggregate, discover, payloads
 from context_report.produce.cost import context_tokens_row, injected_text_paths, latency_rows
 from context_report.produce.fault import client_dependent_rows, malformed_output_row
 from context_report.produce.reachability import reachability_row
@@ -77,12 +77,17 @@ def _with_payload(row: Row, provenance: dict[str, Any]) -> Row:
     return dataclasses.replace(row, conditions={**(row.conditions or {}), "payload": provenance})
 
 
-def _unmeasured_exec_rows(subject_kind: str, binding: tuple[object, ...]) -> list[Row]:
-    why = (
-        f"subjectKind {subject_kind} has nothing to execute"
-        if subject_kind not in EXECUTABLE_KINDS
-        else "no hook command was declared for this artifact"
-    )
+def _unmeasured_exec_rows(
+    subject_kind: str, binding: tuple[object, ...], *, why: str | None = None
+) -> list[Row]:
+    if why is None:
+        why = (
+            f"subjectKind {subject_kind} has nothing to execute"
+            if subject_kind not in EXECUTABLE_KINDS
+            else "the plugin declares no hooks"
+            if subject_kind == "plugin"
+            else "no hook command was declared for this artifact"
+        )
     return [
         not_measured(attr, NOT_APPLICABLE, why, inputs=(subject_kind,), binding=binding)
         for attr in EXEC_ATTRIBUTES
@@ -112,6 +117,78 @@ def _apply_applicability(
     return out
 
 
+def _plugin_exec_rows(
+    subject: Path, target: str, env: dict[str, str], n: int, binding: tuple[object, ...]
+) -> list[Row]:
+    """The six executable rows for a plugin: discover its hooks, measure the pre-tool ones.
+
+    `env` is the plugin's own root variable (e.g. `CLAUDE_PLUGIN_ROOT`) merged with whatever the
+    caller passed -- the caller wins, so `--env` can still override a discovered default. Hooks on
+    any other event (e.g. `SessionStart`) are recorded under each row's `values.skippedHooks`
+    rather than measured: v0.1 only knows how to drive a pre-tool call.
+    """
+    hooks = discover.discover_hooks(subject, target)
+    merged_env = {**discover.plugin_root_env(target, subject), **env}
+    shape = payloads.shape(target)
+    pre_tool_event = shape["event_name"] if shape else None
+    pre_hooks = [h for h in hooks if h.event == pre_tool_event]
+    skipped_hooks = [h for h in hooks if h not in pre_hooks]
+    if not pre_hooks:
+        why = (
+            "the plugin declares no hooks"
+            if not hooks
+            else f"the plugin declares hooks, but none on {target}'s pre-tool event"
+        )
+        return _unmeasured_exec_rows("plugin", binding, why=why)
+
+    payload, provenance = payloads.pre_tool_payload(target, "true", cwd=str(subject))
+    rows: list[Row] = []
+    with _scoped_environ(merged_env):
+        rows.append(
+            _with_environment(
+                _with_payload(
+                    aggregate.aggregate_reachability(
+                        pre_hooks, subject, payload=payload, skipped=skipped_hooks, binding=binding
+                    ),
+                    provenance,
+                ),
+                merged_env,
+            )
+        )
+        rows.append(
+            _with_environment(
+                _with_payload(
+                    aggregate.aggregate_malformed_output(
+                        pre_hooks,
+                        subject,
+                        target=target,
+                        control_payload=payload,
+                        skipped=skipped_hooks,
+                        binding=binding,
+                    ),
+                    provenance,
+                ),
+                merged_env,
+            )
+        )
+        rows.append(
+            _with_payload(
+                aggregate.aggregate_latency(
+                    pre_hooks,
+                    payload,
+                    n=n,
+                    cwd=str(subject),
+                    env_note={"env": merged_env} if merged_env else None,
+                    skipped=skipped_hooks,
+                    binding=binding,
+                ),
+                provenance,
+            )
+        )
+    rows.extend(client_dependent_rows(target, binding=binding))
+    return rows
+
+
 def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's flags
     *,
     subject: Path,
@@ -138,7 +215,11 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
     # Every inputHash starts with these three, so a row is bound to this subject and this target.
     binding: tuple[object, ...] = (digest_before, target, client_version)
     rows: list[Row] = []
-    if hook_command:
+    if subject_kind == "plugin":
+        # A plugin is self-describing: its own hooks.json says what runs and when, so a passed
+        # --hook-command (a usage error the CLI already rejects) is simply ignored here too.
+        rows.extend(_plugin_exec_rows(subject, target, env, n, binding))
+    elif hook_command:
         payload, provenance = payloads.pre_tool_payload(target, "true", cwd=str(subject))
         with _scoped_environ(env):  # subprocesses inherit this; it is recorded on each row
             rows.append(
@@ -278,6 +359,15 @@ def _check_out_location(out: str | None, subject: Path) -> None:
         raise ValueError("--out must not be inside --subject: it would change the artifact digest")
 
 
+def _check_hook_command_usage(subject_kind: str, hook_command: str | None) -> None:
+    """A plugin discovers its own hooks; naming one on the command line is a usage mistake."""
+    if subject_kind == "plugin" and hook_command:
+        raise ValueError(
+            "--hook-command is not allowed with --kind plugin: plugins are self-describing, "
+            "their hooks are discovered from the bundle's own hooks file"
+        )
+
+
 def _parse_env(pairs: list[str]) -> dict[str, str]:
     env: dict[str, str] = {}
     for pair in pairs:
@@ -311,6 +401,7 @@ def add_produce_parser(subparsers: Any) -> None:
 
 def run_produce(args: argparse.Namespace) -> int:
     try:
+        _check_hook_command_usage(args.subject_kind, args.hook_command)
         env = _parse_env(args.env)
         subject = Path(args.subject)
         if not subject.exists():

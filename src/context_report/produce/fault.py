@@ -27,7 +27,7 @@ _MALFORMED_STDIN_CASES = {
     "on_null_tool_input": json.dumps({"tool_input": None}),
 }
 
-_MALFORMED_OUTPUT_REASONING = (
+MALFORMED_OUTPUT_REASONING = (
     "exit 0 on malformed input is how a Claude Code hook fails open; whether that is "
     "acceptable is the consumer's threshold."
 )
@@ -49,6 +49,14 @@ DOCUMENTED_FAULT_BEHAVIOUR: dict[str, str] = {
 }
 
 
+def malformed_cases(control_payload: dict | None) -> dict[str, str]:
+    """The stdin cases a malformed-output probe feeds a hook, `control_benign` added if given."""
+    cases = dict(_MALFORMED_STDIN_CASES)
+    if control_payload is not None:
+        cases["control_benign"] = json.dumps(control_payload)
+    return cases
+
+
 def malformed_output_row(  # noqa: PLR0913 -- keyword-only; the probe's whole configuration
     command: str,
     artifact_root: Path,
@@ -67,9 +75,7 @@ def malformed_output_row(  # noqa: PLR0913 -- keyword-only; the probe's whole co
     """
     artifact_root = Path(artifact_root)
     values: dict[str, dict[str, object]] = {}
-    cases = dict(_MALFORMED_STDIN_CASES)
-    if control_payload is not None:
-        cases["control_benign"] = json.dumps(control_payload)
+    cases = malformed_cases(control_payload)
     for case, stdin_text in cases.items():
         try:
             proc = subprocess.run(  # noqa: S602 -- command is the hook string as registered
@@ -109,7 +115,7 @@ def malformed_output_row(  # noqa: PLR0913 -- keyword-only; the probe's whole co
         ),
         conditions={"cwd": "root", "command": command, "cases": list(cases), "target": target},
         values=values,
-        reasoning=_MALFORMED_OUTPUT_REASONING,
+        reasoning=MALFORMED_OUTPUT_REASONING,
     )
 
 
