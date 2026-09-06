@@ -50,9 +50,16 @@ EXEC_ATTRIBUTES = (
 _ORDER = {name: i for i, name in enumerate(ATTRIBUTES)}
 
 
+# A Python hook that imports a sibling module makes CPython write __pycache__ into the plugin on
+# first run, which changes the subject digest mid-measurement (seen on agentforce-adlc). The
+# client does not set this, so it is recorded on every row that ran under it.
+NO_BYTECODE = {"PYTHONDONTWRITEBYTECODE": "1"}
+
+
 @contextlib.contextmanager
 def _scoped_environ(env: dict[str, str]) -> Iterator[None]:
     """Set variables for the producers' subprocesses, then restore -- never leak between runs."""
+    env = {**NO_BYTECODE, **env}
     saved = {k: os.environ.get(k) for k in env}
     os.environ.update(env)
     try:
@@ -128,7 +135,7 @@ def _plugin_exec_rows(
     rather than measured: v0.1 only knows how to drive a pre-tool call.
     """
     hooks = discover.discover_hooks(subject, target)
-    merged_env = {**discover.plugin_root_env(target, subject), **env}
+    merged_env = {**NO_BYTECODE, **discover.plugin_root_env(target, subject), **env}
     shape = payloads.shape(target)
     pre_tool_event = shape["event_name"] if shape else None
     pre_hooks = [h for h in hooks if h.event == pre_tool_event]
@@ -221,6 +228,7 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
         rows.extend(_plugin_exec_rows(subject, target, env, n, binding))
     elif hook_command:
         payload, provenance = payloads.pre_tool_payload(target, "true", cwd=str(subject))
+        env = {**NO_BYTECODE, **env}
         with _scoped_environ(env):  # subprocesses inherit this; it is recorded on each row
             rows.append(
                 _with_environment(

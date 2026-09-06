@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shlex
 from dataclasses import dataclass
 from importlib.resources import files
 from pathlib import Path
@@ -37,13 +38,58 @@ class Hook:
         return f"{self.event}:{self.index}"
 
 
+def _command_of(hook: dict[str, Any]) -> str | None:
+    """`command` plus any `args`, joined as the shell would receive them; None if no command."""
+    command = hook.get("command")
+    if not isinstance(command, str):
+        return None
+    args = hook.get("args")
+    if isinstance(args, list) and args:
+        return " ".join([command, *(shlex.quote(str(a)) for a in args)])
+    return command
+
+
 def _commands_in_entry(entry: dict[str, Any]) -> list[str]:
     """A hooks.json entry: nested `{"hooks": [{"command": ...}]}` or flat `{"command": ...}`."""
-    if "hooks" in entry:
-        return [h["command"] for h in entry["hooks"] if isinstance(h, dict) and "command" in h]
-    if "command" in entry:
-        return [entry["command"]]
-    return []
+    hooks = entry.get("hooks", [entry])
+    out: list[str] = []
+    for h in hooks:
+        if isinstance(h, dict):
+            command = _command_of(h)
+            if command is not None:
+                out.append(command)
+    return out
+
+
+def _hook_docs(subject_path: Path, info: dict[str, Any]) -> list[dict[str, Any]]:
+    """Every hooks document the client would read: the layout's file, plus the manifest's."""
+    root = Path(subject_path)
+    sources: list[Path] = [root / info["hooks_file"]]
+    inline: list[dict[str, Any]] = []
+    manifest = info.get("manifest")
+    if manifest and (root / manifest).is_file():
+        try:
+            declared = json.loads((root / manifest).read_text("utf-8")).get("hooks")
+        except (OSError, json.JSONDecodeError):
+            declared = None
+        if isinstance(declared, str):
+            sources.append(root / declared)
+        elif isinstance(declared, list):
+            sources.extend(root / p for p in declared if isinstance(p, str))
+        elif isinstance(declared, dict):
+            inline.append(declared)
+    docs: list[dict[str, Any]] = []
+    seen: set[Path] = set()
+    for path in sources:
+        resolved = path.resolve()
+        if resolved in seen or not path.is_file():
+            continue
+        seen.add(resolved)
+        try:
+            docs.append(json.loads(path.read_text("utf-8")))
+        except (OSError, json.JSONDecodeError):
+            continue
+    return docs + inline
 
 
 def discover_hooks(subject_path: Path, target: str) -> list[Hook]:
@@ -56,24 +102,20 @@ def discover_hooks(subject_path: Path, target: str) -> list[Hook]:
     info = layout(target)
     if info is None:
         return []
-    hooks_file = Path(subject_path) / info["hooks_file"]
-    if not hooks_file.is_file():
-        return []
-    try:
-        doc = json.loads(hooks_file.read_text("utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return []
     discovered: list[Hook] = []
-    for event, entries in doc.get("hooks", {}).items():
-        if not isinstance(entries, list):
-            continue
-        index = 0
-        for entry in entries:
-            if not isinstance(entry, dict):
+    index_by_event: dict[str, int] = {}
+    for doc in _hook_docs(subject_path, info):
+        hooks = doc.get("hooks", doc) if isinstance(doc, dict) else {}
+        for event, entries in hooks.items():
+            if not isinstance(entries, list):
                 continue
-            for command in _commands_in_entry(entry):
-                discovered.append(Hook(event=event, index=index, command=command))
-                index += 1
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    continue
+                for command in _commands_in_entry(entry):
+                    index = index_by_event.get(event, 0)
+                    discovered.append(Hook(event=event, index=index, command=command))
+                    index_by_event[event] = index + 1
     return discovered
 
 
