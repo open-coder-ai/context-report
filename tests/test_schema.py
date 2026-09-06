@@ -91,12 +91,28 @@ def test_subject_requires_a_digest() -> None:
 
 
 KINDS = ["plugin", "instruction-file", "skill", "hook", "mcp-server", "subagent"]
+APPLICABILITY = json.loads(
+    (ROOT / "src" / "context_report" / "data" / "applicability-v0.1.json").read_text(
+        encoding="utf-8"
+    )
+)["notApplicable"]
+
+
+def _not_applicable(r: dict, kind: str) -> None:
+    for key in ("measurement", "estimate", "conditions", "values", "environment"):
+        r.pop(key, None)
+    r["result"] = "NotApplicable"
+    r["reasoning"] = f"{r['attribute']} does not apply to subjectKind {kind}"
 
 
 @pytest.mark.parametrize("kind", KINDS)
 def test_every_subject_kind_is_accepted(kind: str) -> None:
+    """The example re-kinded validates once the rows the registry excludes are NotApplicable."""
     ok = copy.deepcopy(EXAMPLE)
     ok["predicate"]["subjectKind"] = kind
+    for r in ok["predicate"]["attributes"]:
+        if r["attribute"] in APPLICABILITY[kind]:
+            _not_applicable(r, kind)
     assert errors(ok) == []
 
 
@@ -104,3 +120,27 @@ def test_percentile_keys_are_percentiles() -> None:
     bad = copy.deepcopy(EXAMPLE)
     row(bad, "cost.latency_ms")["measurement"]["percentiles"] = {"p50": 143}
     assert errors(bad)
+
+
+def test_measured_latency_must_record_its_environment() -> None:
+    bad = copy.deepcopy(EXAMPLE)
+    del row(bad, "cost.latency_ms")["environment"]
+    assert errors(bad), "a measured latency without its runner is not re-derivable to anything"
+    bad = copy.deepcopy(EXAMPLE)
+    row(bad, "cost.latency_ms")["environmentSensitive"] = False
+    assert errors(bad), "latency is environmentSensitive by definition"
+
+
+def test_attribute_that_does_not_apply_to_the_kind_must_be_not_applicable() -> None:
+    """A hook script is not injected into context, so cost.context_tokens cannot PASS for a hook."""
+    bad = copy.deepcopy(EXAMPLE)
+    bad["predicate"]["subjectKind"] = "hook"
+    assert errors(bad), "PASSED context_tokens and efficacy rows on a hook must be rejected"
+    ok = copy.deepcopy(bad)
+    for name in ("cost.context_tokens", "efficacy"):
+        r = row(ok, name)
+        for key in ("measurement", "estimate", "conditions", "values"):
+            r.pop(key, None)
+        r["result"] = "NotApplicable"
+        r["reasoning"] = f"{name} does not apply to subjectKind hook"
+    assert errors(ok) == []

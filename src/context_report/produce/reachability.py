@@ -82,6 +82,7 @@ def reachability_row(
     *,
     payload: dict[str, Any] | None = None,
     timeout_s: float = 10.0,
+    binding: tuple[object, ...] = (),
 ) -> Row:
     """Run `command` as a hook from four cwds; PASSED only if it starts from every one of them."""
     artifact_root = Path(artifact_root)
@@ -97,6 +98,7 @@ def reachability_row(
             payload_json=payload_json,
             resolved_payload=resolved_payload,
             timeout_s=timeout_s,
+            binding=binding,
         )
     finally:
         # A measurement must not alter the artifact it measures: remove what we created.
@@ -113,6 +115,7 @@ def _measure(  # noqa: PLR0913 -- the run loop, split out so cleanup is a single
     payload_json: str,
     resolved_payload: dict[str, Any],
     timeout_s: float,
+    binding: tuple[object, ...] = (),
 ) -> Row:
     with tempfile.TemporaryDirectory(prefix="context-report-reachability-") as outside_dir:
         cwds = {
@@ -142,6 +145,7 @@ def _measure(  # noqa: PLR0913 -- the run loop, split out so cleanup is a single
                     ERROR,
                     f"running from cwd {label!r} raised {exc!r}",
                     inputs=(command, resolved_payload, list(CWD_LABELS)),
+                    binding=binding,
                 )
             stderr_first_line[label] = _first_stderr_line(proc)
             (unreachable_from if _is_unreachable(proc) else reachable_from).append(label)
@@ -151,9 +155,9 @@ def _measure(  # noqa: PLR0913 -- the run loop, split out so cleanup is a single
         attribute=ATTRIBUTE,
         basis=RE_DERIVABLE,
         result=result,
-        input_hash=input_hash(command, resolved_payload, list(CWD_LABELS)),
+        input_hash=input_hash(*binding, ATTRIBUTE, command, resolved_payload, list(CWD_LABELS)),
         conditions={
-            "cwds": list(CWD_LABELS),
+            "cwdTested": list(CWD_LABELS),
             "command": command,
             "nested_dir_source": nested_dir_source,
         },

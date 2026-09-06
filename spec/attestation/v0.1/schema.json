@@ -4,64 +4,147 @@
   "title": "context-report attestation v0.1",
   "description": "An in-toto Statement/v1 whose predicate reports, per target agent, measured facts about one agent context artifact. Rows carry a basis: re-derivable (a verifier can recompute it) or claimed (stochastic; author-reported). The format states facts; it never says pass or fail for the artifact as a whole -- the consumer sets thresholds.",
   "type": "object",
-  "required": ["_type", "subject", "predicateType", "predicate"],
+  "required": [
+    "_type",
+    "subject",
+    "predicateType",
+    "predicate"
+  ],
   "additionalProperties": true,
   "properties": {
-    "_type": {"const": "https://in-toto.io/Statement/v1"},
+    "_type": {
+      "const": "https://in-toto.io/Statement/v1"
+    },
     "subject": {
       "type": "array",
       "minItems": 1,
       "items": {
         "allOf": [
-          {"$ref": "#/$defs/resourceDescriptor"},
-          {"required": ["digest"], "description": "Subjects are matched purely by digest (in-toto Statement/v1)."}
+          {
+            "$ref": "#/$defs/resourceDescriptor"
+          },
+          {
+            "required": [
+              "digest"
+            ],
+            "description": "Subjects are matched purely by digest (in-toto Statement/v1)."
+          }
         ]
       }
     },
-    "predicateType": {"const": "https://open-coder-ai.github.io/context-report/attestation/v0.1"},
-    "predicate": {"$ref": "#/$defs/predicate"}
+    "predicateType": {
+      "const": "https://open-coder-ai.github.io/context-report/attestation/v0.1"
+    },
+    "predicate": {
+      "$ref": "#/$defs/predicate"
+    }
   },
   "$defs": {
     "resourceDescriptor": {
       "description": "in-toto ResourceDescriptor: at least one of uri, digest or content.",
       "type": "object",
       "properties": {
-        "name": {"type": "string"},
-        "uri": {"type": "string", "format": "uri-reference"},
+        "name": {
+          "type": "string"
+        },
+        "uri": {
+          "type": "string",
+          "format": "uri-reference"
+        },
         "digest": {
           "type": "object",
           "minProperties": 1,
-          "propertyNames": {"pattern": "^[a-z0-9_-]+$"},
-          "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]+$"}
+          "propertyNames": {
+            "pattern": "^[a-z0-9_-]+$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]+$"
+          }
         },
-        "content": {"type": "string", "contentEncoding": "base64"},
-        "downloadLocation": {"type": "string", "format": "uri"},
-        "mediaType": {"type": "string"},
-        "annotations": {"type": "object"}
+        "content": {
+          "type": "string",
+          "contentEncoding": "base64"
+        },
+        "downloadLocation": {
+          "type": "string",
+          "format": "uri"
+        },
+        "mediaType": {
+          "type": "string"
+        },
+        "annotations": {
+          "type": "object"
+        }
       },
-      "anyOf": [{"required": ["uri"]}, {"required": ["digest"]}, {"required": ["content"]}],
+      "anyOf": [
+        {
+          "required": [
+            "uri"
+          ]
+        },
+        {
+          "required": [
+            "digest"
+          ]
+        },
+        {
+          "required": [
+            "content"
+          ]
+        }
+      ],
       "additionalProperties": false
     },
-    "timestamp": {"type": "string", "format": "date-time", "pattern": "Z$", "description": "RFC 3339 in UTC, per in-toto field types."},
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$",
+      "description": "RFC 3339 in UTC, per in-toto field types."
+    },
     "predicate": {
       "type": "object",
-      "required": ["subjectKind", "target", "producer", "attributes"],
+      "required": [
+        "subjectKind",
+        "target",
+        "producer",
+        "attributes"
+      ],
       "additionalProperties": true,
       "properties": {
         "subjectKind": {
           "description": "What kind of context artifact the subject is. A row applies or does not by kind.",
-          "enum": ["plugin", "instruction-file", "skill", "hook", "mcp-server", "subagent"]
+          "enum": [
+            "plugin",
+            "instruction-file",
+            "skill",
+            "hook",
+            "mcp-server",
+            "subagent"
+          ]
         },
         "target": {
           "description": "The agent this statement is about. One statement per (subject digest, target).",
           "type": "object",
-          "required": ["name"],
+          "required": [
+            "name"
+          ],
           "properties": {
-            "name": {"type": "string", "minLength": 1},
-            "uri": {"type": "string", "format": "uri"},
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uri": {
+              "type": "string",
+              "format": "uri"
+            },
             "annotations": {
               "type": "object",
-              "properties": {"clientVersion": {"type": "string"}},
+              "properties": {
+                "clientVersion": {
+                  "type": "string"
+                }
+              },
               "additionalProperties": true
             }
           },
@@ -70,84 +153,395 @@
         "producer": {
           "description": "Who ran the checks. Mirrors SLSA Provenance builder.id: the sole determiner of how much trust a consumer places in the rows.",
           "type": "object",
-          "required": ["id"],
+          "required": [
+            "id"
+          ],
           "properties": {
-            "id": {"type": "string", "format": "uri"},
-            "version": {"type": "object", "additionalProperties": {"type": "string"}}
+            "id": {
+              "type": "string",
+              "format": "uri"
+            },
+            "version": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
           },
           "additionalProperties": false
         },
         "metadata": {
           "type": "object",
           "properties": {
-            "invocationId": {"type": "string"},
-            "startedOn": {"$ref": "#/$defs/timestamp"},
-            "finishedOn": {"$ref": "#/$defs/timestamp"}
+            "invocationId": {
+              "type": "string"
+            },
+            "startedOn": {
+              "$ref": "#/$defs/timestamp"
+            },
+            "finishedOn": {
+              "$ref": "#/$defs/timestamp"
+            }
           },
           "additionalProperties": false
         },
-        "configuration": {"type": "array", "items": {"$ref": "#/$defs/resourceDescriptor"}},
-        "resolvedDependencies": {"type": "array", "items": {"$ref": "#/$defs/resourceDescriptor"}},
-        "attributes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/attribute"}},
-        "byproducts": {"type": "array", "items": {"$ref": "#/$defs/resourceDescriptor"}}
-      }
+        "configuration": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceDescriptor"
+          }
+        },
+        "resolvedDependencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceDescriptor"
+          }
+        },
+        "attributes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/attribute"
+          }
+        },
+        "byproducts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceDescriptor"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "subjectKind": {
+                "const": "instruction-file"
+              }
+            },
+            "required": [
+              "subjectKind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "attributes": {
+                "items": {
+                  "if": {
+                    "properties": {
+                      "attribute": {
+                        "enum": [
+                          "decision",
+                          "fault.scriptMissing",
+                          "fault.interpreterMissing",
+                          "fault.timeout",
+                          "fault.malformedOutput",
+                          "cost.latency_ms"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "attribute"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "result": {
+                        "const": "NotApplicable"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Attributes that do not apply to a instruction-file MUST be NotApplicable rows, never omitted and never a pass."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "subjectKind": {
+                "const": "skill"
+              }
+            },
+            "required": [
+              "subjectKind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "attributes": {
+                "items": {
+                  "if": {
+                    "properties": {
+                      "attribute": {
+                        "enum": [
+                          "decision",
+                          "fault.scriptMissing",
+                          "fault.interpreterMissing",
+                          "fault.timeout",
+                          "fault.malformedOutput",
+                          "cost.latency_ms"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "attribute"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "result": {
+                        "const": "NotApplicable"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Attributes that do not apply to a skill MUST be NotApplicable rows, never omitted and never a pass."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "subjectKind": {
+                "const": "subagent"
+              }
+            },
+            "required": [
+              "subjectKind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "attributes": {
+                "items": {
+                  "if": {
+                    "properties": {
+                      "attribute": {
+                        "enum": [
+                          "decision",
+                          "fault.scriptMissing",
+                          "fault.interpreterMissing",
+                          "fault.timeout",
+                          "fault.malformedOutput",
+                          "cost.latency_ms",
+                          "interference"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "attribute"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "result": {
+                        "const": "NotApplicable"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Attributes that do not apply to a subagent MUST be NotApplicable rows, never omitted and never a pass."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "subjectKind": {
+                "const": "mcp-server"
+              }
+            },
+            "required": [
+              "subjectKind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "attributes": {
+                "items": {
+                  "if": {
+                    "properties": {
+                      "attribute": {
+                        "enum": [
+                          "decision",
+                          "interference"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "attribute"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "result": {
+                        "const": "NotApplicable"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Attributes that do not apply to a mcp-server MUST be NotApplicable rows, never omitted and never a pass."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "subjectKind": {
+                "const": "hook"
+              }
+            },
+            "required": [
+              "subjectKind"
+            ]
+          },
+          "then": {
+            "properties": {
+              "attributes": {
+                "items": {
+                  "if": {
+                    "properties": {
+                      "attribute": {
+                        "enum": [
+                          "cost.context_tokens",
+                          "efficacy"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "attribute"
+                    ]
+                  },
+                  "then": {
+                    "properties": {
+                      "result": {
+                        "const": "NotApplicable"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "description": "Attributes that do not apply to a hook MUST be NotApplicable rows, never omitted and never a pass."
+          }
+        }
+      ]
     },
     "attributeName": {
       "description": "v0.1 attribute registry, or an x- extension. Each attribute definition is versioned in the spec, not only the tool.",
       "anyOf": [
-        {"enum": [
-          "conformance",
-          "reachability",
-          "decision",
-          "fault.scriptMissing",
-          "fault.interpreterMissing",
-          "fault.timeout",
-          "fault.malformedOutput",
-          "cost.latency_ms",
-          "cost.context_tokens",
-          "interference",
-          "efficacy"
-        ]},
-        {"type": "string", "pattern": "^x-[a-z0-9][a-z0-9._-]*$"}
+        {
+          "enum": [
+            "conformance",
+            "reachability",
+            "decision",
+            "fault.scriptMissing",
+            "fault.interpreterMissing",
+            "fault.timeout",
+            "fault.malformedOutput",
+            "cost.latency_ms",
+            "cost.context_tokens",
+            "interference",
+            "efficacy"
+          ]
+        },
+        {
+          "type": "string",
+          "pattern": "^x-[a-z0-9][a-z0-9._-]*$"
+        }
       ]
     },
     "result": {
       "description": "PASSED|WARNED|FAILED from in-toto Test Result; NotAvailable|Error|NotApplicable from OpenSSF Scorecard probe outcomes, so an unmeasured row can never be read as a pass.",
-      "enum": ["PASSED", "WARNED", "FAILED", "NotAvailable", "Error", "NotApplicable"]
+      "enum": [
+        "PASSED",
+        "WARNED",
+        "FAILED",
+        "NotAvailable",
+        "Error",
+        "NotApplicable"
+      ]
     },
     "measurement": {
       "description": "A measured distribution. Percentile-keyed map after JMH scorePercentiles.",
       "type": "object",
-      "required": ["unit", "n"],
+      "required": [
+        "unit",
+        "n"
+      ],
       "properties": {
-        "unit": {"type": "string", "minLength": 1},
-        "n": {"type": "integer", "minimum": 1},
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "n": {
+          "type": "integer",
+          "minimum": 1
+        },
         "percentiles": {
           "type": "object",
-          "propertyNames": {"pattern": "^(100|[0-9]{1,2})(\\.[0-9]+)?$"},
-          "additionalProperties": {"type": "number"}
+          "propertyNames": {
+            "pattern": "^(100|[0-9]{1,2})(\\.[0-9]+)?$"
+          },
+          "additionalProperties": {
+            "type": "number"
+          }
         },
-        "min": {"type": "number"},
-        "max": {"type": "number"},
-        "mean": {"type": "number"},
-        "stddev": {"type": "number", "minimum": 0}
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "mean": {
+          "type": "number"
+        },
+        "stddev": {
+          "type": "number",
+          "minimum": 0
+        }
       },
       "additionalProperties": false
     },
     "estimate": {
       "description": "A point estimate with its interval, after Criterion.rs Estimate and CycloneDX confidenceInterval.",
       "type": "object",
-      "required": ["pointEstimate", "confidenceInterval"],
+      "required": [
+        "pointEstimate",
+        "confidenceInterval"
+      ],
       "properties": {
-        "pointEstimate": {"type": "number"},
-        "standardError": {"type": "number", "minimum": 0},
+        "pointEstimate": {
+          "type": "number"
+        },
+        "standardError": {
+          "type": "number",
+          "minimum": 0
+        },
         "confidenceInterval": {
           "type": "object",
-          "required": ["confidenceLevel", "lowerBound", "upperBound"],
+          "required": [
+            "confidenceLevel",
+            "lowerBound",
+            "upperBound"
+          ],
           "properties": {
-            "confidenceLevel": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1},
-            "lowerBound": {"type": "number"},
-            "upperBound": {"type": "number"}
+            "confidenceLevel": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "exclusiveMaximum": 1
+            },
+            "lowerBound": {
+              "type": "number"
+            },
+            "upperBound": {
+              "type": "number"
+            }
           },
           "additionalProperties": false
         }
@@ -157,44 +551,142 @@
     "attribute": {
       "description": "One row. Shape after SCAI attribute assertions, with evidence widened to an array.",
       "type": "object",
-      "required": ["attribute", "basis", "result"],
+      "required": [
+        "attribute",
+        "basis",
+        "result"
+      ],
       "properties": {
-        "attribute": {"$ref": "#/$defs/attributeName"},
+        "attribute": {
+          "$ref": "#/$defs/attributeName"
+        },
         "basis": {
           "description": "re-derivable: a verifier can recompute this row from the subject plus configuration and resolvedDependencies. claimed: stochastic or environment-bound; author-reported; never proof.",
-          "enum": ["re-derivable", "claimed"]
+          "enum": [
+            "re-derivable",
+            "claimed"
+          ]
         },
-        "result": {"$ref": "#/$defs/result"},
+        "result": {
+          "$ref": "#/$defs/result"
+        },
         "inputHash": {
           "description": "SHA-256 over the exact inputs to this row (after Glama TDQS). Required when basis is re-derivable; it is what makes re-derivable checkable rather than asserted.",
           "type": "string",
           "pattern": "^sha256:[0-9a-f]{64}$"
         },
         "environmentSensitive": {
-          "description": "OPEN QUESTION in v0.1: a re-derivable measurement whose value depends on the runner (latency) re-derives to a comparable distribution, not the same number. Set true on such rows and record the environment.",
+          "description": "True on a re-derivable row whose values depend on the runner (latency): it re-derives to a comparable distribution, not the same numbers, and a verifier compares the measurement's unit and sample count rather than its values. MUST be true, with environment recorded, on a measured cost.latency_ms row.",
           "type": "boolean"
         },
-        "environment": {"type": "object"},
-        "conditions": {"type": "object"},
-        "values": {"type": "object"},
-        "measurement": {"$ref": "#/$defs/measurement"},
-        "estimate": {"$ref": "#/$defs/estimate"},
-        "evidence": {"type": "array", "items": {"$ref": "#/$defs/resourceDescriptor"}},
-        "reasoning": {"type": "string"}
+        "environment": {
+          "type": "object"
+        },
+        "conditions": {
+          "type": "object"
+        },
+        "values": {
+          "type": "object"
+        },
+        "measurement": {
+          "$ref": "#/$defs/measurement"
+        },
+        "estimate": {
+          "$ref": "#/$defs/estimate"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/resourceDescriptor"
+          }
+        },
+        "reasoning": {
+          "type": "string"
+        }
       },
       "additionalProperties": false,
       "allOf": [
         {
-          "if": {"properties": {"basis": {"const": "re-derivable"}}},
-          "then": {"required": ["inputHash"]}
+          "if": {
+            "properties": {
+              "basis": {
+                "const": "re-derivable"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "inputHash"
+            ]
+          }
         },
         {
-          "if": {"properties": {"result": {"enum": ["NotAvailable", "Error", "NotApplicable"]}}},
-          "then": {"required": ["reasoning"], "description": "A row that could not be measured must say why."}
+          "if": {
+            "properties": {
+              "result": {
+                "enum": [
+                  "NotAvailable",
+                  "Error",
+                  "NotApplicable"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "reasoning"
+            ],
+            "description": "A row that could not be measured must say why."
+          }
         },
         {
-          "if": {"properties": {"attribute": {"const": "efficacy"}}},
-          "then": {"properties": {"basis": {"const": "claimed"}}, "description": "Efficacy is stochastic by construction; it may never be marked re-derivable."}
+          "if": {
+            "properties": {
+              "attribute": {
+                "const": "efficacy"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "basis": {
+                "const": "claimed"
+              }
+            },
+            "description": "Efficacy is stochastic by construction; it may never be marked re-derivable."
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "attribute": {
+                "const": "cost.latency_ms"
+              },
+              "result": {
+                "enum": [
+                  "PASSED",
+                  "WARNED",
+                  "FAILED"
+                ]
+              }
+            },
+            "required": [
+              "attribute",
+              "result"
+            ]
+          },
+          "then": {
+            "required": [
+              "environmentSensitive",
+              "environment"
+            ],
+            "properties": {
+              "environmentSensitive": {
+                "const": true
+              }
+            },
+            "description": "A measured latency re-derives to a comparable distribution only if the runner is recorded."
+          }
         }
       ]
     }

@@ -539,10 +539,10 @@ reproduces it rather than promoting documentation to observation.
 
 **Latency is environment-sensitive.** `cost.latency_ms` re-derives to a comparable distribution,
 not an identical number, because it depends on the runner's hardware and load. The schema's
-`environmentSensitive` marker and recorded `environment` object are the format's answer, but the
-open question the standards review left unresolved — whether this deserves a third `basis` value
-rather than a marker on `re-derivable` — is unsettled, and any threshold a vendor sets on a latency
-row inherits that uncertainty [8].
+`environmentSensitive` marker and recorded `environment` object are the format's answer, and v0.1
+settled the question the standards review raised: two `basis` values stay, the marker is required on
+a measured latency row, and a verifier compares such a row's distribution shape rather than its
+numbers [8]. Any threshold a vendor sets on a latency row still inherits the runner's variance.
 
 **Tokenizer approximation versus a model's real tokenizer.** `cost.context_tokens` is estimated
 with a named approximation rather than each target agent's exact tokenizer, because the producer

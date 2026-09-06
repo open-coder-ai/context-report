@@ -173,12 +173,13 @@ def test_diff_flags_a_mismatch_on_result():
 
 
 def test_measurement_diff_ignores_the_actual_numbers_but_not_the_unit():
-    """Environment-sensitive measurements may differ run to run (spec's OPEN QUESTION)."""
+    """An environmentSensitive measurement re-derives to a comparable distribution, not numbers."""
     reported = {
         "attribute": "cost.latency_ms",
         "basis": RE_DERIVABLE,
         "result": "PASSED",
         "inputHash": "sha256:" + "0" * 64,
+        "environmentSensitive": True,
         "measurement": {"unit": "ms", "n": 200, "mean": 151},
     }
     recomputed_same_unit = {
@@ -256,3 +257,31 @@ def test_verification_is_a_frozen_dataclass():
     assert isinstance(v, Verification)
     with pytest.raises(AttributeError):
         v.ok = False  # type: ignore[misc]
+
+
+def test_measurement_diff_is_exact_unless_environment_sensitive():
+    """A token count is one number; a recomputation that gets a different one is a mismatch."""
+    reported = {
+        "attribute": "cost.context_tokens",
+        "basis": RE_DERIVABLE,
+        "result": "PASSED",
+        "inputHash": "sha256:" + "0" * 64,
+        "measurement": {"unit": "tokens", "n": 1, "mean": 222},
+    }
+
+    class Fixed:
+        def __init__(self, out):
+            self.out = out
+
+        def recompute(self, row, subject_path):  # noqa: ARG002
+            return self.out
+
+    stmt = {"predicate": {"attributes": [reported]}}
+    same = {
+        "attribute": "cost.context_tokens",
+        "result": "PASSED",
+        "measurement": {"unit": "tokens", "n": 1, "mean": 222},
+    }
+    off_by_one = {**same, "measurement": {"unit": "tokens", "n": 1, "mean": 223}}
+    assert recompute_rows(stmt, "unused", [Fixed(same)])[0].matches is True
+    assert recompute_rows(stmt, "unused", [Fixed(off_by_one)])[0].matches is False

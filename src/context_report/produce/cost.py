@@ -45,6 +45,7 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
     timeout_s: float = 30.0,
     cwd: str | None = None,
     env_note: dict | None = None,
+    binding: tuple[object, ...] = (),
 ) -> Row:
     """Run `command` n times, feeding it `payload` on stdin, and time each run in milliseconds.
 
@@ -75,7 +76,11 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
             )
         except (subprocess.TimeoutExpired, OSError) as exc:
             return not_measured(
-                "cost.latency_ms", ERROR, reasoning=str(exc), inputs=(command, payload, n)
+                "cost.latency_ms",
+                ERROR,
+                reasoning=str(exc),
+                inputs=(command, payload, n),
+                binding=binding,
             )
         samples_ms.append((time.perf_counter() - started) * 1000)
         exit_codes.append(proc.returncode)
@@ -93,6 +98,7 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
             ERROR,
             reasoning=f"command never started: {detail} on all {n} runs; nothing to time",
             inputs=(command, payload, n),
+            binding=binding,
         )
 
     # A benign payload should be allowed, i.e. exit 0. If no run did, the numbers time the
@@ -108,7 +114,7 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
             if never_succeeded
             else None
         ),
-        input_hash=input_hash("cost.latency_ms", command, payload, n),
+        input_hash=input_hash(*binding, "cost.latency_ms", command, payload, n),
         environment_sensitive=True,
         environment={
             "platform": platform.platform(),
@@ -122,7 +128,9 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
     )
 
 
-def context_tokens_row(paths: list[str | Path], *, method: str = "approx-regex-v1") -> Row:
+def context_tokens_row(
+    paths: list[str | Path], *, method: str = "approx-regex-v1", binding: tuple[object, ...] = ()
+) -> Row:
     """Sum an estimated token count over `paths`.
 
     `approx-regex-v1` is fully specified and deterministic: for each readable text file, tokens
@@ -154,6 +162,7 @@ def context_tokens_row(paths: list[str | Path], *, method: str = "approx-regex-v
             NOT_APPLICABLE,
             reasoning="no text files to count",
             inputs=(ordered,),
+            binding=binding,
         )
 
     total = sum(per_file.values())
@@ -165,7 +174,7 @@ def context_tokens_row(paths: list[str | Path], *, method: str = "approx-regex-v
         attribute="cost.context_tokens",
         basis=RE_DERIVABLE,
         result=PASSED,
-        input_hash=input_hash("cost.context_tokens", hashed, method),
+        input_hash=input_hash(*binding, "cost.context_tokens", hashed, method),
         measurement=Measurement(
             unit="tokens", n=1, mean=total, min=total, max=total, percentiles={}
         ),

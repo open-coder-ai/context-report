@@ -97,6 +97,7 @@ def test_statement_validates_against_the_schema(tmp_path):
                 rows.PASSED,
                 input_hash=rows.input_hash("lat"),
                 environment_sensitive=True,
+                environment={"platform": "test", "cpu_count": 1},
                 measurement=rows.Measurement.from_samples([1.0, 2.0, 3.0], "ms"),
             ),
             rows.not_measured("fault.timeout", rows.NOT_AVAILABLE, "no client harness yet"),
