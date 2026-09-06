@@ -6,17 +6,77 @@ on:
 permissions:
   contents: read
 jobs:
+  # Every PR commit must carry a Signed-off-by trailer (Developer Certificate of
+  # Origin -- see CONTRIBUTING.md). Same in-workflow check chock and chock-catalog run.
+  dco:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Check Signed-off-by on every PR commit
+        env:
+          # The base commit, not the branch name: fetch-depth 0 already has it, and a
+          # fetch here would need credentials the checkout deliberately did not keep
+          # (persist-credentials: false), which fails on a private repository.
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          missing=0
+          while read -r sha; do
+            if ! git log -1 --format=%B "$sha" | grep -qi '^Signed-off-by: .\+<.\+@.\+>'; then
+              echo "::error::commit $sha lacks a Signed-off-by trailer (git commit -s)"
+              missing=1
+            fi
+          done < <(git rev-list --no-merges "$BASE_SHA..HEAD")
+          exit "$missing"
+
   check:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.10", "3.12", "3.13"]
+        python: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
         with:
           python-version: ${{ matrix.python }}
       - run: pip install -e ".[dev]"
       - run: python -m ruff check .
       - run: python -m ruff format --check .
       - run: python -m pytest -q
+
+  # This repo is itself a chock adopter (see AGENTS.md, .agents/policies/): it governs
+  # its own contributions the same way chock and chock-catalog do. Checking it here
+  # proves the adoption on this repo rather than only in chock's own tests, and closes
+  # the gap `git commit --no-verify` and an un-synced clone would otherwise leave open
+  # (see SECURITY.md).
+  policies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
+        with:
+          python-version: "3.12"
+      # The framework pin lives in the .framework-ref data file, same as chock-catalog,
+      # so an adoption PR (bumping the pin) never has to touch this workflow.
+      - name: Read the framework pin
+        run: echo "FRAMEWORK_REF=$(cat .framework-ref)" >> "$GITHUB_ENV"
+      - name: Check out the framework
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+          repository: open-coder-ai/chock
+          ref: ${{ env.FRAMEWORK_REF }}
+          path: .framework
+      - name: Install chock
+        run: pip install ./.framework
+      - name: This repo is a valid adopter
+        run: |
+          chock check
+          chock sync --repo . --check

@@ -3,3 +3,9 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 dist/
+
+# Chock runtime output: local to the machine that ran the hook, never shared state.
+.chock/log/
+
+# Local cache for `context-report efficacy` (context_report.efficacy.cli.DEFAULT_CACHE).
+.efficacy-cache.json

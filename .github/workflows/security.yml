@@ -1,0 +1,69 @@
+name: Security checks
+
+# The pressure-testing tier: static analysis of the surfaces the CI/lint jobs do not read.
+# zizmor audits the workflows themselves (template injection, credential persistence,
+# dangerous triggers); actionlint checks workflow correctness; semgrep scans the Python
+# source with a general ruleset.
+#
+# Mirrors chock's security.yml, minus the shellcheck job: this repo carries no shell
+# scripts of its own (the .sh files under .agents/policies/ are chock catalog content,
+# already linted by the catalog's own CI) -- `git grep` for a shell shebang here finds
+# nothing to check.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  zizmor:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054  # v0.6.2
+        with:
+          min-severity: low
+          # Uploading SARIF to the security tab needs GitHub Advanced Security, which a
+          # private repository without it lacks; the audit still fails the job on findings.
+          advanced-security: ${{ github.event.repository.private == false }}
+
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+      - name: Run actionlint
+        # Version-pinned through the Go module checksum database rather than a floating
+        # release download.
+        run: |
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.7
+          "$(go env GOPATH)/bin/actionlint" -color
+
+  semgrep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
+        with:
+          python-version: "3.12"
+      - name: Semgrep
+        # No project-specific rule pack yet (chock's `.semgrep/` encodes its own past
+        # incidents; this repo has none recorded), so this runs semgrep's general Python
+        # and security registry rulesets instead of a custom `--config` directory.
+        run: |
+          pip install semgrep==1.176.1
+          # python37-compatibility-importlib2 flags importlib.resources for Python < 3.7;
+          # this project requires 3.10 (pyproject), so that rule cannot apply here.
+          semgrep scan --config auto --error \
+            --exclude-rule python.lang.compatibility.python37.python37-compatibility-importlib2

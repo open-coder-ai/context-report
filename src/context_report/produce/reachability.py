@@ -129,9 +129,9 @@ def _measure(  # noqa: PLR0913 -- the run loop, split out so cleanup is a single
         stderr_first_line: dict[str, str] = {}
         for label in CWD_LABELS:
             try:
-                proc = subprocess.run(  # noqa: S602 -- command is the hook string as registered
+                proc = subprocess.run(  # noqa: S602 -- the hook command, run as the client runs it
                     command,
-                    shell=True,
+                    shell=True,  # nosemgrep -- the registered hook command, as the client runs it
                     input=payload_json,
                     capture_output=True,
                     timeout=timeout_s,

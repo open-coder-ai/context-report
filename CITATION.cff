@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: context-report
+abstract: >-
+  An open, signed report format for whether an agent context artifact actually
+  works: an in-toto predicate, per target agent, with re-derivable rows.
+type: software
+authors:
+  - name: Open Coder AI
+version: 0.1.0
+date-released: 2026-09-05
+license: Apache-2.0
+repository-code: https://github.com/open-coder-ai/context-report
+url: https://github.com/open-coder-ai/context-report

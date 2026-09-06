@@ -1,0 +1,174 @@
+{
+  "lockfile_version": "1",
+  "engine": ">=0.1,<0.2",
+  "packs": [
+    {
+      "id": "agent-discipline",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "e4aeb77f57bd6796fe3ea825f0b9225f6e9f0725513ef19edb8b8742e776839b",
+      "source": "local",
+      "artifacts_sha256": "36d131cd7df7edbcd57a0e117de79fa144a2bd1fb10b95edcc3c0404ba9533d4"
+    },
+    {
+      "id": "block-curl-pipe-sh",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "1a6bcc98cac00261da6e588625599e5e45ccc9430430581733a12747dcd52c0a",
+      "source": "local",
+      "artifacts_sha256": "a6217f28715ba14d30102abd5f504c63856ab91a7377d798eb9eeffe34e63555"
+    },
+    {
+      "id": "block-destructive-commands",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "f4f090712989985856a7272c16395e36bb34f95ce1186a6577d9379d716d3ca2",
+      "source": "local",
+      "artifacts_sha256": "52b9a7c266e61a5fd0a97c42dd6d9cceefd5fd1dc742d676564ea72cb1a698d0"
+    },
+    {
+      "id": "block-invisible-unicode",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "3bc00c998d3691f7288fa6c540f6a4ab8fd20aac7b32630d501fb4f28ed507c2",
+      "source": "local",
+      "artifacts_sha256": "55029605c05c2320fbf5c9e1b2ccb2fc612269ac2b32e5ea04fec228c99d11fc"
+    },
+    {
+      "id": "block-no-verify",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "7c70fc5f855eacccc90689b118a3f9cc992ddce8ed5cba8a4d78e059f9067d36",
+      "source": "local",
+      "artifacts_sha256": "51965dd75e1a5821b8b0946c3756a122a14e454b6d6c122e1fa9f28b2850f107"
+    },
+    {
+      "id": "block-unapproved-egress",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "0491fb23961cccf92704d358e76704d7521c3bfea11506e7163aac9967317e24",
+      "source": "local",
+      "artifacts_sha256": "26a9b76c284d50ac8cb41eb8224ce4d7d6755219cd95254006d32ac97862ab03"
+    },
+    {
+      "id": "block-wildcard-agent-permissions",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "e12230f761737de3c304f99322e45a5fde8221387e5d4299d43a601ba6f87e0d",
+      "source": "local",
+      "artifacts_sha256": "662e08e9775b0766aa3ff318091a2e34a5cbfdb17f5fd2da343aec7cb99d1d28"
+    },
+    {
+      "id": "code-safety",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "82acac888987f3c05182bbe7b90f8cf673fc335efc5d39e609e23ff66c6001f1",
+      "source": "local",
+      "artifacts_sha256": "bf0dc813438a989b2a193940d0b0a32cba3c651fbff20aead734d16d1a58491e"
+    },
+    {
+      "id": "context-hygiene",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "b428fd0fa0927e343a28334268cfdd214602a7eba0ee27176ec3205e93ffb7ad",
+      "source": "local",
+      "artifacts_sha256": "f85d4575557544366e98ca4d2a468511ae370064048a8fecb1a89d44b7ba4117"
+    },
+    {
+      "id": "firecrawl-fallback-only",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "a3f3fec1f661a6a195f2b4267721d300bc23d8e7847fc846a84372f3bf4cc61a",
+      "source": "local",
+      "artifacts_sha256": "4ee5f9c34e16cbcfe76d8e0cc7016171ed6c28c91d7a59be7238cc9dddd75d7c"
+    },
+    {
+      "id": "git-safety",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "1bfee2dd37c72b42e57ae3f70754679e59a2061097791ec8814d6b6b8800c9ba",
+      "source": "local",
+      "artifacts_sha256": "bab895ad43ce808a0b64298f7e943954901e05de825e17fcce035cbdb9b2ec2a"
+    },
+    {
+      "id": "injection-defense",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "ff181c5171d6360b9add0ec8106189afc97675661899960512e708ea8496bc76",
+      "source": "local",
+      "artifacts_sha256": "c76a9bd12792ccecc411093054f16aac210953f3324b054586f3c8af3f7a0034"
+    },
+    {
+      "id": "memory-discipline",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "72d73e43075bf2323c9159a694050077e0d0a054f5aaa618ff5e7a84881767ff",
+      "source": "local",
+      "artifacts_sha256": "defa07673326d53370dcfda5bcd84ebd6305646318a735887bbe6c61acbaf393"
+    },
+    {
+      "id": "pin-github-actions",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "241a90e41349ab8f6c48e0f8c2445c3866876d5aa858c096dc9511448dfb8f58",
+      "source": "local",
+      "artifacts_sha256": "8cfa8bf1186480b72b4cbf1b874ef988c1dad83fd75e796da2a1d07fb8b9ab39"
+    },
+    {
+      "id": "protect-agent-config",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "1b6417c5e643c1c05e18396bbef07585a4249a0ed687c6cc61373ae6f93678fd",
+      "source": "local",
+      "artifacts_sha256": "1cc2918921e5d6d8f4cb2031381c51d7ec22af71ef5ea3187b73e5c58e651fdd"
+    },
+    {
+      "id": "protect-ci-workflows",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "5a6726762106b96d357b50c46091e54c823dbcb830335f9d9191b5b57ca542e6",
+      "source": "local",
+      "artifacts_sha256": "796e13d87a8b8d3c240ac6a32eb4d7cb955b4f764d7ce1d1c30f3e0f2fbd21e3"
+    },
+    {
+      "id": "protect-commit-privacy",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "21839f1af785444e08f1e3dc3270d57f41b01dc4b8af53348b0308aef0d8d822",
+      "source": "local",
+      "artifacts_sha256": "e27d75a558ff05e9c5a3858d68ecbbfa4ec7a9d3243b85fa8ce76aa0da7c72ba"
+    },
+    {
+      "id": "protect-main-branch",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "316bd80a2fdbeb098f8477503af8c9e0977cf11be4e32572d87014ef062e055d",
+      "source": "local",
+      "artifacts_sha256": "18bb4772936ece0e374fb48e1a09fdbf946fb82381ed30687c0bcc8a10d4643c"
+    },
+    {
+      "id": "scan-secrets",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "6f8285363e7795bf2cedb78a449b7f5b49d7b188047a7802c12fbdc7f63cad4b",
+      "source": "local",
+      "artifacts_sha256": "e4d17797bc89a04483d2bfe1a1d39221ae06ff23be506c572690136c4e5d7c71"
+    },
+    {
+      "id": "token-efficiency",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "9348dbabfdd087efa3f8993c06878d9fe0673ef61563d05c19c41e9386a96d9e",
+      "source": "local",
+      "artifacts_sha256": "0511b29645130a4e9e6819b6e0c7a75953d616b7624e90d3d5639a0d429d5e9d"
+    },
+    {
+      "id": "verify-dependency-exists",
+      "version": "0.0.1",
+      "managed": false,
+      "sha256": "0667de68d009b8b2d3b54139877b8ce70d349474085bedb00172a51f8b53c009",
+      "source": "local",
+      "artifacts_sha256": "52cd4849316e77509b43f3ea8f73aa520ae2292c0b15df0fce03ccedef8d39b3"
+    }
+  ]
+}
