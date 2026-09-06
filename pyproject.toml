@@ -41,6 +41,7 @@ classifiers = [
     "Topic :: Security",
     "Topic :: Software Development",
     "Topic :: Software Development :: Quality Assurance",
+    "Typing :: Typed",
 ]
 dependencies = ["jsonschema>=4.18,<5", "pyyaml>=6"]
 
@@ -51,6 +52,7 @@ dev = ["pytest>=8", "ruff>=0.6", "matplotlib>=3.8"]
 [project.urls]
 Homepage = "https://github.com/open-coder-ai/context-report"
 Repository = "https://github.com/open-coder-ai/context-report"
+Documentation = "https://open-coder-ai.github.io/context-report/"
 Issues = "https://github.com/open-coder-ai/context-report/issues"
 Changelog = "https://github.com/open-coder-ai/context-report/blob/main/CHANGELOG.md"
 Specification = "https://open-coder-ai.github.io/context-report/attestation/v0.1/"

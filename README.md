@@ -120,6 +120,22 @@ ungraded rule, an honest explanation of what wasn't measured and why) plus which
 rules no task exercised. The transcripts directory is what the statement's `byproducts` entry is
 bound to by digest, so a re-judge or an audit has the exact recorded outputs to work from.
 
+## Use as a library
+
+Beyond the CLI, `context_report` exposes a small stable API for a catalog or CI job to import
+directly: `validate`, `verify`, `produce_statement`, `load_manifest`, `run`, `resolve_run_dir`,
+`history_markdown`, `render_table`, `render_history` (see `__all__` in
+[`context_report/__init__.py`](src/context_report/__init__.py)).
+
+```python
+from context_report import validate, verify
+
+errors = validate(stmt)  # schema errors, [] means well-formed
+result = verify(stmt, subject_path="clone/")  # bound + schema check, never a verdict
+```
+
+See [`docs/library.md`](docs/library.md) for a full catalog-verification and CI-production example.
+
 ## Contributing
 
 Bug reports, spec feedback, and PRs are welcome — see

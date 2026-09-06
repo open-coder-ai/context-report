@@ -7,6 +7,18 @@ Per in-toto convention, `0.X` versions are major: fields may change until 1.0.
 
 ### Added
 
+- A public library API in `context_report.__all__` (`validate`, `verify`,
+  `produce_statement`, `load_manifest`, `run`, `resolve_run_dir`,
+  `history_markdown`, `render_table`, `render_history`) for a catalog or CI
+  job to import directly; see [`docs/library.md`](docs/library.md).
+- `py.typed`, shipped in the wheel, so type checkers treat the package as typed.
+- `.github/workflows/release.yml` — publishes to PyPI via trusted publishing
+  (OIDC) on a `v*` tag push.
+
+## [0.1.0] - 2026-09-06
+
+### Added
+
 - Schema v0.1 for the attestation predicate
   (`spec/attestation/v0.1/schema.json`), plus a worked example
   (`spec/attestation/v0.1/examples/plugin-copilot.json`).
@@ -27,4 +39,5 @@ Per in-toto convention, `0.X` versions are major: fields may change until 1.0.
 - Paper draft (`paper/context-report.md`) laying out the format's motivation
   and borrowed field names.
 
-[Unreleased]: https://github.com/open-coder-ai/context-report/commits/main
+[Unreleased]: https://github.com/open-coder-ai/context-report/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/open-coder-ai/context-report/releases/tag/v0.1.0
