@@ -232,14 +232,14 @@
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 665.786320999814,
-                "95": 686.4745330003643,
-                "99": 699.4172139998227
+                "50": 941.4869780000004,
+                "95": 1041.2979769999993,
+                "99": 1059.1436430000272
               },
-              "min": 633.4904969999116,
-              "max": 699.4172139998227,
-              "mean": 665.1165272500066,
-              "stddev": 16.944186664063604
+              "min": 870.9515129999659,
+              "max": 1059.1436430000272,
+              "mean": 951.2105675999949,
+              "stddev": 60.39931823538104
             }
           },
           "skippedHooks": [
@@ -255,28 +255,28 @@
           "unit": "ms",
           "n": 20,
           "percentiles": {
-            "50": 665.786320999814,
-            "95": 686.4745330003643,
-            "99": 699.4172139998227
+            "50": 941.4869780000004,
+            "95": 1041.2979769999993,
+            "99": 1059.1436430000272
           },
-          "min": 633.4904969999116,
-          "max": 699.4172139998227,
-          "mean": 665.1165272500066
+          "min": 870.9515129999659,
+          "max": 1059.1436430000272,
+          "mean": 951.2105675999949
         }
       },
       {
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:b0a0356530ca8ea1834ef5391dfd95270f3365def05558a2c42c7a877f9123c7",
+        "inputHash": "sha256:caf19c13f15994a8b997b0067c1fe372d3ad42145ba60bb822870a049fc650af",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 2
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/protect-mcp/hooks/hooks.json": 219,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/protect-mcp/skills/protect-mcp-setup/SKILL.md": 1626
+            "hooks/hooks.json": 219,
+            "skills/protect-mcp-setup/SKILL.md": 1626
           }
         },
         "measurement": {
@@ -302,8 +302,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:36Z",
-      "finishedOn": "2026-09-06T04:14:55Z"
+      "startedOn": "2026-09-06T12:19:00Z",
+      "finishedOn": "2026-09-06T12:19:27Z"
     },
     "configuration": [
       {

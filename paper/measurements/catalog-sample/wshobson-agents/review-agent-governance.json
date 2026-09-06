@@ -232,14 +232,14 @@
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 671.9790369998009,
-                "95": 711.1949569998615,
-                "99": 738.975931999903
+                "50": 916.8287260000056,
+                "95": 950.1954190000106,
+                "99": 973.595142000022
               },
-              "min": 645.6999740003084,
-              "max": 738.975931999903,
-              "mean": 677.6578635499391,
-              "stddev": 23.337976581611017
+              "min": 870.7818660000157,
+              "max": 973.595142000022,
+              "mean": 919.1594117000022,
+              "stddev": 24.553574491714127
             }
           },
           "skippedHooks": [
@@ -255,28 +255,28 @@
           "unit": "ms",
           "n": 20,
           "percentiles": {
-            "50": 671.9790369998009,
-            "95": 711.1949569998615,
-            "99": 738.975931999903
+            "50": 916.8287260000056,
+            "95": 950.1954190000106,
+            "99": 973.595142000022
           },
-          "min": 645.6999740003084,
-          "max": 738.975931999903,
-          "mean": 677.6578635499391
+          "min": 870.7818660000157,
+          "max": 973.595142000022,
+          "mean": 919.1594117000022
         }
       },
       {
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:f1c58712aa62f7a5fa1efaf41bb6e00a5a89c938396e36fff08b0e06da1cbc58",
+        "inputHash": "sha256:016d8f304d6e91cfffc13bd16bbb7d9e4a2f2799f8f01a8d6911c24d3deecab8",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 2
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/review-agent-governance/hooks/hooks.json": 251,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/review-agent-governance/skills/review-agent-setup/SKILL.md": 1383
+            "hooks/hooks.json": 251,
+            "skills/review-agent-setup/SKILL.md": 1383
           }
         },
         "measurement": {
@@ -302,8 +302,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:17Z",
-      "finishedOn": "2026-09-06T04:14:36Z"
+      "startedOn": "2026-09-06T12:18:32Z",
+      "finishedOn": "2026-09-06T12:19:00Z"
     },
     "configuration": [
       {

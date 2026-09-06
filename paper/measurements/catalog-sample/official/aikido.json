@@ -81,16 +81,16 @@
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:58a6aab109a5147c242bbc47be5f10b6a388709b17e86079e61ad1ea410fa32e",
+        "inputHash": "sha256:a5a38a52364076b8ae9e14518608d7b521b63600eed890e19595786296c98b68",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 3
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aikido/skills/issues/SKILL.md": 514,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aikido/skills/scan/SKILL.md": 393,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aikido/skills/setup/SKILL.md": 602
+            "skills/issues/SKILL.md": 514,
+            "skills/scan/SKILL.md": 393,
+            "skills/setup/SKILL.md": 602
           }
         },
         "measurement": {
@@ -116,8 +116,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:56Z",
-      "finishedOn": "2026-09-06T04:14:56Z"
+      "startedOn": "2026-09-06T12:19:28Z",
+      "finishedOn": "2026-09-06T12:19:28Z"
     },
     "configuration": [
       {

@@ -340,36 +340,36 @@
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:6b295e031d114e8c04cd4e7d81ea74078bbb79561fc09be96b53b667e7cc004a",
+        "inputHash": "sha256:e4ab123df2a9ccbde61fbc6d3cb6185c6fcfcae65fa0a4c4d9596bc78822abdc",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 23
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/hooks/hooks.json": 603,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-compensation-app/SKILL.md": 13623,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-compensation-benchmarks/SKILL.md": 16525,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-compensation-rolematcher/SKILL.md": 7852,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-compensation-scorecard/SKILL.md": 13024,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-conversion-calculator/SKILL.md": 2016,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-discover-commands/SKILL.md": 1251,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-grant-vesting/SKILL.md": 3425,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-interaction-reference-core/SKILL.md": 2400,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-interaction-reference/SKILL.md": 8816,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-issuance/SKILL.md": 16435,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-issuance/issuance-config/SKILL.md": 7438,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-issuance/issuance-import/SKILL.md": 2047,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-issuance/issuance-review/SKILL.md": 5409,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-market-benchmarks/SKILL.md": 1916,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-portfolio-alerts/SKILL.md": 2259,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-reporting-excel/SKILL.md": 2027,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-reporting-markdown/SKILL.md": 3362,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-reporting/SKILL.md": 9745,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-round-history/SKILL.md": 2044,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-valuation-history/SKILL.md": 2191,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-waterfall-scenarios/SKILL.md": 1372,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/skills/carta-witness-signatures/SKILL.md": 2038
+            "hooks/hooks.json": 603,
+            "skills/carta-compensation-app/SKILL.md": 13623,
+            "skills/carta-compensation-benchmarks/SKILL.md": 16525,
+            "skills/carta-compensation-rolematcher/SKILL.md": 7852,
+            "skills/carta-compensation-scorecard/SKILL.md": 13024,
+            "skills/carta-conversion-calculator/SKILL.md": 2016,
+            "skills/carta-discover-commands/SKILL.md": 1251,
+            "skills/carta-grant-vesting/SKILL.md": 3425,
+            "skills/carta-interaction-reference-core/SKILL.md": 2400,
+            "skills/carta-interaction-reference/SKILL.md": 8816,
+            "skills/carta-issuance/SKILL.md": 16435,
+            "skills/carta-issuance/issuance-config/SKILL.md": 7438,
+            "skills/carta-issuance/issuance-import/SKILL.md": 2047,
+            "skills/carta-issuance/issuance-review/SKILL.md": 5409,
+            "skills/carta-market-benchmarks/SKILL.md": 1916,
+            "skills/carta-portfolio-alerts/SKILL.md": 2259,
+            "skills/carta-reporting-excel/SKILL.md": 2027,
+            "skills/carta-reporting-markdown/SKILL.md": 3362,
+            "skills/carta-reporting/SKILL.md": 9745,
+            "skills/carta-round-history/SKILL.md": 2044,
+            "skills/carta-valuation-history/SKILL.md": 2191,
+            "skills/carta-waterfall-scenarios/SKILL.md": 1372,
+            "skills/carta-witness-signatures/SKILL.md": 2038
           }
         },
         "measurement": {
@@ -395,8 +395,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:16Z",
-      "finishedOn": "2026-09-06T04:14:16Z"
+      "startedOn": "2026-09-06T12:18:31Z",
+      "finishedOn": "2026-09-06T12:18:31Z"
     },
     "configuration": [
       {

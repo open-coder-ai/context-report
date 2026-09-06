@@ -316,39 +316,39 @@
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:d8197432d0976974515ed3576105a6f32563da9ae687702a6de23eded802344a",
+        "inputHash": "sha256:0f1eaca46b17afe45be2c11e5660514851ab1c2da8cbcf2074884d09d79e42af",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 26
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/hooks.json": 438,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-company/SKILL.md": 822,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-contact/SKILL.md": 987,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-deal/SKILL.md": 1108,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-fundraising/SKILL.md": 892,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-investor/SKILL.md": 810,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-note/SKILL.md": 853,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/deal-flow-analytics/SKILL.md": 2150,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/enrich-company/SKILL.md": 1326,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/get-angles/SKILL.md": 7128,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/home/SKILL.md": 2338,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/prepare-for-meeting/SKILL.md": 5605,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-companies/SKILL.md": 1598,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-contacts/SKILL.md": 1566,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-deals/SKILL.md": 1253,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-fundraisings/SKILL.md": 1488,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-investors/SKILL.md": 1435,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-notes/SKILL.md": 852,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-reports/SKILL.md": 1213,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/tutorial/SKILL.md": 4677,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-company/SKILL.md": 987,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-contact/SKILL.md": 1105,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-deal/SKILL.md": 1235,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-fundraising/SKILL.md": 967,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-investor/SKILL.md": 949,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-note/SKILL.md": 806
+            "hooks/hooks.json": 438,
+            "skills/add-company/SKILL.md": 822,
+            "skills/add-contact/SKILL.md": 987,
+            "skills/add-deal/SKILL.md": 1108,
+            "skills/add-fundraising/SKILL.md": 892,
+            "skills/add-investor/SKILL.md": 810,
+            "skills/add-note/SKILL.md": 853,
+            "skills/deal-flow-analytics/SKILL.md": 2150,
+            "skills/enrich-company/SKILL.md": 1326,
+            "skills/get-angles/SKILL.md": 7128,
+            "skills/home/SKILL.md": 2338,
+            "skills/prepare-for-meeting/SKILL.md": 5605,
+            "skills/search-companies/SKILL.md": 1598,
+            "skills/search-contacts/SKILL.md": 1566,
+            "skills/search-deals/SKILL.md": 1253,
+            "skills/search-fundraisings/SKILL.md": 1488,
+            "skills/search-investors/SKILL.md": 1435,
+            "skills/search-notes/SKILL.md": 852,
+            "skills/search-reports/SKILL.md": 1213,
+            "skills/tutorial/SKILL.md": 4677,
+            "skills/update-company/SKILL.md": 987,
+            "skills/update-contact/SKILL.md": 1105,
+            "skills/update-deal/SKILL.md": 1235,
+            "skills/update-fundraising/SKILL.md": 967,
+            "skills/update-investor/SKILL.md": 949,
+            "skills/update-note/SKILL.md": 806
           }
         },
         "measurement": {
@@ -374,8 +374,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:16Z",
-      "finishedOn": "2026-09-06T04:14:16Z"
+      "startedOn": "2026-09-06T12:18:31Z",
+      "finishedOn": "2026-09-06T12:18:31Z"
     },
     "configuration": [
       {

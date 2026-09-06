@@ -272,12 +272,12 @@ text at all.
 
 | Plugin | Hooks declared | Reachability | Malformed input allows | Latency p50 / p95 ms | Context tokens |
 | :--- | :--- | :--- | :--- | :--- | ---: |
-| agentforce-adlc | 2 | PASSED, 4 of 4 | yes | 26.8 / 28.7 | 29,625 |
-| ai-plugins | 4 | PASSED, 4 of 4 | yes | 32.0 / 37.4 | 2,289 |
-| aws-core | 2 | PASSED, 4 of 4 | yes | 45.5 / 51.8 | 57,466 |
-| planning-with-files | 6 | PASSED, 4 of 4 | yes | 6.0 / 6.2 | 25,179 |
-| protect-mcp | 2 | PASSED, 4 of 4 | yes | 665.8 / 686.5 | 1,845 |
-| review-agent-governance | 2 | PASSED, 4 of 4 | yes | 672.0 / 711.2 | 1,634 |
+| agentforce-adlc | 2 | PASSED, 4 of 4 | yes | 33.1 / 36.1 | 29,625 |
+| ai-plugins | 4 | PASSED, 4 of 4 | yes | 38.9 / 45.7 | 2,289 |
+| aws-core | 2 | PASSED, 4 of 4 | yes | 53.9 / 60.2 | 57,466 |
+| planning-with-files | 6 | PASSED, 4 of 4 | yes | 7.3 / 7.5 | 25,179 |
+| protect-mcp | 2 | PASSED, 4 of 4 | yes | 941.5 / 1041.3 | 1,845 |
+| review-agent-governance | 2 | PASSED, 4 of 4 | yes | 916.8 / 950.2 | 1,634 |
 | carta-cap-table | 9 | FAILED, 0 of 4 | never ran | Error: exit 126 | 127,818 |
 | carta-crm | 7 | FAILED, 0 of 4 | never ran | Error: exit 126 | 44,588 |
 | carta-investors | 8 | FAILED, 0 of 4 | never ran | Error: exit 126 | 146,663 |
@@ -286,8 +286,8 @@ text at all.
 
 - **Reachable was not the same as executable, and now it is.** Three plugins share a dispatch
   script with no execute bit; exit 126 now counts as unreachable, so all three rows agree.
-- **Hook cost spans two orders of magnitude.** The two `npx`-based hooks cost about 670 ms per
-  call; the four running a local script cost 6–52 ms.
+- **Hook cost spans two orders of magnitude.** The two `npx`-based hooks cost 917–942 ms per
+  call; the four running a local script cost 7–54 ms.
 - **Every hook that runs allows on malformed input**, same as all sixteen chock hooks in §5.1.
 - **Context weight varies a hundredfold**, about 1,500 to 147,000 tokens. One plugin injects no
   text at all, and its row says so rather than reporting zero.
@@ -301,8 +301,9 @@ text at all.
 | carta-cap-table, carta-crm, carta-investors | Shared `dispatch.sh` has no execute bit; exit 126 read as reachable. | pass 2 |
 | agentforce-adlc | Hook's own `__pycache__` write moved the subject digest mid-run. | pass 2 |
 | planning-with-files | `shlex.quote()` over-quoted a var; reachability read PASSED for a hook that never ran. | pass 3 |
+| all eighteen | `cost.context_tokens` keyed `per_file` by absolute clone path and hashed it into `inputHash`; fixed in #27; this pass re-measured on it. | pass 4 |
 
-Each gap has a named test; only the third pass is committed.
+Each gap has a named test; only the fourth pass is committed.
 
 ### 5.3 The fault oracle versus documentation
 

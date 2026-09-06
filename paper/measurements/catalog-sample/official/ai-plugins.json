@@ -256,14 +256,14 @@
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 31.996909999634227,
-                "95": 37.353799999891635,
-                "99": 37.981384999966394
+                "50": 38.889729000004536,
+                "95": 45.74663700003612,
+                "99": 46.49180100000194
               },
-              "min": 30.8163820000118,
-              "max": 37.981384999966394,
-              "mean": 32.93578924997291,
-              "stddev": 2.211532134510039
+              "min": 37.77098899996645,
+              "max": 46.49180100000194,
+              "mean": 40.27948629999969,
+              "stddev": 2.509678724881164
             }
           },
           "skippedHooks": [
@@ -291,28 +291,28 @@
           "unit": "ms",
           "n": 20,
           "percentiles": {
-            "50": 31.996909999634227,
-            "95": 37.353799999891635,
-            "99": 37.981384999966394
+            "50": 38.889729000004536,
+            "95": 45.74663700003612,
+            "99": 46.49180100000194
           },
-          "min": 30.8163820000118,
-          "max": 37.981384999966394,
-          "mean": 32.93578924997291
+          "min": 37.77098899996645,
+          "max": 46.49180100000194,
+          "mean": 40.27948629999969
         }
       },
       {
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:01b7413883fe8396f0f25b4a575af14c226bdead01aa60636e28998a8a51e794",
+        "inputHash": "sha256:4e85a09a2014600effbf0a206b6a480be2f30fd3da9b9f0703eb3091c8cc08fa",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 2
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/ai-plugins/hooks/hooks.json": 260,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/ai-plugins/skills/endor-agent-kit-setup/SKILL.md": 2029
+            "hooks/hooks.json": 260,
+            "skills/endor-agent-kit-setup/SKILL.md": 2029
           }
         },
         "measurement": {
@@ -338,8 +338,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:12Z",
-      "finishedOn": "2026-09-06T04:14:13Z"
+      "startedOn": "2026-09-06T12:18:26Z",
+      "finishedOn": "2026-09-06T12:18:27Z"
     },
     "configuration": [
       {

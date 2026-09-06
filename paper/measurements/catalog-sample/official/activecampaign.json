@@ -81,19 +81,19 @@
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:1d154f86649012e781cc0f765150fdc016e61d8cda3fb54465cf0dcdf87b918e",
+        "inputHash": "sha256:fdc2ebd18e14beddedf7375c6d6ce5586afff9cfdbee1d9d276bbc00029d5062",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 6
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/activecampaign/skills/automation-builder/SKILL.md": 1527,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/activecampaign/skills/campaign-strategist/SKILL.md": 1200,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/activecampaign/skills/contact-operations/SKILL.md": 1711,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/activecampaign/skills/deals-crm/SKILL.md": 1827,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/activecampaign/skills/deliverability-advisor/SKILL.md": 1262,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/activecampaign/skills/reporting-analyst/SKILL.md": 1542
+            "skills/automation-builder/SKILL.md": 1527,
+            "skills/campaign-strategist/SKILL.md": 1200,
+            "skills/contact-operations/SKILL.md": 1711,
+            "skills/deals-crm/SKILL.md": 1827,
+            "skills/deliverability-advisor/SKILL.md": 1262,
+            "skills/reporting-analyst/SKILL.md": 1542
           }
         },
         "measurement": {
@@ -119,8 +119,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:55Z",
-      "finishedOn": "2026-09-06T04:14:55Z"
+      "startedOn": "2026-09-06T12:19:28Z",
+      "finishedOn": "2026-09-06T12:19:28Z"
     },
     "configuration": [
       {

@@ -81,16 +81,16 @@
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:089e582bc1777fed1c9c2cc997a0995079f8bfd65f629199a9222401502a7eff",
+        "inputHash": "sha256:be5c2488dba65c3da3838fcf4175b9f78e237e668830739f4539fa527f32ddd5",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 3
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/altimate/plugins/altimate-code/hooks/hooks.json": 146,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/altimate/plugins/altimate-code/skills/altimate-code/SKILL.md": 2094,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/altimate/plugins/altimate-code/skills/review/SKILL.md": 1700
+            "hooks/hooks.json": 146,
+            "skills/altimate-code/SKILL.md": 2094,
+            "skills/review/SKILL.md": 1700
           }
         },
         "measurement": {
@@ -116,8 +116,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:14Z",
-      "finishedOn": "2026-09-06T04:14:14Z"
+      "startedOn": "2026-09-06T12:18:27Z",
+      "finishedOn": "2026-09-06T12:18:27Z"
     },
     "configuration": [
       {

@@ -232,14 +232,14 @@
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 26.783112999964942,
-                "95": 28.678385999683087,
-                "99": 30.53126400027395
+                "50": 33.087147999992794,
+                "95": 36.13984100002199,
+                "99": 48.98844399997415
               },
-              "min": 24.90463600042858,
-              "max": 30.53126400027395,
-              "mean": 26.949951900041924,
-              "stddev": 1.2321541998776018
+              "min": 31.825959999991937,
+              "max": 48.98844399997415,
+              "mean": 34.01768239999683,
+              "stddev": 3.699612974100019
             }
           },
           "skippedHooks": [
@@ -255,30 +255,30 @@
           "unit": "ms",
           "n": 20,
           "percentiles": {
-            "50": 26.783112999964942,
-            "95": 28.678385999683087,
-            "99": 30.53126400027395
+            "50": 33.087147999992794,
+            "95": 36.13984100002199,
+            "99": 48.98844399997415
           },
-          "min": 24.90463600042858,
-          "max": 30.53126400027395,
-          "mean": 26.949951900041924
+          "min": 31.825959999991937,
+          "max": 48.98844399997415,
+          "mean": 34.01768239999683
         }
       },
       {
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:c627634ea205f6c2b084592c0402f19ae6337c7cc83859b5672fc5bc88b41e3b",
+        "inputHash": "sha256:8a527ae9e899d797dfcae61e7d3cecf38ab59e57fe0b761442c041861abc88c1",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 4
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc/hooks/hooks.json": 131,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc/skills/agentforce-generate/SKILL.md": 14557,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc/skills/agentforce-observe/SKILL.md": 4710,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc/skills/agentforce-test/SKILL.md": 10227
+            "hooks/hooks.json": 131,
+            "skills/agentforce-generate/SKILL.md": 14557,
+            "skills/agentforce-observe/SKILL.md": 4710,
+            "skills/agentforce-test/SKILL.md": 10227
           }
         },
         "measurement": {
@@ -304,8 +304,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:11Z",
-      "finishedOn": "2026-09-06T04:14:12Z"
+      "startedOn": "2026-09-06T12:18:25Z",
+      "finishedOn": "2026-09-06T12:18:26Z"
     },
     "configuration": [
       {
