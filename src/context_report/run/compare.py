@@ -101,8 +101,11 @@ def _rule_lists(cells: list[Cell]) -> dict[str, tuple[set[str], set[str]]]:
     return out
 
 
-def render_history(out: Path) -> str:
-    """Every run of the manifest under `out`, side by side: the table `out/SUMMARY.md` holds."""
+def render_history(out: Path, *, rules: bool = False) -> str:
+    """Every run under `out` side by side (the table `out/SUMMARY.md` holds); with `rules`, the
+    same at rule level: adherence with / without, lift and verdict per rule in every run."""
+    if rules:
+        return layout.rule_history_markdown(Path(out))
     return layout.history_markdown(layout.load_index(Path(out)))
 
 
