@@ -121,14 +121,24 @@ class GraderRegex:
     """
 
     name = "eval-case-regex"
+    full_output = True  # a last_message grader reads the whole reply, not only its code fences
 
-    def __init__(self, pattern: str, flags: str, match: str, rule_ids: tuple[str, ...] = ()):
+    def __init__(
+        self,
+        pattern: str,
+        flags: str,
+        match: str,
+        rule_ids: tuple[str, ...] = (),
+        rule_texts: tuple[str, ...] = (),
+    ):
         self._regex = re.compile(pattern, _regex_grader_flags(flags))
         self.match = match
         self.rule_ids = rule_ids
+        self.rule_texts = rule_texts  # measure() hands checkers the rule text, not its id
 
     def applies(self, rule: str) -> bool:
-        return not self.rule_ids or rule in self.rule_ids
+        bound = self.rule_ids or self.rule_texts
+        return not bound or rule in self.rule_ids or rule in self.rule_texts
 
     def obeys(self, rule: str, code: str) -> bool:
         """`code` here is the case's whole last-message output, not just its code fences."""
@@ -174,7 +184,8 @@ class FastPathJudge:
             for checker in self.checkers:
                 if checker.applies(rule):
                     try:
-                        verdict = checker.obeys(rule, code)
+                        text = output if getattr(checker, "full_output", False) else code
+                        verdict = checker.obeys(rule, text)
                     except CannotJudgeError:
                         continue
                     self.last_source = checker.name

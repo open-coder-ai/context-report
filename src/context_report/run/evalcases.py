@@ -18,6 +18,7 @@ from typing import Any
 
 import yaml
 
+from context_report.efficacy.core import RuleCard
 from context_report.efficacy.fastjudge import Checker, GraderRegex
 from context_report.run.manifest import ManifestError, Subject, Task
 
@@ -178,7 +179,9 @@ def load_dir(path: Path, subjects: tuple[Subject, ...]) -> list[dict[str, Any]]:
     return cases
 
 
-def checkers_for(tasks: tuple[Task, ...]) -> tuple[Checker, ...]:
+def checkers_for(
+    tasks: tuple[Task, ...], cards: list[RuleCard] | None = None
+) -> tuple[Checker, ...]:
     """One `GraderRegex` `Checker` per eval-case `regex` grader recorded on these tasks.
 
     Wiring these into `context_report.efficacy.grade.grade` is the orchestrator's job (see the
@@ -188,8 +191,15 @@ def checkers_for(tasks: tuple[Task, ...]) -> tuple[Checker, ...]:
     grader `rule:` fields name — the orchestrator needs to pass rule ids through, not text, for
     these checkers to ever fire.
     """
+    text_of = {card.id: card.text for card in cards or ()}
     return tuple(
-        GraderRegex(spec["pattern"], spec["flags"], spec["match"], spec["rule_ids"])
+        GraderRegex(
+            spec["pattern"],
+            spec["flags"],
+            spec["match"],
+            tuple(spec["rule_ids"]),
+            tuple(text_of[r] for r in spec["rule_ids"] if r in text_of),
+        )
         for task in tasks
         for spec in task.regex_graders
     )

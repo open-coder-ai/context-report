@@ -14,6 +14,7 @@ from context_report.efficacy.grade import grade
 from context_report.efficacy.row import VALUES_UNEXERCISED, efficacy_row
 from context_report.efficacy.transcripts import Bundle, MissingTranscriptError, ReplayRunner
 from context_report.run.cards import cards_for
+from context_report.run.evalcases import checkers_for
 from context_report.run.manifest import Manifest
 from context_report.run.manifest import load as load_manifest
 from context_report.statement import now_utc
@@ -98,7 +99,8 @@ def _judge_one(
     transcripts_dir = ref.path.parent / ref.slug / "transcripts"
     runner = ReplayRunner(Bundle(transcripts_dir), cards)
     try:
-        graded = grade(cards, runner, aj, trials=manifest.arms.n_per_arm)
+        checkers = checkers_for(manifest.tasks_for(subject.id), cards)
+        graded = grade(cards, runner, aj, trials=manifest.arms.n_per_arm, checkers=checkers)
     except MissingTranscriptError as exc:
         msg = f"the run did not record that arm: {exc}"
         return JudgeOutcome(ref.subject_id, model, judged=False, message=msg)

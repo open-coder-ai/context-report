@@ -18,6 +18,7 @@ from context_report.efficacy.transcripts import Bundle, RecordingRunner
 from context_report.produce.run import produce_statement
 from context_report.rows import Row
 from context_report.run.cards import cards_for, unexercised_rules
+from context_report.run.evalcases import checkers_for
 from context_report.run.manifest import MODE_LEAVE_ONE_OUT, Manifest, ModelRef, Subject
 
 ANTHROPIC = "anthropic"
@@ -188,7 +189,8 @@ def _run_model(  # noqa: PLR0913, PLR0917 -- one (subject, model) pair needs all
     rec = RecordingRunner(
         AskerRunner(asker), bundle, subject_id=subject.id, model=model.qualified, cards=cards
     )
-    graded = grade(cards, rec, judge, trials=n_per_arm)
+    checkers = checkers_for(manifest.tasks_for(subject.id), cards)
+    graded = grade(cards, rec, judge, trials=n_per_arm, checkers=checkers)
     transcripts = len(list(bundle.root.glob("*.json"))) if bundle.root.exists() else 0
     row = efficacy_row(
         graded,

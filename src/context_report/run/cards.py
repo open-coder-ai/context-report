@@ -28,7 +28,10 @@ def cards_for(manifest: Manifest, subject: Subject) -> list[RuleCard]:
     for rule in rules:
         scenarios = tuple(
             Scenario(
-                id=task.id, task=task.prompt, rule_applies=task.criteria.get(rule.id, rule.text)
+                id=task.id,
+                task=task.prompt,
+                # An eval case with no rule: tags binds its llm grader to every rule as "*".
+                rule_applies=task.criteria.get(rule.id) or task.criteria.get("*") or rule.text,
             )
             for task in manifest.tasks_for(subject.id)
             if not task.rules or rule.id in task.rules
