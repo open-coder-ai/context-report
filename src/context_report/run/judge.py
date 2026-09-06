@@ -15,6 +15,7 @@ from context_report.efficacy.row import VALUES_UNEXERCISED, efficacy_row
 from context_report.efficacy.transcripts import Bundle, MissingTranscriptError, ReplayRunner
 from context_report.run.cards import cards_for
 from context_report.run.evalcases import checkers_for
+from context_report.run.layout import resolve_run_dir
 from context_report.run.manifest import Manifest, ModelRef
 from context_report.run.manifest import load as load_manifest
 from context_report.run.runner import PROVIDERS
@@ -137,14 +138,19 @@ def _judge_one(
 
 
 def judge_out(
-    out: Path, judge_spec: str, *, asker_factory: AskerFactory = _default_asker_factory
+    out: Path,
+    judge_spec: str,
+    *,
+    asker_factory: AskerFactory = _default_asker_factory,
+    run_id: str | None = None,
 ) -> tuple[list[JudgeOutcome], int]:
-    """Grade every recorded statement under `out`; returns outcomes and the process exit code.
+    """Grade every recorded statement of one run under `out` (the latest unless `run_id`).
 
     Exit stays 0 even when some statements were skipped (the run recorded no arm for them, e.g.
     a non-anthropic model) -- only when *nothing at all* could be judged does it become 1.
     """
     provider, model_id = parse_judge_ref(judge_spec)  # before anything: no manifest, no asker
+    out = resolve_run_dir(out, run_id)
     manifest = load_manifest(out / "manifest.json")
     aj = AskerJudge(asker_factory(ModelRef(provider, model_id)))
     judge_model = f"{provider}/{model_id}"

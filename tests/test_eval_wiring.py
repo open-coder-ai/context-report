@@ -66,8 +66,8 @@ def test_regex_grader_grades_deterministically_without_a_judge(tmp_path: Path) -
         askers.append(asker)
         return asker
 
-    run(manifest, asker_factory=factory)
-    stmt = json.loads((manifest.out / "rules" / "anthropic--m.json").read_text())
+    out = run(manifest, asker_factory=factory)
+    stmt = json.loads((out / "rules" / "anthropic--m.json").read_text())
     efficacy = next(a for a in stmt["predicate"]["attributes"] if a["attribute"] == "efficacy")
     assert efficacy["basis"] == CLAIMED and efficacy["result"] == PASSED
     assert efficacy["conditions"]["judge"] == "deterministic"

@@ -82,9 +82,13 @@ from a JSON manifest matching [`spec/run/v0.1/schema.json`](spec/run/v0.1/schema
 context-report run run.json --dry-run   # rules found/exercised and the call budget, no model touched
 context-report run run.json             # the real thing
 context-report run run.json --n 2       # override arms.nPerArm for a smoke run
-context-report run run.json --resume    # after an interrupted run: reuse every statement and
-                                        # matching transcript under `out`, call only for the rest
+context-report run run.json --resume    # continue the latest run: reuse every statement and
+                                        # matching transcript, call only for the rest
+context-report compare out --history    # every run of this manifest side by side
 ```
+
+Every run lands in its own `out/runs/<run id>/`; `out/SUMMARY.md` shows all runs of a manifest
+next to each other, so an edit to an instruction file can be read against the run before it.
 
 See [`spec/run/v0.1/examples/run.json`](spec/run/v0.1/examples/run.json) and its `tasks.json` for
 a worked manifest: two subjects, two models, three tasks.

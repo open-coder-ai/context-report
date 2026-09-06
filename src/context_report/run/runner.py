@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import dataclasses
+import hashlib
 import json
 from collections.abc import Callable
 from datetime import datetime, timezone
@@ -18,6 +19,7 @@ from context_report.efficacy.row import efficacy_row
 from context_report.efficacy.transcripts import Bundle, RecordingRunner
 from context_report.produce.run import produce_statement
 from context_report.rows import Row
+from context_report.run import layout
 from context_report.run.cards import cards_for, unexercised_rules
 from context_report.run.evalcases import checkers_for
 from context_report.run.manifest import MODE_LEAVE_ONE_OUT, Manifest, ModelRef, Subject
@@ -249,6 +251,14 @@ def _run_model(  # noqa: PLR0913, PLR0917 -- one (subject, model) pair needs all
     return stmt, summary
 
 
+def _now() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 def _write_json(path: Path, doc: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(doc, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -310,16 +320,35 @@ def _finished_summary(
     }
 
 
+def _run_dir_for(out: Path, *, resume: bool, run_id: str | None) -> Path:
+    """A fresh `out/runs/<id>/` for a new run; the named or latest existing one to resume."""
+    if resume:
+        try:
+            return layout.resolve_run_dir(out, run_id)
+        except ValueError as exc:
+            raise RunError(str(exc)) from exc
+    run_dir = layout.runs_dir(out) / (run_id or layout.new_run_id())
+    if run_dir.exists():
+        raise RunError(
+            f"run {run_dir.name!r} already exists under {out}; pass --resume to continue it, "
+            "or another --run-id"
+        )
+    return run_dir
+
+
 def run(
     manifest: Manifest,
     *,
     asker_factory: AskerFactory = default_asker_factory,
     resume: bool = False,
-) -> None:
-    """Run every subject and model of `manifest`, writing the fixed output layout under `out`.
+    run_id: str | None = None,
+) -> Path:
+    """Run every subject and model of `manifest` into a new `out/runs/<run id>/`; return it.
 
-    With `resume`, a pair whose statement already exists under `out` is kept as is, and a pair
-    whose transcripts are partly on disk reuses every transcript whose input hash still matches.
+    Every run is kept: `out/runs.json` indexes them and `out/SUMMARY.md` lays their results side
+    by side. With `resume`, the latest run (or `run_id`) is continued: a pair whose statement
+    exists is kept as is, and a pair whose transcripts are partly on disk reuses every transcript
+    whose input hash still matches.
     """
     preflight(manifest)
     judge_model = manifest.judge.qualified if manifest.judge else None
@@ -327,7 +356,9 @@ def run(
     if manifest.judge is not None:
         judge = AskerJudge(asker_factory(manifest.judge, effort=JUDGE_EFFORT))
 
-    out = manifest.out
+    started_on = _now()
+    out = layout_root = manifest.out
+    out = _run_dir_for(layout_root, resume=resume, run_id=run_id)
     out.mkdir(parents=True, exist_ok=True)
     _write_json(out / MANIFEST_FILENAME, _resolved_manifest_doc(manifest))
 
@@ -368,3 +399,18 @@ def run(
             summary_rows.append(summary)
 
     (out / SUMMARY_FILENAME).write_text(_summary_markdown(summary_rows), encoding="utf-8")
+    if out != layout_root:  # a flat pre-history layout resumed in place has no index to keep
+        layout.record_run(
+            layout_root,
+            {
+                "runId": out.name,
+                "startedOn": started_on,
+                "finishedOn": _now(),
+                "manifestSha256": _sha256_file(out / MANIFEST_FILENAME),
+                "rows": [
+                    {k: r[k] for k in ("subject", "model", "result", "estimate")}
+                    for r in summary_rows
+                ],
+            },
+        )
+    return out

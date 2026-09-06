@@ -131,13 +131,22 @@ eval case with `llm` graders but no `rule:` tags gets the rule's own text as its
   hooks here would let it assert hooks the plugin does not actually register — precisely the gap a
   `reachability` row exists to catch.
 
+## Every run is kept
+
+Each `context-report run` writes a new directory, `out/runs/<run id>/`, and never overwrites an
+earlier one: the id is a UTC timestamp (`20260906T121500Z`) unless `--run-id NAME` names it.
+`out/runs.json` indexes every run (id, start and end, the resolved manifest's digest, each
+`(subject, model)` result and estimate) and `out/SUMMARY.md` lays them side by side, one column
+per run — the view a developer reads to see what an edit to the artifact moved.
+`context-report compare OUT --history` prints the same table; `compare OUT` and
+`judge OUT` act on the latest run unless `--run ID` names another.
+
 ## Resuming an interrupted run
 
-`context-report run MANIFEST --resume` keeps whatever an earlier run left under `out`: a
-`(subject, model)` pair whose statement exists is not run again, and a pair with transcripts but
-no statement reuses each transcript whose `input_sha256` and model still match, calling the model
-only for the trials that are missing. Without `--resume`, a run into an existing `out` records
-everything afresh and overwrites.
+`context-report run MANIFEST --resume` continues the latest run under `out` (or `--run-id ID`)
+instead of starting a new one: a `(subject, model)` pair whose statement exists is not run again,
+and a pair with transcripts but no statement reuses each transcript whose `input_sha256` and
+model still match, calling the model only for the trials that are missing.
 
 ## Output layout
 
@@ -145,14 +154,20 @@ Running a manifest with `"out": "reports/"` produces:
 
 ```
 reports/
-  manifest.json                     # the resolved manifest, for provenance
-  <subject id>/
-    <model slug>.json               # the statement for this subject and this model
-    <model slug>/
-      transcripts/                  # one file per (task, rule, arm, trial) recorded
-    statement.json                  # only when `models` is empty: one deterministic statement
-  SUMMARY.md                        # a human-readable table across every subject and model
+  runs.json                         # index of every run of this manifest
+  SUMMARY.md                        # every run side by side, one column per run
+  runs/<run id>/
+    manifest.json                   # the resolved manifest, for provenance
+    <subject id>/
+      <model slug>.json             # the statement for this subject and this model
+      <model slug>/
+        transcripts/                # one file per (task, rule, arm, trial) recorded
+      statement.json                # only when `models` is empty: one deterministic statement
+    SUMMARY.md                      # this run's table across every subject and model
 ```
+
+A directory holding `manifest.json` and subject directories directly (the layout before runs were
+kept) is still read as a single run by `judge` and `compare`.
 
 A **model slug** is `<provider>--<id>` with every character outside `[A-Za-z0-9._-]` replaced by
 `_` (e.g. `anthropic/claude-sonnet-5` slugs to `anthropic--claude-sonnet-5`) — the same rule
