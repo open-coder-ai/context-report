@@ -22,6 +22,7 @@ class ApiAsker:
         self.client = anthropic.Anthropic()
         self.model = model
         self.effort = effort
+        self.last_usage: dict[str, int] | None = None
 
     def ask(self, prompt: str) -> str:
         params = {
@@ -32,4 +33,8 @@ class ApiAsker:
         if self.effort is not None:
             params["output_config"] = {"effort": self.effort}
         response = self.client.messages.create(**params)
+        self.last_usage = {
+            "inputTokens": int(response.usage.input_tokens),
+            "outputTokens": int(response.usage.output_tokens),
+        }
         return "".join(block.text for block in response.content if block.type == "text").strip()

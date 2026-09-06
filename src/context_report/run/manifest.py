@@ -1,0 +1,193 @@
+"""The run manifest: metadata on what to measure, validated before any token is spent."""
+
+from __future__ import annotations
+
+import json
+import re
+from dataclasses import dataclass, field
+from importlib.resources import files
+from pathlib import Path
+from typing import Any
+
+from jsonschema import Draft202012Validator
+
+MANIFEST_VERSION = "v0.1"
+MODE_ISOLATED = "isolated"
+MODE_LEAVE_ONE_OUT = "leave-one-out"
+_SLUG = re.compile(r"[^A-Za-z0-9._-]+")
+
+
+class ManifestError(ValueError):
+    """The manifest is well-formed JSON but cannot be run as written."""
+
+
+@dataclass(frozen=True)
+class Subject:
+    id: str
+    path: Path
+    kind: str
+
+
+@dataclass(frozen=True)
+class ModelRef:
+    provider: str
+    id: str
+
+    @property
+    def slug(self) -> str:
+        """A filesystem-safe name for this model, used for output paths."""
+        return f"{_SLUG.sub('_', self.provider)}--{_SLUG.sub('_', self.id)}"
+
+    @property
+    def qualified(self) -> str:
+        return f"{self.provider}/{self.id}"
+
+
+@dataclass(frozen=True)
+class Task:
+    id: str
+    prompt: str
+    subjects: tuple[str, ...]  # resolved: never empty
+    rules: tuple[str, ...]  # empty means every rule of the named subjects
+    criteria: dict[str, str] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class Arms:
+    n_per_arm: int
+    seed: int = 0
+    mode: str = MODE_ISOLATED
+
+
+@dataclass(frozen=True)
+class Target:
+    name: str
+    client_version: str | None = None
+
+
+@dataclass(frozen=True)
+class Manifest:
+    subjects: tuple[Subject, ...]
+    target: Target
+    models: tuple[ModelRef, ...]
+    tasks: tuple[Task, ...]
+    arms: Arms
+    judge: ModelRef | None
+    out: Path
+    source: Path
+
+    def subject(self, subject_id: str) -> Subject:
+        for s in self.subjects:
+            if s.id == subject_id:
+                return s
+        raise KeyError(subject_id)
+
+    def tasks_for(self, subject_id: str) -> tuple[Task, ...]:
+        return tuple(t for t in self.tasks if subject_id in t.subjects)
+
+
+def schema() -> dict[str, Any]:
+    blob = files("context_report.data").joinpath("run-v0.1.schema.json").read_text("utf-8")
+    return json.loads(blob)
+
+
+def validate(doc: dict[str, Any]) -> list[str]:
+    """Schema errors as `path: message` strings; empty means well-formed."""
+    validator = Draft202012Validator(schema())
+    return [
+        "/".join(str(p) for p in e.absolute_path) + ": " + e.message
+        for e in sorted(validator.iter_errors(doc), key=lambda e: list(e.absolute_path))
+    ]
+
+
+def _resolve(base: Path, raw: str) -> Path:
+    p = Path(raw)
+    return (p if p.is_absolute() else base / p).resolve()
+
+
+def _load_tasks(doc: dict[str, Any], base: Path) -> list[dict[str, Any]]:
+    raw = doc.get("tasks")
+    if raw is None:
+        return []
+    if isinstance(raw, str):
+        path = _resolve(base, raw)
+        if not path.is_file():
+            raise ManifestError(f"tasks file not found: {path}")
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+        full = schema()
+        task_file_schema = {**full["$defs"]["taskFile"], "$defs": full["$defs"]}
+        errors = [e.message for e in Draft202012Validator(task_file_schema).iter_errors(loaded)]
+        if errors:
+            raise ManifestError(f"{path}: " + "; ".join(errors))
+        return list(loaded["tasks"])
+    return list(raw["tasks"])
+
+
+def _inside(path: Path, root: Path) -> bool:
+    try:
+        path.relative_to(root)
+    except ValueError:
+        return False
+    return True
+
+
+def load(path: str | Path) -> Manifest:
+    """Read, validate and resolve a manifest; every error is raised before anything runs."""
+    source = Path(path).resolve()
+    doc = json.loads(source.read_text(encoding="utf-8"))
+    errors = validate(doc)
+    if errors:
+        raise ManifestError(f"{source}: " + "; ".join(errors))
+    base = source.parent
+
+    subjects: list[Subject] = []
+    for raw in doc["subjects"]:
+        p = _resolve(base, raw["path"])
+        if not p.exists():
+            raise ManifestError(f"subject path not found: {p}")
+        subjects.append(Subject(id=raw.get("id") or p.name, path=p, kind=raw["kind"]))
+    ids = [s.id for s in subjects]
+    if len(set(ids)) != len(ids):
+        raise ManifestError(f"subject ids must be unique: {ids}")
+
+    out = _resolve(base, doc["out"])
+    for s in subjects:
+        if _inside(out, s.path) or _inside(s.path, out):
+            raise ManifestError(f"out {out} overlaps subject {s.id!r}: it would change its digest")
+
+    tasks: list[Task] = []
+    for raw in _load_tasks(doc, base):
+        named = tuple(raw.get("subjects") or ids)
+        unknown = sorted(set(named) - set(ids))
+        if unknown:
+            raise ManifestError(f"task {raw['id']!r} names unknown subject(s) {unknown}")
+        tasks.append(
+            Task(
+                id=raw["id"],
+                prompt=raw["prompt"],
+                subjects=named,
+                rules=tuple(raw.get("rules") or ()),
+                criteria=dict(raw.get("criteria") or {}),
+            )
+        )
+    task_ids = [t.id for t in tasks]
+    if len(set(task_ids)) != len(task_ids):
+        raise ManifestError(f"task ids must be unique: {task_ids}")
+
+    arms_raw = doc["arms"]
+    judge_raw = doc.get("judge")
+    target_raw = doc["target"]
+    return Manifest(
+        subjects=tuple(subjects),
+        target=Target(target_raw["name"], target_raw.get("clientVersion")),
+        models=tuple(ModelRef(m["provider"], m["id"]) for m in doc["models"]),
+        tasks=tuple(tasks),
+        arms=Arms(
+            n_per_arm=arms_raw["nPerArm"],
+            seed=arms_raw.get("seed", 0),
+            mode=arms_raw.get("mode", MODE_ISOLATED),
+        ),
+        judge=ModelRef(judge_raw["provider"], judge_raw["id"]) if judge_raw else None,
+        out=out,
+        source=source,
+    )

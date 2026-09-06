@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://open-coder-ai.github.io/context-report/run/v0.1/schema.json",
+  "title": "context-report run manifest v0.1",
+  "description": "What `context-report run` needs: which artifacts, which agent, which subject models, which tasks, how many runs, and optionally which judge. Metadata only; how the artifact works is read from the artifact itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contextReportRun", "subjects", "target", "models", "arms", "out"],
+  "properties": {
+    "contextReportRun": {"const": "v0.1"},
+    "subjects": {
+      "description": "The artifacts under test. One statement per subject and model; ids are the handles tasks use.",
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/subject"}
+    },
+    "target": {
+      "description": "The agent every statement is about. To compare agents, run twice.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "clientVersion": {"type": "string"}
+      }
+    },
+    "models": {
+      "description": "Subject models to run the paired ablation on. Empty means deterministic rows only.",
+      "type": "array",
+      "items": {"$ref": "#/$defs/modelRef"}
+    },
+    "tasks": {
+      "description": "Path to a tasks file, or the tasks inline. The same set is used for every model.",
+      "oneOf": [{"type": "string", "minLength": 1}, {"$ref": "#/$defs/taskFile"}]
+    },
+    "arms": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nPerArm"],
+      "properties": {
+        "nPerArm": {"description": "Runs of each task in each arm.", "type": "integer", "minimum": 1},
+        "seed": {"description": "Fixes task order and any sampling so a re-run is reproducible.", "type": "integer"},
+        "mode": {
+          "description": "isolated: each subject measured alone against the bare agent. leave-one-out: all subjects installed, each ablated in turn.",
+          "enum": ["isolated", "leave-one-out"],
+          "default": "isolated"
+        }
+      }
+    },
+    "judge": {
+      "description": "null: no model grades anything; rules with a deterministic criterion are still graded by code. Otherwise the one model that grades every transcript for every subject model.",
+      "oneOf": [{"type": "null"}, {"$ref": "#/$defs/modelRef"}]
+    },
+    "out": {"description": "Output directory; never inside a subject path.", "type": "string", "minLength": 1}
+  },
+  "if": {"properties": {"models": {"minItems": 1}}},
+  "then": {"required": ["tasks"]},
+  "$defs": {
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "kind"],
+      "properties": {
+        "id": {"description": "Defaults to the path's basename.", "type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
+        "path": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["plugin", "instruction-file", "skill", "hook", "mcp-server", "subagent"]}
+      }
+    },
+    "modelRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "id"],
+      "properties": {
+        "provider": {"type": "string", "minLength": 1},
+        "id": {"type": "string", "minLength": 1}
+      }
+    },
+    "taskFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tasks"],
+      "properties": {"tasks": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/task"}}}
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "prompt"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
+        "prompt": {"description": "What the agent is asked to do; it should tempt a violation of the rules it names.", "type": "string", "minLength": 1},
+        "subjects": {"description": "Subject ids this task exercises. Default: every subject.", "type": "array", "items": {"type": "string"}},
+        "rules": {"description": "Rule ids, within the named subjects, this task exercises. Default: every rule of those subjects.", "type": "array", "items": {"type": "string"}},
+        "criteria": {"description": "Per rule id, what compliance looks like for this task. Default: the rule text itself.", "type": "object", "additionalProperties": {"type": "string"}}
+      }
+    }
+  }
+}
