@@ -5,39 +5,56 @@ Per in-toto convention, `0.X` versions are major: fields may change until 1.0.
 
 ## Unreleased
 
-### Added
-
-- A public library API in `context_report.__all__` (`validate`, `verify`,
-  `produce_statement`, `load_manifest`, `run`, `resolve_run_dir`,
-  `history_markdown`, `render_table`, `render_history`) for a catalog or CI
-  job to import directly; see [`docs/library.md`](docs/library.md).
-- `py.typed`, shipped in the wheel, so type checkers treat the package as typed.
-- `.github/workflows/release.yml` — publishes to PyPI via trusted publishing
-  (OIDC) on a `v*` tag push.
-
 ## [0.1.0] - 2026-09-06
 
-### Added
+First public release: the format, a reference producer and verifier, a run manifest for
+paired-ablation measurement, and three measurements in the paper.
 
-- Schema v0.1 for the attestation predicate
-  (`spec/attestation/v0.1/schema.json`), plus a worked example
-  (`spec/attestation/v0.1/examples/plugin-copilot.json`).
-- `context-report produce` — builds a statement from a subject artifact:
-  conformance, reachability, hook discovery, fault rows
-  (`scriptMissing`, `interpreterMissing`, `timeout`, `malformedOutput`), and
-  cost rows (`latency_ms`, `context_tokens`).
-- `context-report verify` — checks a statement is schema-valid and, with
-  `--subject`, that its `re-derivable` rows recompute against the subject.
-- `context-report run` — runs a manifest (`spec/run/v0.1/schema.json`) across
-  subjects, models and tasks in one shot, writing one statement per
-  (subject, model) pair plus a `SUMMARY.md`.
-- `context-report judge` / `context-report compare` — grade a transcript
-  against a rule's compliance criterion and compare paired-ablation runs.
-- `context-report efficacy` (optional extra `context-report[efficacy]`) —
-  paired-ablation measurement of whether an artifact changes agent behaviour;
-  the engine behind the `efficacy` row. `provider: "anthropic"` only in v0.1.
-- Paper draft (`paper/context-report.md`) laying out the format's motivation
-  and borrowed field names.
+### Format
+
+- Attestation predicate v0.1 (`spec/attestation/v0.1/schema.json`): an in-toto Statement whose
+  rows carry `basis: re-derivable` (recomputes from the subject, with an `inputHash`) or
+  `claimed`; results `PASSED`, `WARNED`, `FAILED`, `NotAvailable`, `Error`, `NotApplicable`; an
+  applicability table per subject kind; a worked example.
+- Run manifest v0.1 (`spec/run/v0.1/schema.json`): subjects, target agent, models, tasks, arms,
+  judge and output directory for one measurement; tasks as JSON or as `claude plugin eval` case
+  directories; the rule-id algorithm stated so other tools can name a rule.
+
+### Commands
+
+- `produce`: conformance, reachability (hooks discovered from the plugin itself), the fault rows
+  (`scriptMissing`, `interpreterMissing`, `timeout`, `malformedOutput`), `cost.latency_ms` and
+  `cost.context_tokens` with subject-relative file names.
+- `verify`: schema validity and, with `--subject`, that every re-derivable row recomputes.
+- `run`: every subject against every model over the tasks, one statement per pair; every run kept
+  under `out/runs/<id>/` with `runs.json` and a side-by-side `SUMMARY.md`; `--resume` continues an
+  interrupted run without re-spending recorded calls; `--dry-run` prints the call budget;
+  `subjects[].workdir` puts the subject model in the right checkout.
+- `judge`: re-grade recorded transcripts with another judge model, writing `.judged.json` siblings.
+- `compare`: efficacy by model or subject; `--history` across runs; `--history --rules` per rule.
+- `ingest-eval`: an `aggregate-result.json` from `claude plugin eval` as an efficacy row.
+- Two model backends: `anthropic` (the API) and `claude-cli` (the local `claude` CLI, so one
+  manifest compares `opus`, `sonnet` and `fable` under the account's own login). No model is
+  hardcoded; every model comes from the manifest. Input tokens count the cached prefix.
+
+### Library
+
+- `context_report.__all__`: `validate`, `verify`, `produce_statement`, `load_manifest`, `run`,
+  `resolve_run_dir`, `history_markdown`, `rule_history_markdown`, `render_table`,
+  `render_history`; `py.typed` ships in the wheel. See `docs/library.md`.
+- Published to PyPI via trusted publishing on a `v*` tag (`.github/workflows/release.yml`).
+
+### Measurements (in `paper/`)
+
+- chock's 88 plugin bundles across four target agents; 18 public Claude Code plugins; seven
+  third-party instruction files and skills, three of them ablated on opus, sonnet and fable with a
+  fixed judge. Every statement is committed and re-derives from the recorded commits.
+
+### Known limits
+
+- Fault rows for a live client (`timeout`, crash posture) are `NotAvailable`: v0.1 does not drive
+  a client. Efficacy is always a `claimed` row. The tokenizer is an approximation. Coding agents
+  only: Claude Code, Codex CLI, GitHub Copilot, Cursor.
 
 [Unreleased]: https://github.com/open-coder-ai/context-report/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/open-coder-ai/context-report/releases/tag/v0.1.0
