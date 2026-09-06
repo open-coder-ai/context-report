@@ -81,21 +81,21 @@
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:a6433e8ee6385840c2db905661baade64af06ab3ccbae75e8824d260b0620d67",
+        "inputHash": "sha256:2ec2ef5d3d44530d2c33844bd0175a9f8aaf893a3d96a2e27cb0b52c132936f8",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 8
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-agent-plugins/plugins/aws-serverless/hooks/hooks.json": 71,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-agent-plugins/plugins/aws-serverless/skills/api-gateway/SKILL.md": 3739,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-agent-plugins/plugins/aws-serverless/skills/aws-lambda-durable-functions/SKILL.md": 2315,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-agent-plugins/plugins/aws-serverless/skills/aws-lambda-managed-instances/SKILL.md": 3847,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-agent-plugins/plugins/aws-serverless/skills/aws-lambda-microvms/SKILL.md": 4252,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-agent-plugins/plugins/aws-serverless/skills/aws-lambda/SKILL.md": 2938,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-agent-plugins/plugins/aws-serverless/skills/aws-serverless-deployment/SKILL.md": 1323,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-agent-plugins/plugins/aws-serverless/skills/aws-step-functions/SKILL.md": 2038
+            "hooks/hooks.json": 71,
+            "skills/api-gateway/SKILL.md": 3739,
+            "skills/aws-lambda-durable-functions/SKILL.md": 2315,
+            "skills/aws-lambda-managed-instances/SKILL.md": 3847,
+            "skills/aws-lambda-microvms/SKILL.md": 4252,
+            "skills/aws-lambda/SKILL.md": 2938,
+            "skills/aws-serverless-deployment/SKILL.md": 1323,
+            "skills/aws-step-functions/SKILL.md": 2038
           }
         },
         "measurement": {
@@ -121,8 +121,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:15Z",
-      "finishedOn": "2026-09-06T04:14:15Z"
+      "startedOn": "2026-09-06T12:18:29Z",
+      "finishedOn": "2026-09-06T12:18:30Z"
     },
     "configuration": [
       {

@@ -81,23 +81,23 @@
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:647ff34423dc37037b0f7c68dede4ccff33ca0bcd2d16ae214f928fc4ac6574d",
+        "inputHash": "sha256:2129705cf4ea01a6ce6f6376d1d72f81a8e9b3f8f42aa19e5336a3a973f96327",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 10
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/hooks/hooks.json": 83,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/agent-advisor/SKILL.md": 3770,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/architect-for-startups/SKILL.md": 2163,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/gcp-to-aws/SKILL.md": 11221,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/heroku-to-aws/SKILL.md": 4406,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/knowledge-base-for-startups/SKILL.md": 2700,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/llm-to-bedrock/SKILL.md": 8957,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/prompt-library-for-startups/SKILL.md": 2670,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/start-building-for-startups/SKILL.md": 4137,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/tf-best-practices/SKILL.md": 2934
+            "hooks/hooks.json": 83,
+            "skills/agent-advisor/SKILL.md": 3770,
+            "skills/architect-for-startups/SKILL.md": 2163,
+            "skills/gcp-to-aws/SKILL.md": 11221,
+            "skills/heroku-to-aws/SKILL.md": 4406,
+            "skills/knowledge-base-for-startups/SKILL.md": 2700,
+            "skills/llm-to-bedrock/SKILL.md": 8957,
+            "skills/prompt-library-for-startups/SKILL.md": 2670,
+            "skills/start-building-for-startups/SKILL.md": 4137,
+            "skills/tf-best-practices/SKILL.md": 2934
           }
         },
         "measurement": {
@@ -123,8 +123,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:15Z",
-      "finishedOn": "2026-09-06T04:14:15Z"
+      "startedOn": "2026-09-06T12:18:30Z",
+      "finishedOn": "2026-09-06T12:18:30Z"
     },
     "configuration": [
       {

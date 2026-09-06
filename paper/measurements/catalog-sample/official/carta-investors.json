@@ -328,30 +328,30 @@
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:f47389146015be9fc8919f03916436053250d7a785218eda63f9efc74a7394ca",
+        "inputHash": "sha256:e606c882eb74d9f85eb18361798f8e8bfd041bc42d04159e4d7d1afe20a18dac",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 17
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/hooks/hooks.json": 565,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-agm-deck-builder/SKILL.md": 10782,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-brand-extraction/SKILL.md": 3663,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-co-investors/SKILL.md": 17333,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-compliance-routing/SKILL.md": 2792,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-consolidating-balance-sheet/SKILL.md": 9407,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-consolidating-pnl/SKILL.md": 18892,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-download-tearsheet/SKILL.md": 2597,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-explore-data/SKILL.md": 6990,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-fund-admin-requests/SKILL.md": 2960,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-fund-forecasting/SKILL.md": 10738,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-fund-modeling/SKILL.md": 12976,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-home-build/SKILL.md": 6373,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-manco/SKILL.md": 10719,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-portfolio-analytics-routing/SKILL.md": 7807,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-spa-audit/SKILL.md": 16342,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-investors/skills/carta-workhub-build/SKILL.md": 5727
+            "hooks/hooks.json": 565,
+            "skills/carta-agm-deck-builder/SKILL.md": 10782,
+            "skills/carta-brand-extraction/SKILL.md": 3663,
+            "skills/carta-co-investors/SKILL.md": 17333,
+            "skills/carta-compliance-routing/SKILL.md": 2792,
+            "skills/carta-consolidating-balance-sheet/SKILL.md": 9407,
+            "skills/carta-consolidating-pnl/SKILL.md": 18892,
+            "skills/carta-download-tearsheet/SKILL.md": 2597,
+            "skills/carta-explore-data/SKILL.md": 6990,
+            "skills/carta-fund-admin-requests/SKILL.md": 2960,
+            "skills/carta-fund-forecasting/SKILL.md": 10738,
+            "skills/carta-fund-modeling/SKILL.md": 12976,
+            "skills/carta-home-build/SKILL.md": 6373,
+            "skills/carta-manco/SKILL.md": 10719,
+            "skills/carta-portfolio-analytics-routing/SKILL.md": 7807,
+            "skills/carta-spa-audit/SKILL.md": 16342,
+            "skills/carta-workhub-build/SKILL.md": 5727
           }
         },
         "measurement": {
@@ -377,8 +377,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:16Z",
-      "finishedOn": "2026-09-06T04:14:17Z"
+      "startedOn": "2026-09-06T12:18:31Z",
+      "finishedOn": "2026-09-06T12:18:32Z"
     },
     "configuration": [
       {

@@ -274,27 +274,27 @@
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 22.82084499984194,
-                "95": 24.322633999872778,
-                "99": 26.3650490001055
+                "50": 26.913621000005605,
+                "95": 28.42763199998899,
+                "99": 28.812664000042787
               },
-              "min": 22.089146000325854,
-              "max": 26.3650490001055,
-              "mean": 23.047156200004792,
-              "stddev": 0.9383245105836948
+              "min": 25.630189000025894,
+              "max": 28.812664000042787,
+              "mean": 27.064430000001494,
+              "stddev": 0.6664513715490896
             },
             "PreToolUse:1": {
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 22.704425000029005,
-                "95": 27.488627999900928,
-                "99": 28.718392999962816
+                "50": 26.997935999986566,
+                "95": 31.73738800001047,
+                "99": 36.998244000017166
               },
-              "min": 20.96114599999055,
-              "max": 28.718392999962816,
-              "mean": 23.381942099990738,
-              "stddev": 2.019940449865987
+              "min": 26.09411599996747,
+              "max": 36.998244000017166,
+              "mean": 27.933822050002277,
+              "stddev": 2.507322658509414
             }
           }
         },
@@ -302,50 +302,50 @@
           "unit": "ms",
           "n": 20,
           "percentiles": {
-            "50": 45.52526999987094,
-            "95": 51.811261999773706,
-            "99": 55.08344200006832
+            "50": 53.91155699999217,
+            "95": 60.16501999999946,
+            "99": 65.81090800005995
           },
-          "min": 43.050292000316404,
-          "max": 55.08344200006832,
-          "mean": 46.42909829999553
+          "min": 51.724304999993365,
+          "max": 65.81090800005995,
+          "mean": 54.99825205000377
         }
       },
       {
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:f25d945e92487e7830bf21c9719d08b88e8b2461fbd4525ae93ee31277638f0e",
+        "inputHash": "sha256:aad4c7d522fb7af0aff1a0fef7d06c94c77027dbc6d5d7248bc50edfba1ef0fc",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 24
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/amazon-bedrock/SKILL.md": 7400,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-ai-ml/SKILL.md": 1489,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-auth/SKILL.md": 3492,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-billing-and-cost-management/SKILL.md": 2289,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-blocks/SKILL.md": 1078,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-cdk/SKILL.md": 1682,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-cloudformation/SKILL.md": 3317,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-compute/SKILL.md": 2205,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-containers/SKILL.md": 1037,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-database/SKILL.md": 1879,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-deployment/SKILL.md": 1621,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-iam/SKILL.md": 1458,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-messaging-and-streaming/SKILL.md": 2641,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-networking/SKILL.md": 2513,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-observability/SKILL.md": 1505,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-sdk-js-v3-usage/SKILL.md": 2353,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-sdk-python-usage/SKILL.md": 1897,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-sdk-swift-usage/SKILL.md": 1105,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-secrets-manager/SKILL.md": 1915,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-security/SKILL.md": 3050,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-serverless/SKILL.md": 1824,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-storage/SKILL.md": 4959,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/launch-with-aws/SKILL.md": 3115,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/signing-in-to-aws/SKILL.md": 1642
+            "skills/amazon-bedrock/SKILL.md": 7400,
+            "skills/aws-ai-ml/SKILL.md": 1489,
+            "skills/aws-auth/SKILL.md": 3492,
+            "skills/aws-billing-and-cost-management/SKILL.md": 2289,
+            "skills/aws-blocks/SKILL.md": 1078,
+            "skills/aws-cdk/SKILL.md": 1682,
+            "skills/aws-cloudformation/SKILL.md": 3317,
+            "skills/aws-compute/SKILL.md": 2205,
+            "skills/aws-containers/SKILL.md": 1037,
+            "skills/aws-database/SKILL.md": 1879,
+            "skills/aws-deployment/SKILL.md": 1621,
+            "skills/aws-iam/SKILL.md": 1458,
+            "skills/aws-messaging-and-streaming/SKILL.md": 2641,
+            "skills/aws-networking/SKILL.md": 2513,
+            "skills/aws-observability/SKILL.md": 1505,
+            "skills/aws-sdk-js-v3-usage/SKILL.md": 2353,
+            "skills/aws-sdk-python-usage/SKILL.md": 1897,
+            "skills/aws-sdk-swift-usage/SKILL.md": 1105,
+            "skills/aws-secrets-manager/SKILL.md": 1915,
+            "skills/aws-security/SKILL.md": 3050,
+            "skills/aws-serverless/SKILL.md": 1824,
+            "skills/aws-storage/SKILL.md": 4959,
+            "skills/launch-with-aws/SKILL.md": 3115,
+            "skills/signing-in-to-aws/SKILL.md": 1642
           }
         },
         "measurement": {
@@ -371,8 +371,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:14Z",
-      "finishedOn": "2026-09-06T04:14:15Z"
+      "startedOn": "2026-09-06T12:18:28Z",
+      "finishedOn": "2026-09-06T12:18:29Z"
     },
     "configuration": [
       {

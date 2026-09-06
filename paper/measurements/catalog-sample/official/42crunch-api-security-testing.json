@@ -81,18 +81,18 @@
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:8bcb8cf8bdf7d3323652c33ac74280b57189e69f87d99410c203fa3f3631494f",
+        "inputHash": "sha256:0f008373b8990b9d22ea1a69eb1a9e088de77447710820e1481fd48720a45237",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 5
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/42crunch/plugins/api-security-testing/skills/42crunch-api-security-testing/SKILL.md": 2160,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/42crunch/plugins/api-security-testing/skills/42crunch-audit/SKILL.md": 998,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/42crunch/plugins/api-security-testing/skills/42crunch-scan/SKILL.md": 1734,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/42crunch/plugins/api-security-testing/skills/42crunch-setup/SKILL.md": 2017,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/42crunch/plugins/api-security-testing/skills/generate-oas/SKILL.md": 11003
+            "skills/42crunch-api-security-testing/SKILL.md": 2160,
+            "skills/42crunch-audit/SKILL.md": 998,
+            "skills/42crunch-scan/SKILL.md": 1734,
+            "skills/42crunch-setup/SKILL.md": 2017,
+            "skills/generate-oas/SKILL.md": 11003
           }
         },
         "measurement": {
@@ -118,8 +118,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:55Z",
-      "finishedOn": "2026-09-06T04:14:55Z"
+      "startedOn": "2026-09-06T12:19:28Z",
+      "finishedOn": "2026-09-06T12:19:28Z"
     },
     "configuration": [
       {

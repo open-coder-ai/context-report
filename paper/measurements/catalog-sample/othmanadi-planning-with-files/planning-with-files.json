@@ -280,14 +280,14 @@
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 5.955937000180711,
-                "95": 6.154570000035164,
-                "99": 6.1930310002935585
+                "50": 7.330964999994194,
+                "95": 7.536501999993561,
+                "99": 7.651141999986066
               },
-              "min": 5.731104999995296,
-              "max": 6.1930310002935585,
-              "mean": 5.971199600003274,
-              "stddev": 0.1273815289254168
+              "min": 7.1352599999841,
+              "max": 7.651141999986066,
+              "mean": 7.35560119998695,
+              "stddev": 0.12968074752052672
             }
           },
           "skippedHooks": [
@@ -327,33 +327,33 @@
           "unit": "ms",
           "n": 20,
           "percentiles": {
-            "50": 5.955937000180711,
-            "95": 6.154570000035164,
-            "99": 6.1930310002935585
+            "50": 7.330964999994194,
+            "95": 7.536501999993561,
+            "99": 7.651141999986066
           },
-          "min": 5.731104999995296,
-          "max": 6.1930310002935585,
-          "mean": 5.971199600003274
+          "min": 7.1352599999841,
+          "max": 7.651141999986066,
+          "mean": 7.35560119998695
         }
       },
       {
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:19a467980b4415544cb69cf65599c3f943a105362b423c540b3c1aad38802273",
+        "inputHash": "sha256:d0e185c75f89d789a3d04ec5a4a6378b6a9eeb1893ded0399eff6fcda6405fdb",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 7
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/hooks/hooks.json": 486,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/i18n/planning-with-files-ar/SKILL.md": 3482,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/i18n/planning-with-files-de/SKILL.md": 3316,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/i18n/planning-with-files-es/SKILL.md": 3575,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/i18n/planning-with-files-zh/SKILL.md": 2566,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/i18n/planning-with-files-zht/SKILL.md": 2567,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/planning-with-files/SKILL.md": 9187
+            "hooks/hooks.json": 486,
+            "skills/i18n/planning-with-files-ar/SKILL.md": 3482,
+            "skills/i18n/planning-with-files-de/SKILL.md": 3316,
+            "skills/i18n/planning-with-files-es/SKILL.md": 3575,
+            "skills/i18n/planning-with-files-zh/SKILL.md": 2566,
+            "skills/i18n/planning-with-files-zht/SKILL.md": 2567,
+            "skills/planning-with-files/SKILL.md": 9187
           }
         },
         "measurement": {
@@ -379,8 +379,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:55Z",
-      "finishedOn": "2026-09-06T04:14:55Z"
+      "startedOn": "2026-09-06T12:19:27Z",
+      "finishedOn": "2026-09-06T12:19:27Z"
     },
     "configuration": [
       {

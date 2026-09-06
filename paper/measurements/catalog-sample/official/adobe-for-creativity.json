@@ -81,21 +81,21 @@
         "attribute": "cost.context_tokens",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:6446082e9f271b9eef422e6b348e370c508c0c2174891b109199ed0718386b0f",
+        "inputHash": "sha256:b1cec7b7e6a080f12bab05fd46725811ed03e306e3e64892643d18e421d1dbfa",
         "conditions": {
           "tokenizer": "approx-regex-v1",
           "files": 8
         },
         "values": {
           "per_file": {
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-batch-edit-photos/SKILL.md": 9294,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-create-pdfs-from-data/SKILL.md": 3273,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-create-social-variations/SKILL.md": 7230,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-design-from-template/SKILL.md": 3783,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-edit-quick-cut/SKILL.md": 3774,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-resize-photos-and-videos/SKILL.md": 4865,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-retouch-portraits/SKILL.md": 9123,
-            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe/SKILL.md": 2305
+            "skills/adobe-batch-edit-photos/SKILL.md": 9294,
+            "skills/adobe-create-pdfs-from-data/SKILL.md": 3273,
+            "skills/adobe-create-social-variations/SKILL.md": 7230,
+            "skills/adobe-design-from-template/SKILL.md": 3783,
+            "skills/adobe-edit-quick-cut/SKILL.md": 3774,
+            "skills/adobe-resize-photos-and-videos/SKILL.md": 4865,
+            "skills/adobe-retouch-portraits/SKILL.md": 9123,
+            "skills/adobe/SKILL.md": 2305
           }
         },
         "measurement": {
@@ -121,8 +121,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:14:56Z",
-      "finishedOn": "2026-09-06T04:14:56Z"
+      "startedOn": "2026-09-06T12:19:28Z",
+      "finishedOn": "2026-09-06T12:19:28Z"
     },
     "configuration": [
       {
