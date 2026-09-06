@@ -14,7 +14,7 @@ from context_report.rows import CLAIMED, NOT_AVAILABLE
 from context_report.run import manifest as m
 from context_report.run.cards import cards_for
 from context_report.run.cli import add_run_parser, run_run
-from context_report.run.runner import run
+from context_report.run.runner import RunError, preflight, run
 
 PRINT_RULE_TEXT = "No print statements in shipped code."
 SECRET_RULE_TEXT = "Never commit secrets to the repository."  # noqa: S105 -- rule text, not a secret
@@ -39,8 +39,9 @@ class FakeAsker:
 
 
 def _fake_asker_factory(askers: list[FakeAsker]):
-    def factory(model, *, effort=None):  # noqa: ARG001 -- Asker factory contract
+    def factory(model, *, effort=None, cwd=None):  # noqa: ARG001 -- Asker factory contract
         asker = FakeAsker()
+        asker.cwd = cwd
         askers.append(asker)
         return asker
 
@@ -227,3 +228,36 @@ def test_run_cli_accepts_resume() -> None:
     add_run_parser(parser.add_subparsers(dest="command"))
     args = parser.parse_args(["run", "run.json", "--resume"])
     assert args.resume is True
+
+
+def test_workdir_reaches_the_backend_and_the_resolved_manifest(tmp_path: Path) -> None:
+    """`subjects[].workdir` is where the subject model works; the run records it, resolved."""
+    manifest = _build_manifest(tmp_path, provider="claude-cli")
+    repo = tmp_path / "checkout"
+    repo.mkdir()
+    doc = json.loads((tmp_path / "run.json").read_text())
+    doc["subjects"][0]["workdir"] = "checkout"
+    (tmp_path / "run.json").write_text(json.dumps(doc))
+    manifest = m.load(tmp_path / "run.json")
+    assert manifest.subjects[0].workdir == repo.resolve()
+
+    askers: list[FakeAsker] = []
+    run(manifest, asker_factory=_fake_asker_factory(askers))
+    assert {a.cwd for a in askers} == {repo.resolve()}
+    recorded = json.loads((manifest.out / "manifest.json").read_text())
+    assert recorded["subjects"][0]["workdir"] == str(repo.resolve())
+
+
+def test_workdir_must_exist_and_the_api_provider_cannot_honour_it(tmp_path: Path) -> None:
+    _build_manifest(tmp_path, provider="claude-cli")
+    doc = json.loads((tmp_path / "run.json").read_text())
+    doc["subjects"][0]["workdir"] = "missing"
+    (tmp_path / "run.json").write_text(json.dumps(doc))
+    with pytest.raises(m.ManifestError, match="workdir is not a directory"):
+        m.load(tmp_path / "run.json")
+
+    (tmp_path / "missing").mkdir()
+    doc["models"] = [{"provider": "anthropic", "id": "claude-sonnet-5"}]
+    (tmp_path / "run.json").write_text(json.dumps(doc))
+    with pytest.raises(RunError, match="cannot honour"):
+        preflight(m.load(tmp_path / "run.json"))

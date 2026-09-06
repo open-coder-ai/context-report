@@ -63,7 +63,8 @@
       "properties": {
         "id": {"description": "Defaults to the path's basename.", "type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
         "path": {"type": "string", "minLength": 1},
-        "kind": {"enum": ["plugin", "instruction-file", "skill", "hook", "mcp-server", "subagent"]}
+        "kind": {"enum": ["plugin", "instruction-file", "skill", "hook", "mcp-server", "subagent"]},
+        "workdir": {"description": "Directory the subject model works in for this subject's tasks (relative to the manifest). Default: the directory the run is started from.", "type": "string", "minLength": 1}
       }
     },
     "modelRef": {

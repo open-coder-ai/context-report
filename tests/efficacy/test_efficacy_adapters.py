@@ -141,3 +141,12 @@ def test_cli_asker_retries_one_timeout_then_gives_up():
     run = mock.patch.object(cli_backend.subprocess, "run", side_effect=[timeout, timeout])
     with which, run, pytest.raises(RuntimeError, match="no answer within 1s"):
         CliAsker(timeout=1).ask("hi")
+
+
+def test_cli_asker_runs_in_the_given_workdir():
+    which, run = _patched("ok")
+    with which, run as m:
+        CliAsker(cwd="/somewhere/checkout").ask("hi")
+        assert m.call_args.kwargs["cwd"] == "/somewhere/checkout"
+        CliAsker().ask("hi")
+        assert m.call_args.kwargs["cwd"] is None
