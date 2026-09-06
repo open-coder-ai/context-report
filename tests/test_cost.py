@@ -215,6 +215,19 @@ def test_injected_text_paths_plugin(tmp_path):
     assert len(result) == 5
 
 
+def test_injected_text_paths_plugin_counts_the_copilot_hooks_file(tmp_path):
+    """Copilot bundles keep hooks.json under com.github.copilot/; it must count like the others."""
+    plugin_dir = tmp_path / "copilot-plugin"
+    (plugin_dir / "skills" / "a").mkdir(parents=True)
+    (plugin_dir / "skills" / "a" / "SKILL.md").write_text("a")
+    hooks = plugin_dir / "com.github.copilot" / "hooks" / "hooks.json"
+    hooks.parent.mkdir(parents=True)
+    hooks.write_text("{}")
+
+    result = injected_text_paths(plugin_dir, "plugin")
+    assert hooks in result and len(result) == 2
+
+
 def test_injected_text_paths_plugin_without_hooks_json(tmp_path):
     plugin_dir = tmp_path / "plugin2"
     (plugin_dir / "skills").mkdir(parents=True)
