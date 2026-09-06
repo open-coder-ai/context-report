@@ -35,6 +35,7 @@
         "inputHash": "sha256:2ea6c45fbba292407dbb1c39740fa33ad5bc8bf0a30db1869188fcfa37eb7c0b",
         "environment": {
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/review-agent-governance"
           }
         },
@@ -67,7 +68,7 @@
               ],
               "unreachable_from": [],
               "stderr_first_line": {
-                "root": "npm warn exec The following package was not found and will be installed: protect-mcp@0.7.4",
+                "root": "",
                 "nested": "",
                 "parent": "",
                 "outside": ""
@@ -127,6 +128,7 @@
         "inputHash": "sha256:c5267202c34958eeafc01cc1c70ce5d668ed7eda33ba0656d87df7e8961fc0e1",
         "environment": {
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/review-agent-governance"
           }
         },
@@ -206,6 +208,7 @@
           "python": "3.11.15",
           "cpu_count": 4,
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/review-agent-governance"
           }
         },
@@ -229,14 +232,14 @@
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 666.7292469999211,
-                "95": 711.2375240001256,
-                "99": 723.4639650000645
+                "50": 681.9888350000838,
+                "95": 727.490194999973,
+                "99": 784.4515449996834
               },
-              "min": 637.1192599999631,
-              "max": 723.4639650000645,
-              "mean": 673.2475759500062,
-              "stddev": 21.947950436013247
+              "min": 662.6736230000461,
+              "max": 784.4515449996834,
+              "mean": 692.3268280000002,
+              "stddev": 28.426761120473426
             }
           },
           "skippedHooks": [
@@ -252,13 +255,13 @@
           "unit": "ms",
           "n": 20,
           "percentiles": {
-            "50": 666.7292469999211,
-            "95": 711.2375240001256,
-            "99": 723.4639650000645
+            "50": 681.9888350000838,
+            "95": 727.490194999973,
+            "99": 784.4515449996834
           },
-          "min": 637.1192599999631,
-          "max": 723.4639650000645,
-          "mean": 673.2475759500062
+          "min": 662.6736230000461,
+          "max": 784.4515449996834,
+          "mean": 692.3268280000002
         }
       },
       {
@@ -299,8 +302,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T03:50:34Z",
-      "finishedOn": "2026-09-06T03:50:59Z"
+      "startedOn": "2026-09-06T04:05:59Z",
+      "finishedOn": "2026-09-06T04:06:20Z"
     },
     "configuration": [
       {

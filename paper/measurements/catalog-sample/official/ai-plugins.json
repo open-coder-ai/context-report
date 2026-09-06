@@ -35,6 +35,7 @@
         "inputHash": "sha256:48cdc26469304224044f1f4276f837172788c9dd65b0d72450b7ccc33045d4c3",
         "environment": {
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/ai-plugins"
           }
         },
@@ -139,6 +140,7 @@
         "inputHash": "sha256:0b29712911e116f63110a73ec0edd3dc77e0c96700827622b717e354937b92a5",
         "environment": {
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/ai-plugins"
           }
         },
@@ -230,6 +232,7 @@
           "python": "3.11.15",
           "cpu_count": 4,
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/ai-plugins"
           }
         },
@@ -253,14 +256,14 @@
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 30.647038000097382,
-                "95": 33.56686699999045,
-                "99": 41.05698300008953
+                "50": 31.700282000201696,
+                "95": 33.09328100021958,
+                "99": 40.139556000212906
               },
-              "min": 30.01902300002257,
-              "max": 41.05698300008953,
-              "mean": 31.62790489998315,
-              "stddev": 2.4327415341534704
+              "min": 30.944201999773213,
+              "max": 40.139556000212906,
+              "mean": 32.267684800058305,
+              "stddev": 1.9641939324173092
             }
           },
           "skippedHooks": [
@@ -288,13 +291,13 @@
           "unit": "ms",
           "n": 20,
           "percentiles": {
-            "50": 30.647038000097382,
-            "95": 33.56686699999045,
-            "99": 41.05698300008953
+            "50": 31.700282000201696,
+            "95": 33.09328100021958,
+            "99": 40.139556000212906
           },
-          "min": 30.01902300002257,
-          "max": 41.05698300008953,
-          "mean": 31.62790489998315
+          "min": 30.944201999773213,
+          "max": 40.139556000212906,
+          "mean": 32.267684800058305
         }
       },
       {
@@ -335,8 +338,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T03:50:31Z",
-      "finishedOn": "2026-09-06T03:50:32Z"
+      "startedOn": "2026-09-06T04:05:54Z",
+      "finishedOn": "2026-09-06T04:05:55Z"
     },
     "configuration": [
       {

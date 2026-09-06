@@ -31,10 +31,11 @@
       {
         "attribute": "reachability",
         "basis": "re-derivable",
-        "result": "PASSED",
+        "result": "FAILED",
         "inputHash": "sha256:efea4be19ca0c7d40934794273a59a3c62828a46a1f1754c6601d1cb374311e2",
         "environment": {
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table"
           }
         },
@@ -63,13 +64,13 @@
         "values": {
           "perHook": {
             "PreToolUse:0": {
-              "reachable_from": [
+              "reachable_from": [],
+              "unreachable_from": [
                 "root",
                 "nested",
                 "parent",
                 "outside"
               ],
-              "unreachable_from": [],
               "stderr_first_line": {
                 "root": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/hooks/dispatch.sh: Permission denied",
                 "nested": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/hooks/dispatch.sh: Permission denied",
@@ -79,13 +80,13 @@
               "relative_script_path": false
             },
             "PreToolUse:1": {
-              "reachable_from": [
+              "reachable_from": [],
+              "unreachable_from": [
                 "root",
                 "nested",
                 "parent",
                 "outside"
               ],
-              "unreachable_from": [],
               "stderr_first_line": {
                 "root": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/hooks/dispatch.sh: Permission denied",
                 "nested": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table/hooks/dispatch.sh: Permission denied",
@@ -95,13 +96,13 @@
               "relative_script_path": false
             }
           },
-          "reachable_from": [
+          "reachable_from": [],
+          "unreachable_from": [
             "root",
             "nested",
             "parent",
             "outside"
           ],
-          "unreachable_from": [],
           "skippedHooks": [
             {
               "hook_id": "SessionStart:0",
@@ -183,6 +184,7 @@
         "inputHash": "sha256:eb1a1c84a6a37098c88851cf308b79bc76bf38b0ad1695cdc63580ea281d8299",
         "environment": {
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-cap-table"
           }
         },
@@ -393,8 +395,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T03:50:33Z",
-      "finishedOn": "2026-09-06T03:50:33Z"
+      "startedOn": "2026-09-06T04:05:58Z",
+      "finishedOn": "2026-09-06T04:05:58Z"
     },
     "configuration": [
       {

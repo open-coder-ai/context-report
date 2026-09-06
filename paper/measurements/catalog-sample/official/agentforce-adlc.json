@@ -35,6 +35,7 @@
         "inputHash": "sha256:48d897068014f4f459140117db43071dba31ca73364ca03adde4343ab2bc4033",
         "environment": {
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc"
           }
         },
@@ -127,6 +128,7 @@
         "inputHash": "sha256:92b10a9e54910e8c5674bbcaf51674b12bb53beb37fb1241847be231242e9cd8",
         "environment": {
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc"
           }
         },
@@ -206,6 +208,7 @@
           "python": "3.11.15",
           "cpu_count": 4,
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc"
           }
         },
@@ -229,14 +232,14 @@
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 26.62987000007888,
-                "95": 28.006418999893867,
-                "99": 28.110946999959197
+                "50": 26.624427000115247,
+                "95": 27.521532999799092,
+                "99": 30.30774599983488
               },
-              "min": 25.671976000012364,
-              "max": 28.110946999959197,
-              "mean": 26.718370500009314,
-              "stddev": 0.6759087947745829
+              "min": 25.573394000275584,
+              "max": 30.30774599983488,
+              "mean": 26.842206000014812,
+              "stddev": 0.9410211375406048
             }
           },
           "skippedHooks": [
@@ -252,13 +255,13 @@
           "unit": "ms",
           "n": 20,
           "percentiles": {
-            "50": 26.62987000007888,
-            "95": 28.006418999893867,
-            "99": 28.110946999959197
+            "50": 26.624427000115247,
+            "95": 27.521532999799092,
+            "99": 30.30774599983488
           },
-          "min": 25.671976000012364,
-          "max": 28.110946999959197,
-          "mean": 26.718370500009314
+          "min": 25.573394000275584,
+          "max": 30.30774599983488,
+          "mean": 26.842206000014812
         }
       },
       {
@@ -301,8 +304,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T03:53:06Z",
-      "finishedOn": "2026-09-06T03:53:07Z"
+      "startedOn": "2026-09-06T04:05:53Z",
+      "finishedOn": "2026-09-06T04:05:54Z"
     },
     "configuration": [
       {

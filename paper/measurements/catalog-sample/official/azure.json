@@ -33,7 +33,7 @@
         "basis": "re-derivable",
         "result": "NotApplicable",
         "inputHash": "sha256:6d9f5dc2867302e89136ca7b50a890255fea933960c75c69a409e81d66e38819",
-        "reasoning": "the plugin declares no hooks"
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
       },
       {
         "attribute": "decision",
@@ -47,35 +47,35 @@
         "basis": "re-derivable",
         "result": "NotApplicable",
         "inputHash": "sha256:d23f2da720306ac885397ffb67911bdc4bc95693f7f257b4fc053a0360eb096b",
-        "reasoning": "the plugin declares no hooks"
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
       },
       {
         "attribute": "fault.interpreterMissing",
         "basis": "re-derivable",
         "result": "NotApplicable",
         "inputHash": "sha256:a70a703690cfc635ec0ee1fc65f2719a39c2d84a2e607cdefacae7caf09bd13b",
-        "reasoning": "the plugin declares no hooks"
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
       },
       {
         "attribute": "fault.timeout",
         "basis": "re-derivable",
         "result": "NotApplicable",
         "inputHash": "sha256:31437ec926270052e810bf7f7d2bac0b8b994cb6f5a71671a1ce6ce3f14dd7ef",
-        "reasoning": "the plugin declares no hooks"
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
       },
       {
         "attribute": "fault.malformedOutput",
         "basis": "re-derivable",
         "result": "NotApplicable",
         "inputHash": "sha256:f0b145893679607ca31c9b078ad8a88c14a8c57f6229c9bc2faf369398e03144",
-        "reasoning": "the plugin declares no hooks"
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
       },
       {
         "attribute": "cost.latency_ms",
         "basis": "re-derivable",
         "result": "NotApplicable",
         "inputHash": "sha256:52cbcc8a4c70194260bdcba4a0b0793fd7e24812167cbd56b92a52d4c15bd4c6",
-        "reasoning": "the plugin declares no hooks"
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
       },
       {
         "attribute": "cost.context_tokens",
@@ -151,8 +151,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T03:50:33Z",
-      "finishedOn": "2026-09-06T03:50:33Z"
+      "startedOn": "2026-09-06T04:05:58Z",
+      "finishedOn": "2026-09-06T04:05:58Z"
     },
     "configuration": [
       {

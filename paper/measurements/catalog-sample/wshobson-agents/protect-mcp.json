@@ -35,6 +35,7 @@
         "inputHash": "sha256:a2b4ace5e838bd870f1995d067f507c396db6ea0ebd9b74a6ca5ce6b1a9b7857",
         "environment": {
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/protect-mcp"
           }
         },
@@ -127,6 +128,7 @@
         "inputHash": "sha256:d5452201a5ea579e1619a4ce31bbf0a42762d63eb2da680c39159b1dca1f8bcf",
         "environment": {
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/protect-mcp"
           }
         },
@@ -206,6 +208,7 @@
           "python": "3.11.15",
           "cpu_count": 4,
           "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
             "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/protect-mcp"
           }
         },
@@ -229,14 +232,14 @@
               "unit": "ms",
               "n": 20,
               "percentiles": {
-                "50": 664.5953659999577,
-                "95": 717.532877999929,
-                "99": 746.4993279997998
+                "50": 676.3938880003479,
+                "95": 708.9274070003739,
+                "99": 724.9816570001713
               },
-              "min": 635.7849250000527,
-              "max": 746.4993279997998,
-              "mean": 675.3368181499923,
-              "stddev": 28.914825537202322
+              "min": 644.0914079998947,
+              "max": 724.9816570001713,
+              "mean": 677.7720348500225,
+              "stddev": 20.51112102085061
             }
           },
           "skippedHooks": [
@@ -252,13 +255,13 @@
           "unit": "ms",
           "n": 20,
           "percentiles": {
-            "50": 664.5953659999577,
-            "95": 717.532877999929,
-            "99": 746.4993279997998
+            "50": 676.3938880003479,
+            "95": 708.9274070003739,
+            "99": 724.9816570001713
           },
-          "min": 635.7849250000527,
-          "max": 746.4993279997998,
-          "mean": 675.3368181499923
+          "min": 644.0914079998947,
+          "max": 724.9816570001713,
+          "mean": 677.7720348500225
         }
       },
       {
@@ -299,8 +302,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T03:50:59Z",
-      "finishedOn": "2026-09-06T03:51:18Z"
+      "startedOn": "2026-09-06T04:06:20Z",
+      "finishedOn": "2026-09-06T04:06:39Z"
     },
     "configuration": [
       {
