@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
+from pathlib import Path
 from typing import Any
 
 _CLI = "claude"
@@ -28,9 +29,12 @@ class CliAsker:
     plain text is accepted as a fallback for CLI versions that do not emit it.
     """
 
-    def __init__(self, model: str | None = None, timeout: int = _TIMEOUT) -> None:
+    def __init__(
+        self, model: str | None = None, timeout: int = _TIMEOUT, cwd: Path | None = None
+    ) -> None:
         self.model = model
         self.timeout = timeout
+        self.cwd = cwd  # the directory the agent works in; None means the caller's
         self.last_usage: dict[str, int] | None = None
         self.last_model: str | None = None
 
@@ -49,6 +53,7 @@ class CliAsker:
                     text=True,
                     timeout=self.timeout,
                     check=False,
+                    cwd=self.cwd,
                 )
                 break
             except subprocess.TimeoutExpired as exc:

@@ -93,6 +93,9 @@ next to each other, so an edit to an instruction file can be read against the ru
 See [`spec/run/v0.1/examples/run.json`](spec/run/v0.1/examples/run.json) and its `tasks.json` for
 a worked manifest: two subjects, two models, three tasks.
 
+A subject may set `workdir`, the checkout the subject model works in for that subject's tasks, so
+"add this dependency" is answered against the real `package.json`; `claude-cli` models only.
+
 v0.1 supports `arms.mode: "isolated"` only; `"leave-one-out"` is rejected before anything runs.
 Two providers have a backend: `anthropic` (the API, needs `ANTHROPIC_API_KEY`) and `claude-cli`
 (the local `claude` CLI with its own login; `id` is an alias such as `opus`, `sonnet`, `fable` or a

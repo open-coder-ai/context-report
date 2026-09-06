@@ -38,13 +38,15 @@ class RunError(ValueError):
     """A manifest is well-formed but asks for something v0.1's engine cannot do."""
 
 
-def default_asker_factory(model: ModelRef, *, effort: str | None = None) -> Asker:
+def default_asker_factory(
+    model: ModelRef, *, effort: str | None = None, cwd: Path | None = None
+) -> Asker:
     """The real backends, built only for a provider actually used: the API, or the `claude` CLI."""
     if model.provider == CLAUDE_CLI:
         from context_report.efficacy.cli_backend import CliAsker  # noqa: PLC0415
 
-        return CliAsker(model=model.id)  # the CLI has no effort knob; the judge runs as-is
-    return ApiAsker(model.id, effort=effort)
+        return CliAsker(model=model.id, cwd=cwd)  # no effort knob; the judge runs as-is
+    return ApiAsker(model.id, effort=effort)  # the API has no filesystem: cwd is rejected upstream
 
 
 def _today() -> str:
@@ -56,7 +58,15 @@ def _resolved_manifest_doc(manifest: Manifest) -> dict[str, Any]:
 
     return {
         "contextReportRun": "v0.1",
-        "subjects": [{"id": s.id, "path": str(s.path), "kind": s.kind} for s in manifest.subjects],
+        "subjects": [
+            {
+                "id": s.id,
+                "path": str(s.path),
+                "kind": s.kind,
+                "workdir": None if s.workdir is None else str(s.workdir),
+            }
+            for s in manifest.subjects
+        ],
         "target": {"name": manifest.target.name, "clientVersion": manifest.target.client_version},
         "models": [{"provider": m.provider, "id": m.id} for m in manifest.models],
         "tasks": [
@@ -93,6 +103,13 @@ def preflight(manifest: Manifest) -> None:
     if manifest.judge is not None and manifest.judge.provider not in PROVIDERS:
         raise RunError(
             f"no backend for judge provider {manifest.judge.provider!r} in v0.1 (have {PROVIDERS})"
+        )
+    with_workdir = [s.id for s in manifest.subjects if s.workdir is not None]
+    api_models = [m.qualified for m in manifest.models if m.provider == ANTHROPIC]
+    if with_workdir and api_models:
+        raise RunError(
+            f"subjects {with_workdir} set a workdir, which the {ANTHROPIC!r} provider cannot "
+            f"honour (no filesystem behind the API); use {CLAUDE_CLI!r} for {api_models}"
         )
 
 
@@ -198,7 +215,7 @@ def _run_model(  # noqa: PLR0913, PLR0917 -- one (subject, model) pair needs all
         return stmt, summary
 
     bundle = Bundle(model_dir / "transcripts")
-    asker = asker_factory(model, effort=None)
+    asker = asker_factory(model, effort=None, cwd=subject.workdir)
     rec = RecordingRunner(
         AskerRunner(asker),
         bundle,
