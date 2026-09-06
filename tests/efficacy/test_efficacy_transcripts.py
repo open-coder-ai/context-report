@@ -49,6 +49,10 @@ def test_recording_runner_writes_one_file_per_arm_and_trial(tmp_path: Path) -> N
         "t1.no-secrets.with.1.json",
     ]
     assert rec.tokens == {"inputTokens": 24, "outputTokens": 40}
+    assert rec.tokens_per_arm == {
+        "with": {"inputTokens": 12, "outputTokens": 20},
+        "without": {"inputTokens": 12, "outputTokens": 20},
+    }
     first = bundle.read_all()[0]
     assert (
         first.subject_id == "s" and first.model == "anthropic/m" and first.usage["inputTokens"] == 3
