@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-import shlex
+import re
 from dataclasses import dataclass
 from importlib.resources import files
 from pathlib import Path
@@ -38,6 +38,19 @@ class Hook:
         return f"{self.event}:{self.index}"
 
 
+def _shell_word(arg: str) -> str:
+    """Quote an arg so spaces survive but `${CLAUDE_PLUGIN_ROOT}` still expands: double quotes.
+
+    `shlex.quote` uses single quotes, which would hand the shell the literal text
+    `${CLAUDE_PLUGIN_ROOT}/hooks/x.sh`; the client substitutes that variable before running, and
+    the shell only does so inside double quotes or bare words.
+    """
+    if re.fullmatch(r"[A-Za-z0-9_./:=@%+,${}-]+", arg):
+        return arg
+    escaped = arg.replace("\\", "\\\\").replace('"', '\\"').replace("`", "\\`")
+    return f'"{escaped}"'
+
+
 def _command_of(hook: dict[str, Any]) -> str | None:
     """`command` plus any `args`, joined as the shell would receive them; None if no command."""
     command = hook.get("command")
@@ -45,7 +58,7 @@ def _command_of(hook: dict[str, Any]) -> str | None:
         return None
     args = hook.get("args")
     if isinstance(args, list) and args:
-        return " ".join([command, *(shlex.quote(str(a)) for a in args)])
+        return " ".join([command, *(_shell_word(str(a)) for a in args)])
     return command
 
 
