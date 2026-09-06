@@ -1,0 +1,18 @@
+# Line endings are pinned to LF so schema copies and chock's compiled artifacts are
+# byte-identical across platforms. Without an explicit rule, core.autocrlf=true (common
+# on Windows) checks text files out as CRLF -- `chock check --only verify` then fails on
+# every pack nobody touched, and a byte-diff against spec/attestation/v0.1/schema.json
+# reports noise instead of a real change.
+*.py text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.txt text eol=lf
+
+# Written by `chock init`; extended above. Chock's pack hashes and compiled artifacts
+# are raw bytes, so they must check out identically on every platform.
+chock.lock text eol=lf
+.chock/** text eol=lf
+.agents/** text eol=lf

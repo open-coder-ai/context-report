@@ -1,0 +1,39 @@
+# CodeRabbit configuration. Inert until the CodeRabbit GitHub App is installed
+# (launch-day step: free Pro tier on public repos). Mirrors the review policy in
+# CONTRIBUTING.md: generated output is not review surface; the honesty-deciding
+# code gets the slow path.
+language: en-US
+
+reviews:
+  profile: chill
+  high_level_summary: true
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
+  path_filters:
+    # Generated trees: reviewed via their sources, not their output.
+    - "!.chock/compiled/**"
+    - "!.chock/registry.json"
+    - "!.chock/coverage.json"
+    - "!chock.lock"
+  path_instructions:
+    - path: "spec/**"
+      instructions: >
+        This is the format's schema and worked examples. A field-name or field-shape
+        change here is a breaking change for every producer and verifier that reads it.
+        Flag anything that renames or narrows a field without a version bump.
+    - path: "src/context_report/verify.py"
+      instructions: >
+        This decides what "re-derivable" actually re-derives. Be suspicious of edits
+        that make a claim easier to satisfy instead of making the recomputation
+        stronger -- that is the one edit this project cannot wave through.
+    - path: ".agents/policies/**"
+      instructions: >
+        This compiles into git hooks and agent guards. Review the full scripts, not
+        just changed hunks. Flag anything that could execute repo content as
+        instructions.
+
+chat:
+  auto_reply: true

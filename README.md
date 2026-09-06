@@ -1,5 +1,11 @@
 # context-report
 
+[![CI](https://github.com/open-coder-ai/context-report/actions/workflows/ci.yml/badge.svg)](https://github.com/open-coder-ai/context-report/actions/workflows/ci.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/open-coder-ai/context-report/badge)](https://scorecard.dev/viewer/?uri=github.com/open-coder-ai/context-report)
+
 An open, signed report format for one question: **does this agent context artifact actually work?**
 
 A plugin, an `AGENTS.md`, a skill, a hook, an MCP server. Every catalog ships them; nothing proves
@@ -8,6 +14,16 @@ they behave as declared, cost what they cost, or fail the way their author think
 `context-report` is an [in-toto](https://github.com/in-toto/attestation) predicate an author produces
 in their own CI and a catalog verifies at submission. It states measured facts, **per target agent**,
 and never says "pass" or "fail" for the artifact as a whole — the consumer sets thresholds.
+
+## Install
+
+```
+pip install -e ".[dev]"
+```
+
+Not yet published to PyPI — install from a checkout of this repository. The optional
+`context-report[efficacy]` extra pulls in the `anthropic` client for the `efficacy` row;
+see [Verify](#verify) below.
 
 ## The one idea that makes self-certification honest
 
@@ -92,6 +108,16 @@ own — with an `efficacy` row carrying the measured lift (or, for an unsupporte
 ungraded rule, an honest explanation of what wasn't measured and why) plus which of the subject's
 rules no task exercised. The transcripts directory is what the statement's `byproducts` entry is
 bound to by digest, so a re-judge or an audit has the exact recorded outputs to work from.
+
+## Contributing
+
+Bug reports, spec feedback, and PRs are welcome — see
+[CONTRIBUTING.md](CONTRIBUTING.md) for the development loop and the DCO sign-off every
+commit needs.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) to report a vulnerability privately.
 
 ## License
 

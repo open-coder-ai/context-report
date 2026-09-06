@@ -8,7 +8,40 @@ version = "0.1.0"
 description = "An open, signed report format for whether an agent context artifact actually works: an in-toto predicate, per target agent, with re-derivable rows."
 readme = "README.md"
 requires-python = ">=3.10"
+# PEP 639 SPDX expression; no License classifier below, deprecated alongside one.
 license = "Apache-2.0"
+# No email: SECURITY.md routes vulnerability reports through GitHub advisories, and a
+# placeholder address would ship to PyPI as the project contact.
+authors = [{ name = "Open Coder AI" }]
+keywords = [
+    "ai",
+    "agents",
+    "attestation",
+    "in-toto",
+    "provenance",
+    "efficacy",
+    "agents-md",
+    "claude-code",
+    "mcp",
+    "skills",
+]
+classifiers = [
+    # v0.1 draft: the schema, one worked example and its tests are here; the reference
+    # producer and verifier are early. A stability claim here that README.md's own
+    # "Status" section contradicts is the kind of thing this project does not ship.
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security",
+    "Topic :: Software Development",
+    "Topic :: Software Development :: Quality Assurance",
+]
 dependencies = ["jsonschema>=4.18,<5"]
 
 [project.optional-dependencies]
@@ -16,6 +49,10 @@ efficacy = ["anthropic>=1.0"]
 dev = ["pytest>=8", "ruff>=0.6"]
 
 [project.urls]
+Homepage = "https://github.com/open-coder-ai/context-report"
+Repository = "https://github.com/open-coder-ai/context-report"
+Issues = "https://github.com/open-coder-ai/context-report/issues"
+Changelog = "https://github.com/open-coder-ai/context-report/blob/main/CHANGELOG.md"
 Specification = "https://open-coder-ai.github.io/context-report/attestation/v0.1/"
 
 [project.scripts]
@@ -33,6 +70,10 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 100
 src = ["src", "tests"]
+# .chock/bin/ is chock's own bundler output (vendored per-agent hook runtimes), not
+# hand-written source here -- same exclusion chock applies to itself, for the same
+# reason (see .github/codeql/codeql-config.yml).
+extend-exclude = [".chock/bin/"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C90", "S", "BLE", "FBT", "T20", "SIM", "RET", "ARG", "ERA", "PIE", "PL", "TRY", "RUF"]
@@ -48,3 +89,6 @@ ignore = ["TRY003", "S101"]
 "src/context_report/run/judge_cli.py" = ["T20"]
 # Checker.obeys takes the rule text by contract; checkers that match on code alone ignore it.
 "src/context_report/efficacy/fastjudge.py" = ["ARG002"]
+# Chock policy-authoring skill template: a runnable stub scaffolded into new policies,
+# printing is its whole point. Matches chock's own per-file-ignore for the same file.
+".agents/skills/policy-init/assets/templates/scripts-stub.py" = ["T201"]
