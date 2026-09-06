@@ -139,7 +139,7 @@ per-attribute rule.
   the runner; see "Re-derivable is not identical" below. MUST be `true`, with `environment`
   recorded, on a measured `cost.latency_ms` row; the schema enforces this.
 - **`conditions`** — a free-form object recording what was held fixed for this measurement (e.g.
-  `efficacy`'s `{ablation, model, measuredOn, nPerArm}`, or `reachability`'s
+  `efficacy`'s `{ablation, model, judgeModel, judge, measuredOn, nPerArm}`, or `reachability`'s
   `{cwdTested: [...]}`). Producer-defined; consumers MUST ignore keys they do not recognize.
 - **`values`** — a free-form object for a row's non-distributional result (e.g. `fault.*`'s
   `{failMode: "fail-open" | "fail-closed"}`).
@@ -168,6 +168,19 @@ compares the full `measurement` exactly unless the row is `environmentSensitive`
 compares `unit` and that both sides have `n >= 1`, and leaves the numbers to the consumer's own
 threshold. A third `basis` value was considered and rejected: the procedure is re-derivable; only
 the numbers are not, and that is a property of the row, not of the trust model.
+
+## Where the arms live
+
+An `efficacy` row is a summary; the model outputs it summarizes are a run's actual arms, and a
+statement never inlines them. A producer measuring efficacy records every arm's output once, as it
+is produced, and lists that recording under `byproducts` as a `resourceDescriptor` with
+`mediaType: "application/vnd.context-report.transcripts+json"`, bound by digest — never by name or
+path alone, for the same reason a `subject[]` entry is never matched by name alone (see Envelope).
+Judging — deciding whether a given arm's output met a rule's criterion — is a separate step from
+running the arm, and MAY be redone later against a different judge model without re-running the
+subject model at all: the transcripts are what make that possible. See
+[`../../run/v0.1/`](../../run/v0.1/) for the manifest that produces a run's subjects, arms, and
+transcripts in the first place; this predicate only ever consumes the result.
 
 ## Applicability by `subjectKind`
 

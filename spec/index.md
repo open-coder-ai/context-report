@@ -5,6 +5,8 @@ work?** `context-report` is an [in-toto](https://github.com/in-toto/attestation)
 author produces in their own CI and a catalog verifies at submission.
 
 - Spec: [attestation/v0.1/](attestation/v0.1/)
+- Run manifest: [run/v0.1/](run/v0.1/) — the input to `context-report run`, which produces
+  statements under the predicate below
 
 ## Predicate type
 
