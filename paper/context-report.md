@@ -66,7 +66,7 @@ borrow from [8]. Table 2 places both alongside the format's own uncovered rows.
 
 **Table 2. The closest prior art: what it covers, what it does not.**
 
-| System | Covers | Does not cover | |
+| System | Covers | Does not cover | Ref |
 | :--- | :--- | :--- | :--- |
 | MCP official registry | namespace listing | any behavior, cost, or fault evidence | [1] |
 | NVIDIA SkillEvaluator / Verified Skills | schema+security scan, signed card, with/without efficacy | hooks, reachability, decision, fault, interference; signs own skills, not a third party's result | [10] |
@@ -193,7 +193,7 @@ under, and read as author-reported, never as proof.
 | `cost.latency_ms` | Times `n` invocations with `perf_counter`, records the full distribution [20]. | re-derivable, env-sensitive | A payload that never exits 0 reports `Error`. |
 | `cost.context_tokens` | Sums an `approx-regex-v1` count over session-start files — prior work's order of cost, per session [29]. | re-derivable | Not a provider's real tokenizer. |
 | `interference` | Checks shadowed rules against declared co-installed artifacts, extending chock's check [30]. | re-derivable | `NotAvailable` with nothing co-installed. |
-| `efficacy` | Paired ablation vs. control, reported as an `estimate` with a confidence interval [19]. | claimed, always | Assigned to a separate product, `adherence` [30]. |
+| `efficacy` | Paired ablation vs. control via the run manifest, reported as an `estimate` with a confidence interval [19]. | claimed, always | Prompt-level ablation only; never installs the artifact. |
 
 ![Figure 2](figures/fig-two-models.svg)
 **Figure 2.** One subject model runs both arms; a judge model grades them, bypassed by a
@@ -232,8 +232,8 @@ chock builds each of its 22 policies into a bundle for four target agents (88 bu
 policies carry a pre-tool hook (16 bundles). Each hook bundle was measured with the plugin-root
 variable set (`resolved`) and unset (`unresolved`).
 
-![Figure 6](figures/fig-chock-reachability.svg)
-**Figure 6.** chock's hooks: reachable everywhere with the variable set; three of four targets
+![Figure 3](figures/fig-chock-reachability.svg)
+**Figure 3.** chock's hooks: reachable everywhere with the variable set; three of four targets
 unreachable without it, Copilot exempted by design.
 
 | Target agent | Bundles | With hook | Reachable, resolved | Reachable, unresolved | Exit 0 and no deny on malformed stdin | Latency p50 / p95 ms, median | Context tokens, median |
@@ -259,15 +259,15 @@ the official marketplace up to ten, then hook-bearing plugins from two community
 fifteen, then five with no hooks. The two community marketplaces held only three hook-bearing
 plugins between them, so the sample has thirteen, not fifteen — a finding about the ecosystem.
 
-![Figure 3](figures/fig-catalog-status.svg)
-**Figure 3.** Eighteen plugins by four attributes; `PASSED` means measured, not good.
+![Figure 4](figures/fig-catalog-status.svg)
+**Figure 4.** Eighteen plugins by four attributes; `PASSED` means measured, not good.
 
-![Figure 4](figures/fig-latency.svg)
-**Figure 4.** Per-hook latency, p50 to p95: a local script costs tens of ms, `npx` an order of
+![Figure 5](figures/fig-latency.svg)
+**Figure 5.** Per-hook latency, p50 to p95: a local script costs tens of ms, `npx` an order of
 magnitude more.
 
-![Figure 5](figures/fig-context-tokens.svg)
-**Figure 5.** Context weight per plugin, log scale: a hundredfold spread, one plugin injecting no
+![Figure 6](figures/fig-context-tokens.svg)
+**Figure 6.** Context weight per plugin, log scale: a hundredfold spread, one plugin injecting no
 text at all.
 
 | Plugin | Hooks declared | Reachability | Malformed input allows | Latency p50 / p95 ms | Context tokens |

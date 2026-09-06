@@ -2,9 +2,9 @@
 
 18 public plugins, measured with the reference producer, `n = 20`, on 2026-09-06.
 
-![Figure 3](../../figures/fig-catalog-status.svg)
+![Figure 4](../../figures/fig-catalog-status.svg)
 
-![Figure 4](../../figures/fig-latency.svg)
+![Figure 5](../../figures/fig-latency.svg)
 
 ## Selection
 

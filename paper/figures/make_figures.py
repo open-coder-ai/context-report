@@ -326,7 +326,7 @@ def fig_two_models(path: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Figure 3: fig-catalog-status.svg
+# Figure 4: fig-catalog-status.svg
 # ---------------------------------------------------------------------------
 
 STATUS_ATTRS = [
@@ -390,7 +390,7 @@ def fig_catalog_status(path: Path, plugins: list[dict]) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Figure 4: fig-latency.svg
+# Figure 5: fig-latency.svg
 # ---------------------------------------------------------------------------
 
 
@@ -449,7 +449,7 @@ def fig_latency(path: Path, plugins: list[dict], chock: list[dict]) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Figure 5: fig-context-tokens.svg
+# Figure 6: fig-context-tokens.svg
 # ---------------------------------------------------------------------------
 
 
@@ -525,7 +525,7 @@ def fig_context_tokens(path: Path, plugins: list[dict]) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Figure 6: fig-chock-reachability.svg
+# Figure 3: fig-chock-reachability.svg
 # ---------------------------------------------------------------------------
 
 
