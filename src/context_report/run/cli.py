@@ -18,6 +18,12 @@ def add_run_parser(subparsers: Any) -> None:
         "--dry-run", action="store_true", help="print the call budget only; touch no model"
     )
     p.add_argument("--n", type=int, default=None, help="override arms.nPerArm (for smoke runs)")
+    p.add_argument(
+        "--resume",
+        action="store_true",
+        help="keep every statement and matching transcript already under `out`; "
+        "call the model only for what is missing",
+    )
 
 
 def run_run(args: argparse.Namespace) -> int:
@@ -31,7 +37,7 @@ def run_run(args: argparse.Namespace) -> int:
         if args.dry_run:
             print(dry_run_report(manifest))  # noqa: T201
             return 0
-        run(manifest)
+        run(manifest, resume=args.resume)
     except (ManifestError, RunError) as exc:
         print(f"error: {exc}", file=sys.stderr)  # noqa: T201
         return 2
