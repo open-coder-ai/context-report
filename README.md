@@ -6,119 +6,118 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/open-coder-ai/context-report/badge)](https://scorecard.dev/viewer/?uri=github.com/open-coder-ai/context-report)
 
-An open, signed report format for one question: **does this agent context artifact actually work?**
+`context-report` is an open, signed report format for one question: **does this agent context
+artifact actually work?**
 
-A plugin, an `AGENTS.md`, a skill, a hook, an MCP server. Every catalog ships them; nothing proves
-they behave as declared, cost what they cost, or fail the way their author thinks they do.
+## The problem
 
-`context-report` is an [in-toto](https://github.com/in-toto/attestation) predicate an author produces
-in their own CI and a catalog verifies at submission. It states measured facts, **per target agent**,
-and never says "pass" or "fail" for the artifact as a whole — the consumer sets thresholds.
+A plugin, an `AGENTS.md`, a skill, a hook, an MCP server — every catalog ships them, and none come
+with evidence attached. Nobody records whether the artifact reaches the agent at all, how it fails
+when it can't run, or what it costs in latency and context tokens, and whether the artifact's own
+instructions change what the agent does is rarely checked at all. `context-report` is a predicate an
+author's CI produces and a catalog verifies at submission — one row per fact, a `basis` declaring
+whether the row is recomputable or only claimed, and never a "pass"/"fail" for the artifact as a
+whole (the consumer sets its own thresholds).
 
-## Install
+## 30-second quickstart
 
-```
-pip install -e ".[dev]"
-```
-
-Not yet published to PyPI — install from a checkout of this repository. The optional
-`context-report[efficacy]` extra pulls in the `anthropic` client for the `efficacy` row;
-see [Verify](#verify) below.
-
-## The one idea that makes self-certification honest
-
-Every row carries a `basis`:
-
-| `basis` | Meaning | How a verifier treats it |
-| :--- | :--- | :--- |
-| `re-derivable` | deterministic; recomputable from the subject plus the recorded configuration | a **cache** it may recompute; a mismatch is a rejected submission |
-| `claimed` | stochastic or author-reported (e.g. efficacy by ablation) | a **labeled claim**, bound to model and date, never proof |
-
-A `re-derivable` row must carry an `inputHash` over its exact inputs. That hash is what makes the
-word checkable rather than asserted.
-
-## Status
-
-**v0.1 draft.** The schema, one worked example and its tests are here. The reference producer and
-verifier are not yet. Per in-toto convention, `0.X` versions are major: fields may change until 1.0.
-
-- Schema: [`spec/attestation/v0.1/schema.json`](spec/attestation/v0.1/schema.json)
-- Example: [`spec/attestation/v0.1/examples/plugin-copilot.json`](spec/attestation/v0.1/examples/plugin-copilot.json)
-- Predicate type: `https://open-coder-ai.github.io/context-report/attestation/v0.1`
-- Hosted: https://open-coder-ai.github.io/context-report/attestation/v0.1/ (schema.json alongside)
-
-## Rows in v0.1
-
-`conformance` · `reachability` · `decision` · `fault.scriptMissing` · `fault.interpreterMissing` ·
-`fault.timeout` · `fault.malformedOutput` · `cost.latency_ms` · `cost.context_tokens` ·
-`interference` · `efficacy`. Extensions use an `x-` prefix. A row that could not be measured says
-`NotAvailable`, `Error` or `NotApplicable` **and why** — an unmeasured row is never a pass.
-
-## Borrowed, deliberately
-
-Field names come from formats that already settled them: in-toto Statement/v1 and Test Result,
-SCAI's attribute assertions, SLSA Provenance's `producer`/`metadata`/`byproducts`, CycloneDX's
-`confidenceInterval` and `reasoning`, Criterion's `estimate`, JMH's percentile map, Glama TDQS's
-`inputHash`, OpenSSF Scorecard's `NotApplicable` outcomes. Only `basis` is new.
-
-## Verify
-
-```
-pip install -e ".[dev]"
-python -m pytest -q
-python -m ruff check .
+```bash
+pip install context-report            # once published; today: pip install -e ".[dev]" from a checkout
+context-report produce --subject ./my-plugin --kind plugin --target claude_code --n 20 \
+  --out report.json                   # one statement: reachability, cost and fault rows for one target
+context-report run run.json           # a whole manifest: subjects x models x tasks in one shot
+context-report compare out --history  # every run of that manifest side by side
 ```
 
-Efficacy — paired-ablation measurement of whether an artifact changes agent behaviour — ships as
-the optional extra `context-report[efficacy]` (`pip install -e ".[efficacy]"`) and is the engine
-behind the `efficacy` row: `context-report efficacy --help`.
+The optional `context-report[efficacy]` extra pulls in the `anthropic` client for the `efficacy`
+row (`context-report efficacy --help`). `context-report run` reads a JSON manifest matching
+[`spec/run/v0.1/schema.json`](spec/run/v0.1/schema.json) — see
+[`spec/run/v0.1/examples/run.json`](spec/run/v0.1/examples/run.json) for a worked one (two
+subjects, two models, three tasks) — and supports `--dry-run` (rules and call budget, no model
+touched), `--n` (override `arms.nPerArm` for a smoke run), and `--resume` (continue the latest run,
+reusing every existing statement and matching transcript, calling only for the rest). Two providers
+have a backend: `anthropic` (the API) and `claude-cli` (the local `claude` CLI, so one manifest can
+compare `opus`/`sonnet`/`fable`); any other subject model gets an honest `NotAvailable` efficacy
+row instead of a guess.
 
-## Running a manifest
+## What a report looks like
 
-`context-report run MANIFEST` measures a whole batch of artifacts, models and tasks in one shot,
-from a JSON manifest matching [`spec/run/v0.1/schema.json`](spec/run/v0.1/schema.json):
+Trimmed from a committed statement over a real public plugin
+(`paper/measurements/catalog-sample/official/ai-plugins.json`):
 
-```
-context-report run run.json --dry-run   # rules found/exercised and the call budget, no model touched
-context-report run run.json             # the real thing
-context-report run run.json --n 2       # override arms.nPerArm for a smoke run
-context-report run run.json --resume    # continue the latest run: reuse every statement and
-                                        # matching transcript, call only for the rest
-context-report compare out --history    # every run of this manifest side by side
-```
-
-Every run lands in its own `out/runs/<run id>/`; `out/SUMMARY.md` shows all runs of a manifest
-next to each other, so an edit to an instruction file can be read against the run before it.
-
-See [`spec/run/v0.1/examples/run.json`](spec/run/v0.1/examples/run.json) and its `tasks.json` for
-a worked manifest: two subjects, two models, three tasks.
-
-A subject may set `workdir`, the checkout the subject model works in for that subject's tasks, so
-"add this dependency" is answered against the real `package.json`; `claude-cli` models only.
-
-v0.1 supports `arms.mode: "isolated"` only; `"leave-one-out"` is rejected before anything runs.
-Two providers have a backend: `anthropic` (the API, needs `ANTHROPIC_API_KEY`) and `claude-cli`
-(the local `claude` CLI with its own login; `id` is an alias such as `opus`, `sonnet`, `fable` or a
-full model id, so one manifest can compare models). Any other subject model gets a `NotAvailable`
-efficacy row explaining there is no backend for it in v0.1, with no arms run and no transcripts
-recorded. A `judge` model, if set, must use one of the same two providers; without one, rules with a prose
-compliance criterion are reported ungraded rather than guessed at.
-
-The command writes a fixed layout under the manifest's `out` directory:
-
-```
-out/manifest.json                                   # the manifest as resolved and run
-out/<subject id>/<model slug>.json                  # one statement per subject and model
-out/<subject id>/<model slug>/transcripts/           # that pair's recorded model outputs
-out/<subject id>/statement.json                      # only when `models` is empty
-out/SUMMARY.md                                       # one row per (subject, model)
+```json
+{
+  "subjectKind": "plugin",
+  "target": {"name": "claude_code"},
+  "attributes": [
+    {
+      "attribute": "cost.context_tokens",
+      "basis": "re-derivable",
+      "result": "PASSED",
+      "inputHash": "sha256:4e85a09a2014600e...",
+      "conditions": {"tokenizer": "approx-regex-v1", "files": 2},
+      "measurement": {"unit": "tokens", "n": 1, "mean": 2289}
+    }
+  ]
+}
 ```
 
-Every `<subject id>/<model slug>.json` is a full context-report statement — schema-valid on its
-own — with an `efficacy` row carrying the measured lift (or, for an unsupported provider or an
-ungraded rule, an honest explanation of what wasn't measured and why) plus which of the subject's
-rules no task exercised. The transcripts directory is what the statement's `byproducts` entry is
-bound to by digest, so a re-judge or an audit has the exact recorded outputs to work from.
+v0.1 rows: `conformance` · `reachability` · `decision` · `fault.scriptMissing` ·
+`fault.interpreterMissing` · `fault.timeout` · `fault.malformedOutput` · `cost.latency_ms` ·
+`cost.context_tokens` · `interference` · `efficacy` (extensions use an `x-` prefix). A row that
+could not be measured says `NotAvailable`, `Error` or `NotApplicable` **and why** — never a silent
+pass. **v0.1 draft**: schema at
+[`spec/attestation/v0.1/schema.json`](spec/attestation/v0.1/schema.json), worked example at
+[`spec/attestation/v0.1/examples/plugin-copilot.json`](spec/attestation/v0.1/examples/plugin-copilot.json),
+predicate type `https://open-coder-ai.github.io/context-report/attestation/v0.1`, hosted at
+https://open-coder-ai.github.io/context-report/attestation/v0.1/.
+
+## Three measurements
+
+The [measurement paper](paper/context-report.md) ran the reference producer over chock's 88
+bundles, a sample of 18 public Claude Code plugins, and seven third-party instruction files and
+skills. Three findings from that run:
+
+**Reachable is not the same as executable.** Of 18 public plugins, three (`carta-cap-table`,
+`carta-crm`, `carta-investors`) share a dispatch script with no execute bit — `reachability`
+`FAILED, 0 of 4`, exit 126. Every hook that runs, across both samples, allows on malformed input.
+See [§5.2](paper/context-report.md#52-top-n-catalog-plugins).
+
+![Eighteen plugins by four measured attributes](paper/figures/fig-catalog-status.svg)
+
+**Cost spans two orders of magnitude.** Hooks that shell out to `npx` cost 916.8–941.5 ms p50; a
+local script costs 7.3–53.9 ms. Context weight varies about a hundredfold across the sample,
+roughly 1,500 to 147,000 tokens. See [§5.2](paper/context-report.md#52-top-n-catalog-plugins).
+
+![Per-hook latency, p50 to p95, log scale](paper/figures/fig-latency.svg)
+
+**No efficacy row reaches `PASSED`.** Three instruction files, ablated on `opus`, `sonnet` and
+`fable` (168 recorded transcripts, one judge model held fixed): with four observations per arm the
+95% interval is about ±0.49 wide, and the row reports the interval instead of rounding it to a
+verdict. A naming-convention rule was the one consistent positive (+0.25 to +0.50 on every model);
+a prompt-injection rule moved nothing on any model. See
+[§5.3](paper/context-report.md#53-instruction-files-and-skills-three-models).
+
+![Pooled efficacy lift per subject and model](paper/figures/fig-efficacy-lift.svg)
+
+## Who it's for
+
+- **An artifact author** wants a report their own CI can produce before anyone else asks for one.
+- **A catalog maintainer** wants a submission format their existing verifier can check without
+  adopting anyone else's test suite, and a `re-derivable`/`claimed` split to build a policy on.
+- **A researcher or reviewer** wants a re-derivable record of what was actually measured, not a
+  vendor's prose description of it.
+
+## Two models, not one
+
+Efficacy needs two roles, never one: the **subject model** runs a task with the rule prepended and
+without it; the **judge model** never performs the task, only reads the transcript and decides
+whether that arm met the rule's criterion, held fixed across every subject model so a comparison
+across models is fair. A machine-checkable criterion is graded by code instead, never guessed at.
+
+## Use as a library
+
+See [Use as a library](#use-as-a-library).
 
 ## Use as a library
 
@@ -138,13 +137,11 @@ See [`docs/library.md`](docs/library.md) for a full catalog-verification and CI-
 
 ## Contributing
 
-Bug reports, spec feedback, and PRs are welcome — see
-[CONTRIBUTING.md](CONTRIBUTING.md) for the development loop and the DCO sign-off every
-commit needs.
-
-## Security
-
-See [SECURITY.md](SECURITY.md) to report a vulnerability privately.
+Bug reports, spec feedback, and PRs are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the
+development loop and the DCO sign-off every commit needs. Discussion, spec proposals, and reports
+of your own runs happen in
+[GitHub Discussions](https://github.com/open-coder-ai/context-report/discussions). See
+[SECURITY.md](SECURITY.md) to report a vulnerability privately.
 
 ## License
 

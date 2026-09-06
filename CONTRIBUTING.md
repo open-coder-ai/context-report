@@ -155,6 +155,48 @@ Browse issues by label to find your entry point:
 
 Comment on an issue to claim it — we'll assign it to you so no one double-works.
 
+## Good first contributions
+
+Concrete, scoped starting points found in the code and the measurement paper — each names the
+file it lives in, so you can go straight there instead of hunting:
+
+1. **Add a fifth target agent's payload shape.** `src/context_report/data/payloads-v0.1.json`
+   covers four target agents (`claude_code`, `codex_cli`, `copilot`, `cursor`). Adding another
+   (Windsurf, Zed, Gemini CLI, Amazon Q Developer CLI, ...) means sourcing its PreToolUse-equivalent
+   payload shape — event key, tool key, deny path — from the vendor's own docs, and grading the
+   entry's `basis` honestly (`vendor-docs` versus `live-run`, per the file's own header comment).
+2. **Source `codex_cli`'s documented fault behaviour.** `DOCUMENTED_FAULT_BEHAVIOUR` in
+   `src/context_report/produce/fault.py` has entries for `claude_code`, `copilot`, and `cursor`,
+   but not `codex_cli` — the paper's §5.4 table records its fault posture as "unconfirmed in
+   sources." Finding and citing the vendor documentation closes that row.
+3. **A producer that drives a live client for the three fault rows.** `client_dependent_rows()` in
+   `src/context_report/produce/fault.py` reports `fault.scriptMissing`, `fault.interpreterMissing`,
+   and `fault.timeout` as `NotAvailable` because v0.1 never drives a real agent client — the one
+   measurement the paper's conclusion (§8) names as coming next.
+4. **Implement `decision` replay.** `src/context_report/produce/run.py` (around line 291) always
+   emits the `decision` row as `NotAvailable`, "no declared positive/negative cases were supplied;
+   v0.1 has no decision replay." Table 3 of the paper describes the intended shape: replay declared
+   cases against the guard, per OpenAI's 5-positive/3-negative contract shape.
+5. **Measure `interference` against declared co-installed artifacts.** `src/context_report/produce/run.py`
+   (around line 300) always reports `interference` as `NotAvailable`, "v0.1 producer does not
+   measure interference." Extending chock's own shadowed-rule check, as the paper's method table
+   (§4) describes, is the starting point.
+6. **A tokenizer that isn't an approximation.** `context_tokens_row()` in
+   `src/context_report/produce/cost.py` counts tokens with `approx-regex-v1` — a word/punctuation
+   regex, not a provider's real tokenizer. The paper's own threats-to-validity section (§6) names
+   the resulting error as unmeasured; wiring in a real tokenizer (behind a new `method` value, so
+   `approx-regex-v1` statements stay reproducible) would close that gap.
+7. **Implement `arms.mode: "leave-one-out"`.** `src/context_report/data/run-v0.1.schema.json`
+   accepts the value, but `src/context_report/run/runner.py` (line 102) raises
+   `RunError("arms.mode 'leave-one-out' is not implemented in v0.1; use 'isolated'")`.
+   `spec/run/v0.1/README.md` describes the intended semantics: all subjects installed together,
+   each ablated in turn while the others stay in place.
+8. **Another instruction-file or skill sample.** `paper/measurements/instruction-sample/` holds
+   seven real-world artifacts (its own `README.md` explains the selection rule). Measuring an
+   eighth the same way — a fresh clone at a pinned commit, run through `context-report produce`
+   and, for efficacy, the run manifest under `efficacy/` — and adding it to that directory's
+   `SUMMARY.md` extends the sample without touching the format itself.
+
 ## Code of Conduct
 
 Be kind, be curious, assume good faith. The full text is in
