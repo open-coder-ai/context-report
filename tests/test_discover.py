@@ -203,4 +203,6 @@ def test_args_are_part_of_the_command(tmp_path: Path) -> None:
         )
     )
     [hook] = discover_hooks(plugin, "claude_code")
-    assert hook.command == "sh '${CLAUDE_PLUGIN_ROOT}/hooks/run.sh' 'a b'"
+    assert hook.command == 'sh ${CLAUDE_PLUGIN_ROOT}/hooks/run.sh "a b"', (
+        "single quotes would stop the shell expanding the plugin-root variable"
+    )

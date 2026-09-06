@@ -127,3 +127,12 @@ def test_a_script_without_the_exec_bit_is_unreachable(tmp_path: Path) -> None:
     row = reachability_row(str(script), artifact, payload={"tool_name": "Bash"})
     assert row.result == rows.FAILED
     assert row.values["unreachable_from"] == ["root", "nested", "parent", "outside"]
+
+
+def test_dash_wording_for_a_missing_script_counts_as_unreachable(tmp_path: Path) -> None:
+    """planning-with-files runs `sh <script>`; dash says "cannot open", not bash's wording."""
+    artifact = tmp_path / "plugin"
+    artifact.mkdir()
+    row = reachability_row(f"sh {artifact}/hooks/missing.sh", artifact, payload={"tool_name": "x"})
+    assert row.result == rows.FAILED
+    assert row.values["unreachable_from"] == ["root", "nested", "parent", "outside"]

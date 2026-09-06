@@ -19,7 +19,12 @@ CWD_LABELS = ("root", "nested", "parent", "outside")
 #: exit 127 is "command not found"; exit 2 with one of these stderr fragments is the
 #: interpreter's own "can't find the script" message (CPython, Node, and POSIX sh all use one
 #: of these phrasings). Any other exit means the process started and ran its own logic.
-_NOT_FOUND_STDERR_FRAGMENTS = ("can't open file", "No such file or directory", "not found")
+_NOT_FOUND_STDERR_FRAGMENTS = (
+    "can't open file",  # python3
+    "No such file",  # bash: "No such file or directory"; dash: "No such file"
+    "not found",  # bash: "command not found"
+    "cannot open",  # dash: "sh: 1: cannot open <path>: No such file"
+)
 
 _SCRIPT_EXTENSIONS = (".py", ".sh", ".js", ".ts")
 #: A token is anchored (not a bare relative path) if it starts with an absolute slash, a shell
