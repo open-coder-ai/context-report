@@ -32,8 +32,14 @@ class ApiAsker:
         if self.effort is not None:
             params["output_config"] = {"effort": self.effort}
         response = self.client.messages.create(**params)
+        u = response.usage
+        created = int(getattr(u, "cache_creation_input_tokens", 0) or 0)
+        read = int(getattr(u, "cache_read_input_tokens", 0) or 0)
         self.last_usage = {
-            "inputTokens": int(response.usage.input_tokens),
-            "outputTokens": int(response.usage.output_tokens),
+            "inputTokens": int(u.input_tokens) + created + read,
+            "outputTokens": int(u.output_tokens),
+            "uncachedInputTokens": int(u.input_tokens),
+            "cacheCreationInputTokens": created,
+            "cacheReadInputTokens": read,
         }
         return "".join(block.text for block in response.content if block.type == "text").strip()
