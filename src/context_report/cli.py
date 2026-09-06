@@ -12,6 +12,7 @@ from typing import Any
 from context_report.efficacy.cli import add_efficacy_parser, run_efficacy
 from context_report.produce.run import add_produce_parser, run_produce
 from context_report.run.cli import add_run_parser, run_run
+from context_report.run.ingest_cli import add_ingest_eval_parser, run_ingest_eval
 from context_report.run.judge_cli import (
     add_compare_parser,
     add_judge_parser,
@@ -27,6 +28,7 @@ def _build_parser() -> argparse.ArgumentParser:
     add_produce_parser(subparsers)
     add_efficacy_parser(subparsers)
     add_run_parser(subparsers)
+    add_ingest_eval_parser(subparsers)
     add_judge_parser(subparsers)
     add_compare_parser(subparsers)
 
@@ -81,6 +83,7 @@ def main(argv: list[str] | None = None) -> int:
         "produce": run_produce,
         "efficacy": run_efficacy,
         "run": run_run,
+        "ingest-eval": run_ingest_eval,
         "judge": run_judge,
         "compare": run_compare,
     }

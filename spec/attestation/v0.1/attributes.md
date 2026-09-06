@@ -409,12 +409,30 @@ recorded transcripts as a `resourceDescriptor` with `mediaType:
 can record many transcripts. A verifier or a later re-grading step reads the same transcripts
 rather than re-running the subject model.
 
+**Ingested vendor results.** A plugin author who has already run Anthropic's
+`claude plugin eval --ablation with-without` need not re-run anything: context-report ingests that
+tool's own `aggregate-result.json` and turns it into this same row shape. `conditions.ablation` is
+then `"claude-plugin-eval@<schemaVersion>"` — `<schemaVersion>` is the vendor result's own
+`schemaVersion` field — meaning the arms were run by the vendor's tool in its own sandbox with the
+plugin actually installed, a real client install unlike `prompt-prefix-v1` above; context-report
+only parsed the result and never re-executed the subject model. `conditions.judge` is
+`"vendor-grader"` for such a row: grading was done by the vendor tool's own graders (deterministic
+checks and its `llm` grader), not by a judge context-report configured, and `conditions.judgeModel`
+is `null` because the vendor result never names the model behind that `llm` grader. `values.vendor`
+(present only on an ingested row) is `{tool, schemaVersion, suite, cases, skippedGraderTypes}`:
+`tool` names the vendor tool; `schemaVersion` and `suite` are copied from the result; `cases` is the
+case count; `skippedGraderTypes` lists any grader `type` string outside the reference's known set
+(`regex`, `tool_used`, `tool_order`, `file_exists`, `llm`, `baseline`) — its `passed` field was still
+used, this is informational only.
+
 **Shape**: `conditions` — `{ablation, model, judgeModel, judge, measuredOn, nPerArm}`: `ablation`
-is the ablation design name (`"prompt-prefix-v1"` in v0.1, see above); `model` is the exact subject
-model string under test; `judgeModel` is the judge's model string, or `null` when no judge model
-was configured; `judge` is `"deterministic"` or `"model"` (see above); `measuredOn` is the
-measurement date; `nPerArm` is the per-arm sample size. `values` — `{perRule, ungraded,
-tokensPerArm, unexercised}`: `perRule` is an array with one entry per graded rule, each `{ruleId,
+is the ablation design name (`"prompt-prefix-v1"` in v0.1, or `"claude-plugin-eval@<schemaVersion>"`
+for an ingested vendor result, see above); `model` is the exact subject model string under test;
+`judgeModel` is the judge's model string, or `null` when no judge model was configured (always
+`null` for an ingested vendor result); `judge` is `"deterministic"`, `"model"`, or `"vendor-grader"`
+(see above); `measuredOn` is the measurement date; `nPerArm` is the per-arm sample size. `values` —
+`{perRule, ungraded, tokensPerArm, unexercised, vendor}`: `perRule` is an array with one entry per
+graded rule, each `{ruleId,
 lift, liftCI,
 adherenceWith, adherenceWithout, observationsPerArm, verdict, confirmed}` (`verdict` is one of
 `"keep"`, `"dead-weight"`, `"ineffective"`, `"weak"`; `confirmed` says whether enough observations
@@ -423,7 +441,9 @@ exist to act on that verdict — a verdict without `confirmed` is a hint, not a 
 is the rule ids the subject carries that no task exercised — a fact about the task set, reported so
 a reader knows which rules the estimate says nothing about; `tokensPerArm` (optional) is
 `{with: {inputTokens, outputTokens}, without: {inputTokens, outputTokens}}`, present only when the
-run recorded token usage — never a price, only counts a catalog can price however it likes. `estimate` — `pointEstimate`,
+run recorded token usage — never a price, only counts a catalog can price however it likes;
+`vendor` (optional, see "Ingested vendor results" above) is present only on a row built from an
+ingested vendor result. `estimate` — `pointEstimate`,
 `confidenceInterval` (`confidenceLevel`, `lowerBound`, `upperBound`), and `standardError` after
 Criterion.rs/CycloneDX, computed over the pooled lift across every graded rule. No `measurement`.
 
