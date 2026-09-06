@@ -13,6 +13,7 @@ def test_layout_known_targets() -> None:
         "hooks_file": "hooks/hooks.json",
         "root_var": "CLAUDE_PLUGIN_ROOT",
         "basis": "chock-bundle-observed",
+        "manifest": ".claude-plugin/plugin.json",
     }
     assert layout("cursor")["root_var"] == "CURSOR_PLUGIN_ROOT"
     assert layout("copilot")["hooks_file"] == "com.github.copilot/hooks/hooks.json"
@@ -132,3 +133,76 @@ def test_plugin_root_env_known_target(tmp_path: Path) -> None:
 
 def test_plugin_root_env_unknown_target_is_empty(tmp_path: Path) -> None:
     assert plugin_root_env("some_future_agent", tmp_path) == {}
+
+
+def _plugin(tmp_path: Path) -> Path:
+    plugin = tmp_path / "p"
+    (plugin / ".claude-plugin").mkdir(parents=True)
+    return plugin
+
+
+def test_manifest_hooks_field_names_a_hooks_file_at_another_path(tmp_path: Path) -> None:
+    """aws-core keeps hooks.json under com.anthropic.claude-code/; plugin.json points at it."""
+    plugin = _plugin(tmp_path)
+    (plugin / ".claude-plugin" / "plugin.json").write_text(
+        json.dumps({"name": "p", "hooks": "./com.anthropic.claude-code/hooks/hooks.json"})
+    )
+    other = plugin / "com.anthropic.claude-code" / "hooks"
+    other.mkdir(parents=True)
+    other.joinpath("hooks.json").write_text(
+        json.dumps({"hooks": {"PreToolUse": [{"hooks": [{"type": "command", "command": "a"}]}]}})
+    )
+    assert [h.command for h in discover_hooks(plugin, "claude_code")] == ["a"]
+
+
+def test_manifest_hooks_field_may_be_a_list_or_inline(tmp_path: Path) -> None:
+    plugin = _plugin(tmp_path)
+    (plugin / "hooks").mkdir()
+    (plugin / "hooks" / "hooks.json").write_text(
+        json.dumps({"hooks": {"PreToolUse": [{"command": "default"}]}})
+    )
+    (plugin / "hooks" / "claude-hooks.json").write_text(
+        json.dumps({"hooks": {"PreToolUse": [{"command": "listed"}]}})
+    )
+    (plugin / ".claude-plugin" / "plugin.json").write_text(
+        json.dumps({"hooks": ["./hooks/claude-hooks.json", "./hooks/hooks.json"]})
+    )
+    assert [h.command for h in discover_hooks(plugin, "claude_code")] == ["default", "listed"]
+    assert [h.hook_id for h in discover_hooks(plugin, "claude_code")] == [
+        "PreToolUse:0",
+        "PreToolUse:1",
+    ], "one index space per event across every hooks document"
+
+    (plugin / ".claude-plugin" / "plugin.json").write_text(
+        json.dumps({"hooks": {"PreToolUse": [{"command": "inline"}]}})
+    )
+    assert [h.command for h in discover_hooks(plugin, "claude_code")] == ["default", "inline"]
+
+
+def test_args_are_part_of_the_command(tmp_path: Path) -> None:
+    """planning-with-files runs `sh` with the script in args; the producer must run the script."""
+    plugin = _plugin(tmp_path)
+    (plugin / "hooks").mkdir()
+    (plugin / "hooks" / "hooks.json").write_text(
+        json.dumps(
+            {
+                "hooks": {
+                    "PreToolUse": [
+                        {
+                            "hooks": [
+                                {
+                                    "type": "command",
+                                    "command": "sh",
+                                    "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/run.sh", "a b"],
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        )
+    )
+    [hook] = discover_hooks(plugin, "claude_code")
+    assert hook.command == 'sh ${CLAUDE_PLUGIN_ROOT}/hooks/run.sh "a b"', (
+        "single quotes would stop the shell expanding the plugin-root variable"
+    )

@@ -19,7 +19,12 @@ CWD_LABELS = ("root", "nested", "parent", "outside")
 #: exit 127 is "command not found"; exit 2 with one of these stderr fragments is the
 #: interpreter's own "can't find the script" message (CPython, Node, and POSIX sh all use one
 #: of these phrasings). Any other exit means the process started and ran its own logic.
-_NOT_FOUND_STDERR_FRAGMENTS = ("can't open file", "No such file or directory", "not found")
+_NOT_FOUND_STDERR_FRAGMENTS = (
+    "can't open file",  # python3
+    "No such file",  # bash: "No such file or directory"; dash: "No such file"
+    "not found",  # bash: "command not found"
+    "cannot open",  # dash: "sh: 1: cannot open <path>: No such file"
+)
 
 _SCRIPT_EXTENSIONS = (".py", ".sh", ".js", ".ts")
 #: A token is anchored (not a bare relative path) if it starts with an absolute slash, a shell
@@ -31,13 +36,14 @@ DEFAULT_PAYLOAD = {"tool_name": "Bash", "tool_input": {"command": "true"}}
 
 
 _EXIT_COMMAND_NOT_FOUND = 127
+_EXIT_NOT_EXECUTABLE = 126
 _EXIT_ERROR = 2
 
 
 def _is_unreachable(proc: subprocess.CompletedProcess[str]) -> bool:
     """True when the exit reflects the interpreter never finding the script, not the script."""
-    if proc.returncode == _EXIT_COMMAND_NOT_FOUND:
-        return True
+    if proc.returncode in (_EXIT_COMMAND_NOT_FOUND, _EXIT_NOT_EXECUTABLE):
+        return True  # 127: not found; 126: found but no exec bit -- the hook never started
     stderr = proc.stderr or ""
     return proc.returncode == _EXIT_ERROR and any(
         frag in stderr for frag in _NOT_FOUND_STDERR_FRAGMENTS
