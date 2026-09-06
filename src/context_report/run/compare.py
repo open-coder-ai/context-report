@@ -48,8 +48,13 @@ def gather(out: Path, *, judged: bool) -> list[Cell]:
 
 
 def _tokens(row: dict[str, Any]) -> int:
+    """Input plus output tokens over both arms; `tokensPerArm` is keyed `with` / `without`."""
     per_arm = (row.get("values") or {}).get("tokensPerArm") or {}
-    return int(per_arm.get("inputTokens", 0)) + int(per_arm.get("outputTokens", 0))
+    return sum(
+        int(arm.get("inputTokens", 0)) + int(arm.get("outputTokens", 0))
+        for arm in per_arm.values()
+        if isinstance(arm, dict)
+    )
 
 
 _REASON_WIDTH = 40
