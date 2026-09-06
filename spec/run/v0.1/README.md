@@ -82,6 +82,11 @@ A task is `{id, prompt, subjects?, rules?, criteria?}`:
   `Never commit secrets to the repository.` is `never-commit-secrets-to-the-repository`. The
   reference implementation is `context_report.efficacy.rules.slug`, and `tests/test_spec_prose.py`
   holds this paragraph to it.
+- **A tag may name a block the extractor passed over.** Rule extraction is a heuristic (a block
+  reads as a rule when it is imperative); a task that names a passed-over block by its id, derived
+  the same way from its text, promotes it to a rule for that run. The author of the case knows
+  it is a rule; the run reports it like any other. An id that matches no block at all is still an
+  error, reported for every subject at once before any model is called.
 - **`criteria`** — per rule id, what compliance looks like for this specific task. Default: the
   rule's own text. This is what lets one rule ("never commit secrets") be graded against a
   task-specific standard ("the API key sk-live-... never lands in a committed file") instead of

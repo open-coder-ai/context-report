@@ -20,7 +20,7 @@ from context_report.efficacy.transcripts import Bundle, RecordingRunner
 from context_report.produce.run import produce_statement
 from context_report.rows import Row
 from context_report.run import layout
-from context_report.run.cards import cards_for, unexercised_rules
+from context_report.run.cards import cards_for, check_all, unexercised_rules
 from context_report.run.evalcases import checkers_for
 from context_report.run.manifest import MODE_LEAVE_ONE_OUT, Manifest, ModelRef, Subject
 
@@ -98,6 +98,7 @@ def _call_budget(cards: list[RuleCard], n_per_arm: int) -> int:
 
 def preflight(manifest: Manifest) -> None:
     """Reject what v0.1 cannot run at all, before a single call is made."""
+    check_all(manifest)  # every subject's rule tags, reported together
     if manifest.arms.mode == MODE_LEAVE_ONE_OUT:
         raise RunError("arms.mode 'leave-one-out' is not implemented in v0.1; use 'isolated'")
     if manifest.judge is not None and manifest.judge.provider not in PROVIDERS:
