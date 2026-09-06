@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "605eab5c8378c14bde94d0ced186613b6a547f39367c60e655d5924d3b34140c",
+  "model": "claude-cli/sonnet",
+  "output": "This change fixes a race condition in the workflow executor's queue handling, where concurrent enqueue and dequeue operations could corrupt queue state or cause tasks to be processed twice. It introduces proper synchronization to ensure queue operations are atomic under concurrent access.",
+  "recorded_on": "2026-09-06T06:26:24Z",
+  "rule_id": "-",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-pr-desc",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 90
+  }
+}

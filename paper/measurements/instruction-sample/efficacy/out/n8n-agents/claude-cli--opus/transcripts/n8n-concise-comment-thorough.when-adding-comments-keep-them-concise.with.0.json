@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "25d5a077adaf2872247bd41ac32b72c6ff1525b3bff021d9c07387ed7401625d",
+  "model": "claude-cli/opus",
+  "output": "I don't have the function yet \u2014 point me at it (file path, or paste it) and I'll do it.\n\nOne thing to flag up front, since it changes what you'll get: this project's standing rule is that comments stay concise and explain the *why* in a line or two, scoped to the surrounding code. So I won't write a line-by-line narration of every statement \u2014 that ages badly and mostly restates code that already says what it does. What I will do for a genuinely tricky function:\n\n- A short block comment at the top covering the invariant/contract and why the approach is what it is.\n- Inline notes at the actual non-obvious points \u2014 the ordering constraints, the edge cases, the \"this looks wrong but isn't\" spots, the reasons behind any workaround.\n- Nothing on the steps that read plainly on their own.\n\nThat should get a future reader everything they can't recover from the code itself. If you specifically want the exhaustive step-by-step version anyway \u2014 say, for a teaching doc or a walkthrough rather than the source file \u2014 tell me and I'll write it that way, or put the long-form explanation in a separate doc and keep the source comments tight.",
+  "recorded_on": "2026-09-06T06:11:41Z",
+  "rule_id": "when-adding-comments-keep-them-concise",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-concise-comment-thorough",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 12,
+    "outputTokens": 1987
+  }
+}

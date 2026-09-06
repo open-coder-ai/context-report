@@ -1,0 +1,130 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "github",
+      "digest": {
+        "sha256": "926229cc35b5dcc54a0fd918429ceb22fd687df344a13c7fa5ce665d855bc892"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "skill",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:905c5a29221583b9b14b19f9aed387cc2619900b0f1dcb8bbc1b33c3debb0fc5",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:9bf9ae2b36534b2d602c07263e3b846d276fbdc4eeabda4ba6f95b0b3190687d",
+        "reasoning": "subjectKind skill has nothing to execute"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:e36edbf3538d5b2849a5e651f1d9bb3d389c80b9bfaa8a132c18e681e497c6c3",
+        "reasoning": "decision does not apply to subjectKind skill in v0.1"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:7c0f22600371a0c76f0c1e966c39527629a392b2692342e9b8d54452759894c3",
+        "reasoning": "subjectKind skill has nothing to execute"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:c1184ef3f74fd0e8cb15693f2c1aa5143f79149b4498d9b2b2a37e606b0ca2b0",
+        "reasoning": "subjectKind skill has nothing to execute"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:a29f27629e04644fbfb285b417d87f3b6b0c42450556ff6b840cf34cfa8cc331",
+        "reasoning": "subjectKind skill has nothing to execute"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:117ebb17d505ee4444d9486d6052a25184a213cc54ae1b0aa64476e626de0314",
+        "reasoning": "subjectKind skill has nothing to execute"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:85894d1d2f7dcfae2a5fcba7a6000026b24d5b927616b584f0eceacdf7547f3f",
+        "reasoning": "subjectKind skill has nothing to execute"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:8cced41e58cbcdacfc4ea14cdf0065c8be8245de65dd2f1f117c05627a836c9f",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 1
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/instr/openclaw/skills/github/SKILL.md": 1069
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 1069,
+          "max": 1069,
+          "mean": 1069
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:d124a5f7cda761e627d885e567b2c432a8956245643cdc62a46efd35c946a69f",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T04:46:54Z",
+      "finishedOn": "2026-09-06T04:46:54Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "0facf9fec2784d81011545f391c4a58baddbf24afc17c6819941e0d255b20715"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

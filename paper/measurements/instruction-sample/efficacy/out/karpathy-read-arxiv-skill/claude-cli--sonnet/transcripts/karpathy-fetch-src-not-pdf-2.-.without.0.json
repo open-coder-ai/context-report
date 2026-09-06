@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "7797645774fdfd2d6ad247e4e6505101bf633b87222343e96abf94936bbffdcf",
+  "model": "claude-cli/sonnet",
+  "output": "I need permission to fetch web content \u2014 please approve the WebFetch tool call so I can pull the arXiv page.",
+  "recorded_on": "2026-09-06T05:48:20Z",
+  "rule_id": "-",
+  "subject_id": "karpathy-read-arxiv-skill",
+  "task_id": "karpathy-fetch-src-not-pdf-2",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 6,
+    "outputTokens": 639
+  }
+}

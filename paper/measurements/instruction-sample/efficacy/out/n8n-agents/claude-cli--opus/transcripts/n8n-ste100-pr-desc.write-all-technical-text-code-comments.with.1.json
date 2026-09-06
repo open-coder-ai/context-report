@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "ee0f64b27362658a9f54afcafd16b317e9a9d9984a043cf664ef2820370c34f0",
+  "model": "claude-cli/opus",
+  "output": "No diff is available in this worktree, so the text below stays general. Adjust the second sentence if you want it to name the specific lock or ordering fix.\n\n**PR description**\n\n> This change corrects a race condition in the queue handling of the workflow executor. Concurrent workers could read and update the same queue entry at the same time, which caused lost or duplicated tasks.",
+  "recorded_on": "2026-09-06T06:07:26Z",
+  "rule_id": "write-all-technical-text-code-comments",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-pr-desc",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 4,
+    "outputTokens": 474
+  }
+}

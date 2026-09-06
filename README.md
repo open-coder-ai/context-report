@@ -88,9 +88,11 @@ See [`spec/run/v0.1/examples/run.json`](spec/run/v0.1/examples/run.json) and its
 a worked manifest: two subjects, two models, three tasks.
 
 v0.1 supports `arms.mode: "isolated"` only; `"leave-one-out"` is rejected before anything runs.
-Only `provider: "anthropic"` models have a backend — any other subject model gets a `NotAvailable`
+Two providers have a backend: `anthropic` (the API, needs `ANTHROPIC_API_KEY`) and `claude-cli`
+(the local `claude` CLI with its own login; `id` is an alias such as `opus`, `sonnet`, `fable` or a
+full model id, so one manifest can compare models). Any other subject model gets a `NotAvailable`
 efficacy row explaining there is no backend for it in v0.1, with no arms run and no transcripts
-recorded. A `judge` model, if set, must also be `anthropic`; without one, rules with a prose
+recorded. A `judge` model, if set, must use one of the same two providers; without one, rules with a prose
 compliance criterion are reported ungraded rather than guessed at.
 
 The command writes a fixed layout under the manifest's `out` directory:

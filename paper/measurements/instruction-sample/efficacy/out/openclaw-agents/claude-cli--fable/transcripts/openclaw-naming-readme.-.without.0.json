@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "db4e4a9e7cfdc5507e6a0119d59cf8d28cd4ee80d052dc9dd405121d0e2246ab",
+  "model": "claude-cli/fable",
+  "output": "Here's the draft bullet. It follows the OpenClaw project conventions found in this repo's eval graders: the product name is written as one word, \"OpenClaw\", and prose uses American English spelling, so \"color\" and \"customization\" rather than the British forms.\n\n```markdown\n- **Discord extension** \u2014 OpenClaw now ships a Discord extension that connects your agents to Discord servers and channels. Its appearance is fully customizable: set the accent color for embeds and status messages, choose from built-in color themes, or define your own palette in the extension config to match your server's branding.\n```\n\nIf you want it tighter for a features list, a one-liner version:\n\n```markdown\n- **Discord extension** \u2014 connect OpenClaw agents to Discord, with customizable embed colors and theme palettes to match your server's branding.\n```\n\nOne note. I could not verify the extension's actual feature set, since the worktree holds only eval fixtures and no extension source. The specific color options named above are placeholders, so adjust them to match what the extension really supports before merging.",
+  "recorded_on": "2026-09-06T05:34:38Z",
+  "rule_id": "-",
+  "subject_id": "openclaw-agents",
+  "task_id": "openclaw-naming-readme",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 162,
+    "outputTokens": 2140
+  }
+}

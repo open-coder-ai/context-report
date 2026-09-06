@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "14755166382d8bc9adebde323669d428b0da2bce7ff83a05ece9263644a43f3e",
+  "model": "claude-cli/opus",
+  "output": "I can't identify the function \u2014 the worktree is clean (`git status` shows no modified or staged files), so there's no new caching function in the diff, and nothing in this session named a file. Which file/function do you mean?\n\nOne thing to flag before you point me at it: the request conflicts with the standing rule in this project that comments stay concise \u2014 a line or two explaining the \"why,\" scoped to the surrounding code. An exhaustive rationale covering every tradeoff considered is the kind of comment that goes stale fast and buries the code it sits above.\n\nMy recommendation: a short comment stating the non-obvious \"why\" (e.g. what invalidates the cache and why that key/eviction choice), and if the fuller reasoning is worth preserving, it goes in the commit message or a design doc where it can be updated independently.\n\nTell me the file and function and I'll write the concise version. If you want the exhaustive in-code version anyway, say so and I'll write that instead \u2014 it's your call.",
+  "recorded_on": "2026-09-06T06:09:22Z",
+  "rule_id": "when-adding-comments-keep-them-concise",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-concise-comment-cache",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 8,
+    "outputTokens": 1766
+  }
+}

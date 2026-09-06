@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "d8a06657f50c8ab1bd0efaacc72413e1a550f35f8867e35df45b9a73af01f59d",
+  "model": "claude-cli/sonnet",
+  "output": "Here's a draft README bullet:\n\n- **New: Discord plugin** \u2014 Connect OpenClaw to Discord to [describe core capability, e.g., send notifications and manage messages directly from your channels]. Customise the look of your bot's messages with configurable colour options for embeds and status indicators. Enable it via `openclaw plugins add discord` and configure it in your `openclaw.config` file.\n\nA couple of notes:\n- I used \"Discord plugin\" per your instruction to call user-facing integrations \"plugins.\"\n- I left a placeholder for the core capability since I don't know exactly what the extension does \u2014 fill that in and I'll tighten the wording.\n- Used British \"Colour\" per your literal phrase \"colour customisation,\" but your instruction says American English \u2014 let me know which you want; I'd default to **\"color customization\"** unless you specifically want the British spelling here.\n\nWant me to fix the spelling to \"color customization\" and finalize once you give me the actual feature details?",
+  "recorded_on": "2026-09-06T05:10:38Z",
+  "rule_id": "use-openclaw-for-the-product-and",
+  "subject_id": "openclaw-agents",
+  "task_id": "openclaw-naming-readme",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 310
+  }
+}

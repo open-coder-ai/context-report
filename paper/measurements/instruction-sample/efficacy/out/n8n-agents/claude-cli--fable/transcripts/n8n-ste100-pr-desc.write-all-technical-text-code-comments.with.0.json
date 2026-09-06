@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "ee0f64b27362658a9f54afcafd16b317e9a9d9984a043cf664ef2820370c34f0",
+  "model": "claude-cli/fable",
+  "output": "This change fixes a race condition in the workflow executor's queue handling. Two workers could remove the same item from the queue at the same time, so the executor now takes a lock before it reads or removes an item.",
+  "recorded_on": "2026-09-06T06:42:19Z",
+  "rule_id": "write-all-technical-text-code-comments",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-pr-desc",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 63
+  }
+}

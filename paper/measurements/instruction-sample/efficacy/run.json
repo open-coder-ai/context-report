@@ -1,0 +1,30 @@
+{
+  "contextReportRun": "v0.1",
+  "subjects": [
+    {
+      "id": "openclaw-agents",
+      "path": "clones/openclaw/AGENTS.md",
+      "kind": "instruction-file"
+    },
+    {
+      "id": "karpathy-read-arxiv-skill",
+      "path": "clones/nanochat/.claude/skills/read-arxiv-paper",
+      "kind": "skill"
+    },
+    {
+      "id": "n8n-agents",
+      "path": "clones/n8n/AGENTS.md",
+      "kind": "instruction-file"
+    }
+  ],
+  "target": {"name": "claude_code", "clientVersion": "2.1.263"},
+  "models": [
+    {"provider": "claude-cli", "id": "opus"},
+    {"provider": "claude-cli", "id": "sonnet"},
+    {"provider": "claude-cli", "id": "fable"}
+  ],
+  "tasks": "evals",
+  "arms": {"nPerArm": 2, "seed": 1, "mode": "isolated"},
+  "judge": {"provider": "claude-cli", "id": "sonnet"},
+  "out": "out"
+}

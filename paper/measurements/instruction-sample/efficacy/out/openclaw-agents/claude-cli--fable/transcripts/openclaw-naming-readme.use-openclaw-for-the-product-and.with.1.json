@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "d8a06657f50c8ab1bd0efaacc72413e1a550f35f8867e35df45b9a73af01f59d",
+  "model": "claude-cli/fable",
+  "output": "Here is the bullet, following the naming and spelling rules you set:\n\n- **Discord plugin** \u2013 OpenClaw now ships a Discord plugin that connects your bots to the OpenClaw runtime. Enable it with `openclaw plugins enable discord`, then use the plugin's color customization options to set embed accent colors and per-channel status colors so messages match your server's theme.\n\nNotes on the wording: I called it a plugin rather than an extension since it is a user-facing integration, used American spelling for \"color\" and \"customization,\" and kept lowercase `openclaw` for the CLI command.",
+  "recorded_on": "2026-09-06T05:33:57Z",
+  "rule_id": "use-openclaw-for-the-product-and",
+  "subject_id": "openclaw-agents",
+  "task_id": "openclaw-naming-readme",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 191
+  }
+}
