@@ -125,3 +125,19 @@ def test_cli_asker_falls_back_to_plain_text():
         asker = CliAsker()
         assert asker.ask("hi") == "plain answer"
     assert asker.last_usage is None
+
+
+def test_cli_asker_retries_one_timeout_then_gives_up():
+    """A slow answer is retried once; two timeouts end the call with a clear error."""
+    timeout = cli_backend.subprocess.TimeoutExpired(cmd="claude", timeout=1)
+    which = mock.patch.object(cli_backend.shutil, "which", return_value="/usr/bin/claude")
+    run = mock.patch.object(
+        cli_backend.subprocess, "run", side_effect=[timeout, _fake_run("late answer", 0, "")]
+    )
+    with which, run as m:
+        assert CliAsker(timeout=1).ask("hi") == "late answer"
+        assert m.call_count == 2
+
+    run = mock.patch.object(cli_backend.subprocess, "run", side_effect=[timeout, timeout])
+    with which, run, pytest.raises(RuntimeError, match="no answer within 1s"):
+        CliAsker(timeout=1).ask("hi")
