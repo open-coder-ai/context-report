@@ -117,10 +117,6 @@ across models is fair. A machine-checkable criterion is graded by code instead, 
 
 ## Use as a library
 
-See [Use as a library](#use-as-a-library).
-
-## Use as a library
-
 Beyond the CLI, `context_report` exposes a small stable API for a catalog or CI job to import
 directly: `validate`, `verify`, `produce_statement`, `load_manifest`, `run`, `resolve_run_dir`,
 `history_markdown`, `render_table`, `render_history` (see `__all__` in
