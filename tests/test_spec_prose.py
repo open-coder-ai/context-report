@@ -6,6 +6,8 @@ import json
 import re
 from pathlib import Path
 
+from context_report.efficacy import rules
+
 ROOT = Path(__file__).resolve().parents[1]
 V01 = ROOT / "spec" / "attestation" / "v0.1"
 SCHEMA = json.loads((V01 / "schema.json").read_text(encoding="utf-8"))
@@ -171,3 +173,14 @@ def test_run_readme_mentions_every_task_property() -> None:
     names = set(RUN_SCHEMA["$defs"]["task"]["properties"])
     missing = {n for n in names if n not in RUN_README}
     assert not missing, f"run/v0.1/README.md never mentions task field(s): {sorted(missing)}"
+
+
+def test_rule_id_paragraph_matches_the_slug_implementation() -> None:
+    """The run spec states the rule-id algorithm for other tools to implement; it must be ours."""
+    text = (ROOT / "spec" / "run" / "v0.1" / "README.md").read_text(encoding="utf-8")
+    assert f"keep the first\n  {rules._SLUG_WORDS} words" in text or (
+        f"first {rules._SLUG_WORDS} words" in text.replace("\n  ", " ")
+    )
+    assert f"{rules._SLUG_CHARS} characters" in text
+    example = "Never commit secrets to the repository."
+    assert f"`{example}` is `{rules.slug(example)}`" in text
