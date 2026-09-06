@@ -122,8 +122,14 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
     producer_id: str = DEFAULT_PRODUCER_ID,
     n: int = 50,
     client_version: str | None = None,
+    efficacy_row: Row | None = None,
+    byproducts: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Every v0.1 attribute gets a row. What v0.1 cannot measure says so; nothing is silent."""
+    """Every v0.1 attribute gets a row. What v0.1 cannot measure says so; nothing is silent.
+
+    `efficacy_row` is the measured row from the efficacy engine when a run produced one; without
+    it the row is the honest NotAvailable. `byproducts` lists what the run recorded (transcripts).
+    """
     if subject_kind not in SUBJECT_KINDS:
         raise ValueError(f"subjectKind must be one of {SUBJECT_KINDS}, not {subject_kind!r}")
     env = dict(env or {})
@@ -205,14 +211,19 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
             binding=binding,
         )
     )
-    rows.append(
-        not_measured(
-            "efficacy",
-            NOT_AVAILABLE,
-            "efficacy is measured by adherence (paired ablation) and was not run",
-            basis=CLAIMED,
+    if efficacy_row is not None:
+        if efficacy_row.attribute != "efficacy":
+            raise ValueError(f"efficacy_row must be an efficacy row, not {efficacy_row.attribute}")
+        rows.append(efficacy_row)
+    else:
+        rows.append(
+            not_measured(
+                "efficacy",
+                NOT_AVAILABLE,
+                "efficacy (paired ablation) was not run; use `context-report run` with models",
+                basis=CLAIMED,
+            )
         )
-    )
     rows = _apply_applicability(rows, subject_kind, binding)
     rows.sort(key=lambda r: _ORDER.get(r.attribute, len(_ORDER)))
 
@@ -253,6 +264,7 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
         started_on=started,
         finished_on=now_utc(),
         configuration=configuration,
+        byproducts=byproducts,
     )
     errors = validate(stmt)
     if errors:  # a producer bug, never a user error -- surface loudly

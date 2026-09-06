@@ -41,6 +41,11 @@ class AskerRunner:
             return self.asker.ask(task)
         return self.asker.ask(prompts.render("run_with_rule", rule=rule, task=task))
 
+    @property
+    def last_usage(self) -> dict[str, int] | None:
+        """Token usage of the last call, when the asker reports it (the API backend does)."""
+        return getattr(self.asker, "last_usage", None)
+
 
 class AskerJudge:
     """LLM-as-judge: did the output obey the rule? A forced YES/NO, parsed deterministically."""
