@@ -7,9 +7,11 @@ import shutil
 import subprocess
 
 _CLI = "claude"
-_TIMEOUT = 120
+_TIMEOUT = 600  # one agentic answer can take minutes; a real hang still ends the run
+_ATTEMPTS = 2  # a timed-out call is retried once before the run is given up
 _NOT_ON_PATH = "the `claude` CLI is not on PATH"
 _EXITED = "{cli} exited {code}: {stderr}"
+_TIMED_OUT = "{cli} produced no answer within {seconds}s, {attempts} attempt(s)"
 
 
 def available() -> bool:
@@ -38,13 +40,21 @@ class CliAsker:
         argv = [executable, "-p", prompt, "--output-format", "json"]
         if self.model:
             argv += ["--model", self.model]
-        proc = subprocess.run(  # noqa: S603 - fixed argv, resolved path, prompt is not a shell string
-            argv,
-            capture_output=True,
-            text=True,
-            timeout=self.timeout,
-            check=False,
-        )
+        for attempt in range(1, _ATTEMPTS + 1):
+            try:
+                proc = subprocess.run(  # noqa: S603 - fixed argv, resolved path, prompt is not a shell string
+                    argv,
+                    capture_output=True,
+                    text=True,
+                    timeout=self.timeout,
+                    check=False,
+                )
+                break
+            except subprocess.TimeoutExpired as exc:
+                if attempt == _ATTEMPTS:
+                    raise RuntimeError(
+                        _TIMED_OUT.format(cli=_CLI, seconds=self.timeout, attempts=attempt)
+                    ) from exc
         if proc.returncode != 0:
             raise RuntimeError(
                 _EXITED.format(cli=_CLI, code=proc.returncode, stderr=proc.stderr.strip()[:200])
