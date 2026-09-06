@@ -50,6 +50,12 @@ class Task:
     subjects: tuple[str, ...]  # resolved: never empty
     rules: tuple[str, ...]  # empty means every rule of the named subjects
     criteria: dict[str, str] = field(default_factory=dict)
+    # Populated only when `tasks` was a `claude plugin eval` case directory (see evalcases.py);
+    # a JSON tasks file leaves them at their defaults.
+    tags: tuple[str, ...] = ()  # case tags that were not of the form `rule:<id>`
+    vendor_graders: tuple[dict[str, Any], ...] = ()  # graders v0.1's single-turn runner can't run
+    regex_graders: tuple[dict[str, Any], ...] = ()  # specs for evalcases.checkers_for
+    runs: int | None = None  # a case's own `runs`; only the vendor runner honours it in v0.1
 
 
 @dataclass(frozen=True)
@@ -105,12 +111,24 @@ def _resolve(base: Path, raw: str) -> Path:
     return (p if p.is_absolute() else base / p).resolve()
 
 
-def _load_tasks(doc: dict[str, Any], base: Path) -> list[dict[str, Any]]:
+def _load_tasks(
+    doc: dict[str, Any], base: Path, subjects: tuple[Subject, ...]
+) -> list[dict[str, Any]]:
+    """Resolve `tasks`: a JSON tasks file, an inline list, or a `claude plugin eval` case dir.
+
+    A directory is the source form a plugin developer already writes; `evalcases.load_dir`
+    compiles it into the same dict shape the JSON path produces below, so the loop in `load()`
+    that turns these into `Task`s never needs to know which source it came from.
+    """
     raw = doc.get("tasks")
     if raw is None:
         return []
     if isinstance(raw, str):
         path = _resolve(base, raw)
+        if path.is_dir():
+            from context_report.run import evalcases  # deferred: evalcases imports this module
+
+            return evalcases.load_dir(path, subjects)
         if not path.is_file():
             raise ManifestError(f"tasks file not found: {path}")
         loaded = json.loads(path.read_text(encoding="utf-8"))
@@ -156,7 +174,7 @@ def load(path: str | Path) -> Manifest:
             raise ManifestError(f"out {out} overlaps subject {s.id!r}: it would change its digest")
 
     tasks: list[Task] = []
-    for raw in _load_tasks(doc, base):
+    for raw in _load_tasks(doc, base, tuple(subjects)):
         named = tuple(raw.get("subjects") or ids)
         unknown = sorted(set(named) - set(ids))
         if unknown:
@@ -168,6 +186,10 @@ def load(path: str | Path) -> Manifest:
                 subjects=named,
                 rules=tuple(raw.get("rules") or ()),
                 criteria=dict(raw.get("criteria") or {}),
+                tags=tuple(raw.get("tags") or ()),
+                vendor_graders=tuple(raw.get("vendor_graders") or ()),
+                regex_graders=tuple(raw.get("regex_graders") or ()),
+                runs=raw.get("runs"),
             )
         )
     task_ids = [t.id for t in tasks]
