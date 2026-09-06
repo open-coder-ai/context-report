@@ -103,8 +103,12 @@ EFFICACY_SECTION = _efficacy_section()
 ROW_PY_DICT_KEYS = (
     set(re.findall(r'"([A-Za-z][A-Za-z0-9]*)":', ROW_PY_TEXT))
     | set(re.findall(r'\["([A-Za-z][A-Za-z0-9]*)"\]', ROW_PY_TEXT))
-    # keys written through a module constant, e.g. VALUES_UNEXERCISED = "unexercised"
-    | set(re.findall(r'^[A-Z_]+ = "([A-Za-z][A-Za-z0-9]*)"', ROW_PY_TEXT, flags=re.MULTILINE))
+    # keys written through a VALUES_*/CONDITIONS_* constant, e.g. VALUES_UNEXERCISED = "unexercised"
+    | set(
+        re.findall(
+            r'^(?:VALUES|CONDITIONS)_[A-Z_]+ = "([A-Za-z][A-Za-z0-9]*)"', ROW_PY_TEXT, flags=re.M
+        )
+    )
 )
 
 # The same keys, as attributes.md's efficacy section documents them. Written out by hand so a
