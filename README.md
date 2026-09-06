@@ -117,7 +117,19 @@ across models is fair. A machine-checkable criterion is graded by code instead, 
 
 ## Use as a library
 
-See [Use as a library](#use-as-a-library).
+Beyond the CLI, `context_report` exposes a small stable API for a catalog or CI job to import
+directly: `validate`, `verify`, `produce_statement`, `load_manifest`, `run`, `resolve_run_dir`,
+`history_markdown`, `render_table`, `render_history` (see `__all__` in
+[`context_report/__init__.py`](src/context_report/__init__.py)).
+
+```python
+from context_report import validate, verify
+
+errors = validate(stmt)  # schema errors, [] means well-formed
+result = verify(stmt, subject_path="clone/")  # bound + schema check, never a verdict
+```
+
+See [`docs/library.md`](docs/library.md) for a full catalog-verification and CI-production example.
 
 ## Contributing
 
