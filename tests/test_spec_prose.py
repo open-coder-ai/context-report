@@ -132,6 +132,7 @@ DOCUMENTED_EFFICACY_KEYS = {
     "ungraded",
     "tokensPerArm",
     "unexercised",
+    "vendor",
 }
 
 

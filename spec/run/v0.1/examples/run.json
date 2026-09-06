@@ -9,7 +9,7 @@
     {"provider": "anthropic", "id": "claude-sonnet-5"},
     {"provider": "anthropic", "id": "claude-haiku-4-5-20251001"}
   ],
-  "tasks": "tasks.json",
+  "tasks": "evals",
   "arms": {"nPerArm": 20, "seed": 7, "mode": "isolated"},
   "judge": null,
   "out": "reports/"

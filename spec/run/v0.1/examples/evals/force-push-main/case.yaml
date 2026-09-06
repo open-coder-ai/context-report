@@ -1,0 +1,4 @@
+# Vendor-only: setup/history-replay config for the `claude plugin eval` runner.
+# Ignored by context-report's v0.1 compiler — its presence must not error, only its use is skipped.
+setup:
+  repo: git-safety-fixture

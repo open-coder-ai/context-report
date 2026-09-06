@@ -15,6 +15,11 @@ VALUES_UNEXERCISED = "unexercised"  # rule ids no task exercised: a fact about t
 # v0.1's ablation: the rule text is prepended to the task prompt. It is not a client install,
 # and the row says so, so nobody reads a prompt-prefix result as an installed-plugin result.
 ABLATION_PROMPT_PREFIX = "prompt-prefix-v1"
+# An ingested `claude plugin eval --ablation with-without` result: a real client install, unlike
+# the prompt-prefix ablation above. `pluginval.py` appends "@<schemaVersion>" to this prefix.
+ABLATION_CLAUDE_PLUGIN_EVAL = "claude-plugin-eval"
+# The judge for an ingested vendor result: the vendor's own graders, not one context-report ran.
+JUDGE_VENDOR = "vendor-grader"
 
 
 def pooled_lift(reports: tuple[AdherenceReport, ...]) -> tuple[float, tuple[float, float]]:
@@ -57,8 +62,13 @@ def efficacy_row(  # noqa: PLR0913 -- keyword-only; these are the conditions the
     tokens_per_arm: dict[str, Any] | None = None,
     transcripts: int = 0,
     unexercised: list[str] | tuple[str, ...] = (),
+    vendor: dict[str, Any] | None = None,
 ) -> Row:
-    """Always `claimed`; with nothing graded it is NotAvailable and says what was recorded."""
+    """Always `claimed`; with nothing graded it is NotAvailable and says what was recorded.
+
+    `vendor` (optional) is provenance for a row ingested from a vendor tool's own result (e.g.
+    `claude plugin eval`) rather than measured by this engine: it is opaque here, just recorded.
+    """
     conditions: dict[str, Any] = {
         "ablation": ablation,
         "model": model,
@@ -75,6 +85,8 @@ def efficacy_row(  # noqa: PLR0913 -- keyword-only; these are the conditions the
         values["tokensPerArm"] = dict(tokens_per_arm)
     if unexercised:
         values[VALUES_UNEXERCISED] = list(unexercised)
+    if vendor is not None:
+        values["vendor"] = dict(vendor)
     if not graded.reports:
         why = (
             f"no rule could be graded: {len(graded.ungraded)} rule(s) have a prose criterion and "

@@ -94,6 +94,64 @@ class NoElseAfterReturn:
         return True
 
 
+_REGEX_GRADER_FLAGS = {"i": re.IGNORECASE, "m": re.MULTILINE, "s": re.DOTALL, "x": re.VERBOSE}
+
+
+def _regex_grader_flags(letters: str) -> re.RegexFlag:
+    """`"im"` -> `re.IGNORECASE | re.MULTILINE`; an unknown letter is a loud error, not a no-op."""
+    value = re.RegexFlag(0)
+    for letter in letters:
+        if letter not in _REGEX_GRADER_FLAGS:
+            raise ValueError(f"unknown regex grader flag {letter!r}")
+        value |= _REGEX_GRADER_FLAGS[letter]
+    return value
+
+
+class GraderRegex:
+    """A `claude plugin eval` `regex` grader (`target: last_message`), compiled to a `Checker`.
+
+    Built by `context_report.run.evalcases.checkers_for` from the case's own `pattern`, `flags`
+    and `match` (`contains` / `not_contains` / `count:N`) grader fields. `rule_ids` is which rule
+    ids this grader binds to -- its own `rule:` field, or the case's `rule:` tags; empty means it
+    was bound to none of those, so it applies to every rule (mirrors a task with no `rules`).
+
+    Unlike `DEFAULT_CHECKERS`, which read the rule's *text*, `applies`/`obeys` here expect
+    ``rule`` to be a rule *id* -- see `evalcases.checkers_for` for why wiring this in needs the
+    caller to pass ids, not `rule.text`, through `grade()`.
+    """
+
+    name = "eval-case-regex"
+    full_output = True  # a last_message grader reads the whole reply, not only its code fences
+
+    def __init__(
+        self,
+        pattern: str,
+        flags: str,
+        match: str,
+        rule_ids: tuple[str, ...] = (),
+        rule_texts: tuple[str, ...] = (),
+    ):
+        self._regex = re.compile(pattern, _regex_grader_flags(flags))
+        self.match = match
+        self.rule_ids = rule_ids
+        self.rule_texts = rule_texts  # measure() hands checkers the rule text, not its id
+
+    def applies(self, rule: str) -> bool:
+        bound = self.rule_ids or self.rule_texts
+        return not bound or rule in self.rule_ids or rule in self.rule_texts
+
+    def obeys(self, rule: str, code: str) -> bool:
+        """`code` here is the case's whole last-message output, not just its code fences."""
+        count = len(self._regex.findall(code))
+        if self.match == "contains":
+            return count > 0
+        if self.match == "not_contains":
+            return count == 0
+        if self.match.startswith("count:"):
+            return count == int(self.match.split(":", 1)[1])
+        raise ValueError(f"unknown regex grader match mode: {self.match!r}")
+
+
 DEFAULT_CHECKERS: tuple[Checker, ...] = (
     NoAnyType(),
     ForbiddenCall(),
@@ -126,7 +184,8 @@ class FastPathJudge:
             for checker in self.checkers:
                 if checker.applies(rule):
                     try:
-                        verdict = checker.obeys(rule, code)
+                        text = output if getattr(checker, "full_output", False) else code
+                        verdict = checker.obeys(rule, text)
                     except CannotJudgeError:
                         continue
                     self.last_source = checker.name

@@ -14,3 +14,11 @@
 #
 # Before adding a package here, confirm it actually exists on the official index --
 # that verification is the entire point of the control.
+
+# Dependencies of context-report, each confirmed on PyPI on 2026-09-06 (pip index versions).
+jsonschema
+pyyaml
+anthropic
+pytest
+ruff
+hatchling

@@ -5,7 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from context_report.efficacy.core import AdherenceReport, Judge, RuleCard, Runner, measure
-from context_report.efficacy.fastjudge import CannotJudgeError, FastPathJudge
+from context_report.efficacy.fastjudge import (
+    DEFAULT_CHECKERS,
+    CannotJudgeError,
+    Checker,
+    FastPathJudge,
+)
 
 JUDGE_DETERMINISTIC = "deterministic"
 JUDGE_MODEL = "model"
@@ -27,10 +32,20 @@ class Graded:
     judge: str = JUDGE_DETERMINISTIC
 
 
-def grade(cards: list[RuleCard], runner: Runner, judge: Judge | None, trials: int) -> Graded:
-    """Measure every card; a rule the judge cannot grade is reported ungraded, never guessed."""
+def grade(
+    cards: list[RuleCard],
+    runner: Runner,
+    judge: Judge | None,
+    trials: int,
+    checkers: tuple[Checker, ...] = (),
+) -> Graded:
+    """Measure every card; a rule the judge cannot grade is reported ungraded, never guessed.
+
+    `checkers` are case-specific deterministic graders (eval-case regex graders); they run before
+    the built-in code checkers, and before any judge model.
+    """
     fallback: Judge = judge if judge is not None else DeterministicOnlyJudge()
-    fast = FastPathJudge(fallback)
+    fast = FastPathJudge(fallback, checkers=(*checkers, *DEFAULT_CHECKERS))
     reports: list[AdherenceReport] = []
     ungraded: list[str] = []
     for card in cards:

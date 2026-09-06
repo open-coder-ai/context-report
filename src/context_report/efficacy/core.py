@@ -165,6 +165,16 @@ def required_per_arm(verdict: str) -> int:
     return _SEARCH_CEILING
 
 
+def compute_verdict(adherence_with: float, adherence_without: float, lift: float) -> str:
+    """Public wrapper over `_verdict`, for adapters that measure arms outside `measure()`."""
+    return _verdict(adherence_with, adherence_without, lift)
+
+
+def action_for(verdict: str) -> str:
+    """Public accessor for `_ACTIONS`, so an adapter doesn't need the private table itself."""
+    return _ACTIONS[verdict]
+
+
 def _confirms(verdict: str, evidence: Evidence) -> bool:
     """True when the evidence — not just the point estimate — supports acting on the verdict."""
     if evidence.observations < required_per_arm(verdict):
@@ -181,6 +191,11 @@ def _confirms(verdict: str, evidence: Evidence) -> bool:
     if verdict == "ineffective":
         return evidence.with_ci[1] < _COMPLIANCE_FLOOR
     return evidence.lift_ci[1] - evidence.lift_ci[0] <= _LIFT_NEGLIGIBLE
+
+
+def verdict_confirmed(verdict: str, evidence: Evidence) -> bool:
+    """Public wrapper over `_confirms`, for adapters that measure arms outside `measure()`."""
+    return _confirms(verdict, evidence)
 
 
 def measure(rule: RuleCard, runner: Runner, judge: Judge, trials: int = 1) -> AdherenceReport:
