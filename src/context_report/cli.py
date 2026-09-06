@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from context_report.efficacy.cli import add_efficacy_parser, run_efficacy
 from context_report.produce.run import add_produce_parser, run_produce
 from context_report.verify import Verification, verify_statement
 
@@ -17,6 +18,7 @@ def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="context-report")
     subparsers = parser.add_subparsers(dest="command", required=True)
     add_produce_parser(subparsers)
+    add_efficacy_parser(subparsers)
 
     verify_parser = subparsers.add_parser(
         "verify",
@@ -67,6 +69,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "produce":
         return run_produce(args)
+    if args.command == "efficacy":
+        return run_efficacy(args)
     if args.command != "verify":
         return 2
     return _run_verify(args)

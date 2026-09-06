@@ -53,6 +53,10 @@ python -m pytest -q
 python -m ruff check .
 ```
 
+Efficacy — paired-ablation measurement of whether an artifact changes agent behaviour — ships as
+the optional extra `context-report[efficacy]` (`pip install -e ".[efficacy]"`) and is the engine
+behind the `efficacy` row: `context-report efficacy --help`.
+
 ## License
 
 Apache-2.0.

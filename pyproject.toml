@@ -12,6 +12,7 @@ license = "Apache-2.0"
 dependencies = ["jsonschema>=4.18,<5"]
 
 [project.optional-dependencies]
+efficacy = ["anthropic>=1.0"]
 dev = ["pytest>=8", "ruff>=0.6"]
 
 [project.urls]
@@ -39,3 +40,9 @@ ignore = ["TRY003", "S101"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["PLR2004"]
+# Test doubles implement Runner/Judge Protocols by contract; unused args and terse asserts are fine.
+"tests/efficacy/*" = ["ARG002", "ARG005", "E702", "FBT002"]
+"src/context_report/efficacy/cli.py" = ["T20", "PLC0415"]
+"src/context_report/efficacy/api_backend.py" = ["PLC0415"]
+# Checker.obeys takes the rule text by contract; checkers that match on code alone ignore it.
+"src/context_report/efficacy/fastjudge.py" = ["ARG002"]
