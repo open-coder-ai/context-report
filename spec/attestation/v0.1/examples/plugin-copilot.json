@@ -77,12 +77,40 @@
         "attribute": "efficacy",
         "basis": "claimed",
         "result": "PASSED",
-        "conditions": {"ablation": "with-vs-without", "model": "example-model-2026-08", "measuredOn": "2026-09-05", "nPerArm": 35},
+        "conditions": {
+          "ablation": "prompt-prefix-v1",
+          "model": "example-model-2026-08",
+          "judgeModel": "example-judge-2026-08",
+          "judge": "model",
+          "measuredOn": "2026-09-05",
+          "nPerArm": 35
+        },
+        "values": {
+          "perRule": [
+            {
+              "ruleId": "never-commit-secrets",
+              "lift": 0.31,
+              "liftCI": [0.18, 0.44],
+              "adherenceWith": 0.94,
+              "adherenceWithout": 0.63,
+              "observationsPerArm": 35,
+              "verdict": "keep",
+              "confirmed": true
+            }
+          ],
+          "ungraded": [],
+          "tokensPerArm": {"inputTokens": 1240, "outputTokens": 380}
+        },
         "estimate": {"pointEstimate": 0.31, "standardError": 0.066, "confidenceInterval": {"confidenceLevel": 0.95, "lowerBound": 0.18, "upperBound": 0.44}}
       }
     ],
     "byproducts": [
-      {"name": "replay-trace.jsonl", "digest": {"sha256": "440c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8009"}}
+      {"name": "replay-trace.jsonl", "digest": {"sha256": "440c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8009"}},
+      {
+        "name": "transcripts.json",
+        "digest": {"sha256": "550c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b800a"},
+        "mediaType": "application/vnd.context-report.transcripts+json"
+      }
     ]
   }
 }
