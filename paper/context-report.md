@@ -223,9 +223,9 @@ transcript, held fixed, with `out` never inside a subject's own path.
 
 ## 5. Results
 
-Produced 2026-09-05 (§5.1) and 2026-09-06 (§5.2), `n = 20` latency samples per hook, on a four-CPU
-Linux machine, each statement bound to the digest it measured; held for
-`open-coder-ai/chock-catalog` (PR #57) until this format is public.
+Produced 2026-09-06, `n = 20` latency samples per hook, on a four-CPU Linux machine, each
+statement bound to the digest it measured; held for `open-coder-ai/chock-catalog` (PR #57) until
+this format is public.
 
 ### 5.1 Dogfood: chock's own bundles
 
@@ -239,19 +239,20 @@ unreachable without it, Copilot exempted by design.
 
 | Target agent | Bundles | With hook | Reachable, resolved | Reachable, unresolved | Exit 0 and no deny on malformed stdin | Latency p50 / p95 ms, median | Context tokens, median |
 | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Claude Code | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 46.6 / 51.7 | 222 |
-| Codex CLI | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 44.5 / 46.6 | 222 |
-| GitHub Copilot | 22 | 4 | 4 of 4 | 4 of 4 | 4 of 4 | 42.0 / 43.4 | 222 |
-| Cursor | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 43.7 / 45.9 | 222 |
+| Claude Code | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 42.8 / 46.0 | 222 |
+| Codex CLI | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 39.8 / 44.2 | 222 |
+| GitHub Copilot | 22 | 4 | 4 of 4 | 4 of 4 | 4 of 4 | 38.1 / 41.2 | 222 |
+| Cursor | 22 | 4 | 4 of 4 | 0 of 4 | 4 of 4 | 38.3 / 40.8 | 222 |
 
 - **Reachability is a property of the variable, not the script.** Set, every hook ran from all four
   directories; unset, none ran for three agents. Copilot reads reachable either way — its command
   exits 0 when unset, by design.
 - **Every hook exits 0 with no deny on malformed input**, per chock's own adapter comment:
   "malformed input is not the agent's fault to pay for." Acting on that is a catalog's threshold.
-- **Latency has a knowable floor.** Median p50 runs 42.0–46.6 ms by adapter; the unresolved
-  condition's `Error` rows, timing only the interpreter failing to open a file, sit at 13 ms.
-- **Context weight is 222 tokens for the median bundle**, 288–646 for hook bundles.
+- **No interpreter floor is derivable.** Median p50 runs 38.1–42.8 ms by adapter; unresolved rows
+  now report `Error` with no timing kept.
+- **Context weight is 222 tokens for the median bundle**, 298–725 for hook bundles, Copilot's
+  own hooks file now counted — a producer gap this pass fixed.
 
 ### 5.2 Top-N catalog plugins
 

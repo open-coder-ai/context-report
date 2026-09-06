@@ -1,5 +1,5 @@
 {
-  "_comment": "Fallback numbers for the chock dogfood, computed once from the off-repo context-report statements (open-coder-ai/chock-catalog PR #57) with --chock-statements, then committed here so make_figures.py reproduces the same bytes without that external path. Latency is full-precision (the paper's own Section 5.1 table rounds it to one decimal for display); reachability and allow-on-malformed counts are exact. Used when make_figures.py is run without --chock-statements.",
+  "_comment": "Fallback numbers for the chock dogfood, computed from the off-repo context-report statements (open-coder-ai/chock-catalog PR #57, regenerated on branch claude/context-report-measurements at commit 81d0083) with --chock-statements, then committed here so make_figures.py reproduces the same bytes without that external path. Latency is full-precision (the paper's own Section 5.1 table rounds it to one decimal for display); reachability and allow-on-malformed counts are exact. Used when make_figures.py is run without --chock-statements.",
   "targets": [
     {
       "key": "claude_code",
@@ -9,8 +9,8 @@
       "reachable_resolved": 4,
       "reachable_unresolved": 0,
       "allow_malformed_resolved": 4,
-      "latency_p50_ms": 46.58162400001231,
-      "latency_p95_ms": 51.74766800001862,
+      "latency_p50_ms": 42.757076000043526,
+      "latency_p95_ms": 45.99517949998244,
       "interpreter": "local"
     },
     {
@@ -21,8 +21,8 @@
       "reachable_resolved": 4,
       "reachable_unresolved": 0,
       "allow_malformed_resolved": 4,
-      "latency_p50_ms": 44.491174999976124,
-      "latency_p95_ms": 46.59335300000578,
+      "latency_p50_ms": 39.836827499925676,
+      "latency_p95_ms": 44.18377500007864,
       "interpreter": "local"
     },
     {
@@ -33,8 +33,8 @@
       "reachable_resolved": 4,
       "reachable_unresolved": 4,
       "allow_malformed_resolved": 4,
-      "latency_p50_ms": 42.00713950000079,
-      "latency_p95_ms": 43.41574000001458,
+      "latency_p50_ms": 38.11637349997454,
+      "latency_p95_ms": 41.17389550003736,
       "interpreter": "local"
     },
     {
@@ -45,8 +45,8 @@
       "reachable_resolved": 4,
       "reachable_unresolved": 0,
       "allow_malformed_resolved": 4,
-      "latency_p50_ms": 43.72330500000032,
-      "latency_p95_ms": 45.914969999998334,
+      "latency_p50_ms": 38.305842000113444,
+      "latency_p95_ms": 40.83547349989658,
       "interpreter": "local"
     }
   ]

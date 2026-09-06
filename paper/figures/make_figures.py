@@ -57,7 +57,6 @@ RESULT_COLORS = {
 }
 RESULT_ORDER = ["PASSED", "FAILED", "Error", "NotApplicable"]
 
-INTERPRETER_FLOOR_MS = 13.0  # the interpreter-starting floor the dogfood measured (§4, §5.1)
 CHOCK_CONTEXT_MEDIAN = 222  # chock's median cost.context_tokens per bundle (§5.1)
 
 plt.rcParams.update(
@@ -162,7 +161,7 @@ def _load_chock(chock_statements: Path | None) -> list[dict]:
             if lat:
                 p50s.append(lat["percentiles"]["50"])
                 p95s.append(lat["percentiles"]["95"])
-            commands.append(st["reachability"].get("conditions", {}).get("command", ""))
+            commands.append(_pre_tool_command(st) or "")
         for path in unresolved:
             st = _rows_by_attribute(_load_json(path))
             if st["reachability"]["result"] == "PASSED":
@@ -396,7 +395,7 @@ def fig_catalog_status(path: Path, plugins: list[dict]) -> None:
 
 
 def fig_latency(path: Path, plugins: list[dict], chock: list[dict]) -> None:
-    """Per-hook p50 (bar) to p95 (whisker), log-scale ms; local script vs npx; the 13 ms floor."""
+    """Per-hook p50 (bar) to p95 (whisker), log-scale ms; local script vs npx."""
     rows = []
     for p in plugins:
         lat = p["rows"]["cost.latency_ms"]
@@ -418,21 +417,12 @@ def fig_latency(path: Path, plugins: list[dict], chock: list[dict]) -> None:
         ax.plot(p50, i, "o", color=INK, markersize=3, zorder=3)
 
     top = len(rows) - 0.3
-    ax.axvline(INTERPRETER_FLOOR_MS, color=MUTED, linewidth=1, linestyle=(0, (4, 3)))
-    ax.text(
-        INTERPRETER_FLOOR_MS,
-        top + 0.55,
-        " 13 ms interpreter floor",
-        color=INK_SECONDARY,
-        fontsize=8,
-        va="top",
-    )
 
     ax.set_xscale("log")
     ax.set_yticks(list(y))
     ax.set_yticklabels([r[0] for r in rows], fontsize=9)
     ax.set_xlabel("p50-p95 latency per hook invocation, ms (log scale)")
-    ax.set_ylim(-0.7, top + 0.9)
+    ax.set_ylim(-0.7, top + 0.3)
     ax.grid(axis="x", which="both", linewidth=0.5, alpha=0.6)
     ax.set_axisbelow(True)
     for spine in ("top", "right", "left"):
