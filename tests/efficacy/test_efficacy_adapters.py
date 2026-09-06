@@ -89,8 +89,17 @@ def test_cli_asker_pins_the_model_and_reads_json_usage():
     payload = json.dumps(
         {
             "result": "  ok  ",
-            "usage": {"input_tokens": 12, "output_tokens": 3},
-            "modelUsage": {"claude-opus-5": {"inputTokens": 12}},
+            "usage": {
+                "input_tokens": 12,
+                "cache_creation_input_tokens": 100,
+                "cache_read_input_tokens": 1000,
+                "output_tokens": 3,
+            },
+            # the CLI's own helper model is listed first; the subject model wrote the answer
+            "modelUsage": {
+                "claude-haiku-4-5-20251001": {"inputTokens": 900, "outputTokens": 8},
+                "claude-opus-5": {"inputTokens": 1112, "outputTokens": 3000},
+            },
         }
     )
     which, run = _patched(payload)
@@ -100,7 +109,13 @@ def test_cli_asker_pins_the_model_and_reads_json_usage():
         argv = m.call_args.args[0]
         assert argv[argv.index("--model") + 1] == "opus"
         assert "--output-format" in argv
-    assert asker.last_usage == {"inputTokens": 12, "outputTokens": 3}
+    assert asker.last_usage == {
+        "inputTokens": 1112,  # uncached + cache creation + cache read: what was actually sent
+        "outputTokens": 3,
+        "uncachedInputTokens": 12,
+        "cacheCreationInputTokens": 100,
+        "cacheReadInputTokens": 1000,
+    }
     assert asker.last_model == "claude-opus-5"
 
 
@@ -110,3 +125,19 @@ def test_cli_asker_falls_back_to_plain_text():
         asker = CliAsker()
         assert asker.ask("hi") == "plain answer"
     assert asker.last_usage is None
+
+
+def test_cli_asker_retries_one_timeout_then_gives_up():
+    """A slow answer is retried once; two timeouts end the call with a clear error."""
+    timeout = cli_backend.subprocess.TimeoutExpired(cmd="claude", timeout=1)
+    which = mock.patch.object(cli_backend.shutil, "which", return_value="/usr/bin/claude")
+    run = mock.patch.object(
+        cli_backend.subprocess, "run", side_effect=[timeout, _fake_run("late answer", 0, "")]
+    )
+    with which, run as m:
+        assert CliAsker(timeout=1).ask("hi") == "late answer"
+        assert m.call_count == 2
+
+    run = mock.patch.object(cli_backend.subprocess, "run", side_effect=[timeout, timeout])
+    with which, run, pytest.raises(RuntimeError, match="no answer within 1s"):
+        CliAsker(timeout=1).ask("hi")

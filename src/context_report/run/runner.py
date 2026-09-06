@@ -13,6 +13,7 @@ from context_report.efficacy.api_backend import JUDGE_EFFORT, ApiAsker
 from context_report.efficacy.backends import Asker, AskerJudge, AskerRunner
 from context_report.efficacy.core import RuleCard
 from context_report.efficacy.grade import Graded, grade
+from context_report.efficacy.row import ATTRIBUTE as EFFICACY
 from context_report.efficacy.row import efficacy_row
 from context_report.efficacy.transcripts import Bundle, RecordingRunner
 from context_report.produce.run import produce_statement
@@ -169,6 +170,8 @@ def _run_model(  # noqa: PLR0913, PLR0917 -- one (subject, model) pair needs all
     judge_model: str | None,
     model_dir: Path,
     asker_factory: AskerFactory,
+    *,
+    resume: bool = False,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Run (or skip, for an unsupported provider) one (subject, model) pair."""
     measured_on = _today()
@@ -195,7 +198,12 @@ def _run_model(  # noqa: PLR0913, PLR0917 -- one (subject, model) pair needs all
     bundle = Bundle(model_dir / "transcripts")
     asker = asker_factory(model, effort=None)
     rec = RecordingRunner(
-        AskerRunner(asker), bundle, subject_id=subject.id, model=model.qualified, cards=cards
+        AskerRunner(asker),
+        bundle,
+        subject_id=subject.id,
+        model=model.qualified,
+        cards=cards,
+        resume=resume,
     )
     checkers = checkers_for(manifest.tasks_for(subject.id), cards)
     graded = grade(cards, rec, judge, trials=n_per_arm, checkers=checkers)
@@ -260,8 +268,42 @@ def _summary_markdown(rows: list[dict[str, Any]]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def run(manifest: Manifest, *, asker_factory: AskerFactory = default_asker_factory) -> None:
-    """Run every subject and model of `manifest`, writing the fixed output layout under `out`."""
+def _finished_summary(
+    subject_id: str, model: ModelRef, path: Path, model_dir: Path
+) -> dict[str, Any]:
+    """The summary row of a (subject, model) pair whose statement `path` an earlier run wrote."""
+    stmt = json.loads(path.read_text(encoding="utf-8"))
+    rows = [a for a in stmt["predicate"]["attributes"] if a["attribute"] == EFFICACY]
+    values = rows[0].get("values", {}) if rows else {}
+    estimate = None
+    ci = (rows[0].get("estimate") or {}) if rows else {}
+    if ci:
+        bounds = ci.get("confidenceInterval", {})
+        estimate = (ci["pointEstimate"], bounds.get("lowerBound"), bounds.get("upperBound"))
+    transcripts_dir = model_dir / "transcripts"
+    return {
+        "subject": subject_id,
+        "model": model.qualified,
+        "result": rows[0]["result"] if rows else "NotAvailable",
+        "estimate": estimate,
+        "graded": len(values.get("perRule", [])),
+        "ungraded": len(values.get("ungraded", [])),
+        "transcripts": len(list(transcripts_dir.glob("*.json"))) if transcripts_dir.exists() else 0,
+        "tokens_per_arm": values.get("tokensPerArm"),
+    }
+
+
+def run(
+    manifest: Manifest,
+    *,
+    asker_factory: AskerFactory = default_asker_factory,
+    resume: bool = False,
+) -> None:
+    """Run every subject and model of `manifest`, writing the fixed output layout under `out`.
+
+    With `resume`, a pair whose statement already exists under `out` is kept as is, and a pair
+    whose transcripts are partly on disk reuses every transcript whose input hash still matches.
+    """
     preflight(manifest)
     judge_model = manifest.judge.qualified if manifest.judge else None
     judge = None
@@ -287,6 +329,12 @@ def run(manifest: Manifest, *, asker_factory: AskerFactory = default_asker_facto
             _write_json(subject_dir / "statement.json", stmt)
             continue
         for model in manifest.models:
+            stmt_path = subject_dir / f"{model.slug}.json"
+            if resume and stmt_path.exists():
+                summary_rows.append(
+                    _finished_summary(subject.id, model, stmt_path, subject_dir / model.slug)
+                )
+                continue
             stmt, summary = _run_model(
                 manifest,
                 subject,
@@ -297,8 +345,9 @@ def run(manifest: Manifest, *, asker_factory: AskerFactory = default_asker_facto
                 judge_model,
                 subject_dir / model.slug,
                 asker_factory,
+                resume=resume,
             )
-            _write_json(subject_dir / f"{model.slug}.json", stmt)
+            _write_json(stmt_path, stmt)
             summary_rows.append(summary)
 
     (out / SUMMARY_FILENAME).write_text(_summary_markdown(summary_rows), encoding="utf-8")

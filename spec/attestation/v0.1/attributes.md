@@ -440,7 +440,9 @@ exist to act on that verdict — a verdict without `confirmed` is a hint, not a 
 `ungraded` is the rule ids no judge could grade, never silently dropped; `unexercised` (optional)
 is the rule ids the subject carries that no task exercised — a fact about the task set, reported so
 a reader knows which rules the estimate says nothing about; `tokensPerArm` (optional) is
-`{with: {inputTokens, outputTokens}, without: {inputTokens, outputTokens}}`, present only when the
+`{with: {inputTokens, outputTokens, ...}, without: {...}}`, where `inputTokens` counts everything sent,
+cached prefix included (a backend may add `uncachedInputTokens`, `cacheReadInputTokens` and
+`cacheCreationInputTokens` beside it), present only when the
 run recorded token usage — never a price, only counts a catalog can price however it likes;
 `vendor` (optional, see "Ingested vendor results" above) is present only on a row built from an
 ingested vendor result. `estimate` — `pointEstimate`,

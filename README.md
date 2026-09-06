@@ -82,6 +82,8 @@ from a JSON manifest matching [`spec/run/v0.1/schema.json`](spec/run/v0.1/schema
 context-report run run.json --dry-run   # rules found/exercised and the call budget, no model touched
 context-report run run.json             # the real thing
 context-report run run.json --n 2       # override arms.nPerArm for a smoke run
+context-report run run.json --resume    # after an interrupted run: reuse every statement and
+                                        # matching transcript under `out`, call only for the rest
 ```
 
 See [`spec/run/v0.1/examples/run.json`](spec/run/v0.1/examples/run.json) and its `tasks.json` for

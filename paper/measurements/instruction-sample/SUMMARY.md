@@ -109,6 +109,7 @@ arm the interval is about ±0.49 wide, and the row says so instead of rounding a
 | `compare` printed 0 in its tokens column. | Cosmetic. | Fixed (PR #25). |
 | A 120-second CLI timeout ended a run of 168 calls on one slow answer. | One restart. | Fixed (PR #24); `--resume` (PR #22) made the restart free. |
 | Four observations per arm cannot reach a `dead-weight` (needs 35) or `weak` (51) verdict. | Every per-rule verdict below `keep` is provisional. | A budget choice, stated. |
+| `cost.context_tokens` keys `values.per_file` by absolute path and hashes those paths into `inputHash`. | The row's hash depends on where the clone sat on this machine; a verifier elsewhere recomputes the same count and a different hash. Affects the catalog sample too. | Fixed in the producer (PR #27); these statements were produced before it and are kept as the record. |
 
 ## Re-deriving
 
