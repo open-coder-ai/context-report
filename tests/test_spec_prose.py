@@ -100,8 +100,11 @@ EFFICACY_SECTION = _efficacy_section()
 # or one level down in `_per_rule`'s returned dict) — derived from the source text itself, not
 # retyped by hand, so a key added to or removed from row.py is caught here without editing this
 # test.
-ROW_PY_DICT_KEYS = set(re.findall(r'"([A-Za-z][A-Za-z0-9]*)":', ROW_PY_TEXT)) | set(
-    re.findall(r'\["([A-Za-z][A-Za-z0-9]*)"\]', ROW_PY_TEXT)
+ROW_PY_DICT_KEYS = (
+    set(re.findall(r'"([A-Za-z][A-Za-z0-9]*)":', ROW_PY_TEXT))
+    | set(re.findall(r'\["([A-Za-z][A-Za-z0-9]*)"\]', ROW_PY_TEXT))
+    # keys written through a module constant, e.g. VALUES_UNEXERCISED = "unexercised"
+    | set(re.findall(r'^[A-Z_]+ = "([A-Za-z][A-Za-z0-9]*)"', ROW_PY_TEXT, flags=re.MULTILINE))
 )
 
 # The same keys, as attributes.md's efficacy section documents them. Written out by hand so a
@@ -124,6 +127,7 @@ DOCUMENTED_EFFICACY_KEYS = {
     "confirmed",
     "ungraded",
     "tokensPerArm",
+    "unexercised",
 }
 
 

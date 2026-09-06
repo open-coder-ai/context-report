@@ -414,13 +414,16 @@ is the ablation design name (`"prompt-prefix-v1"` in v0.1, see above); `model` i
 model string under test; `judgeModel` is the judge's model string, or `null` when no judge model
 was configured; `judge` is `"deterministic"` or `"model"` (see above); `measuredOn` is the
 measurement date; `nPerArm` is the per-arm sample size. `values` — `{perRule, ungraded,
-tokensPerArm}`: `perRule` is an array with one entry per graded rule, each `{ruleId, lift, liftCI,
+tokensPerArm, unexercised}`: `perRule` is an array with one entry per graded rule, each `{ruleId,
+lift, liftCI,
 adherenceWith, adherenceWithout, observationsPerArm, verdict, confirmed}` (`verdict` is one of
 `"keep"`, `"dead-weight"`, `"ineffective"`, `"weak"`; `confirmed` says whether enough observations
 exist to act on that verdict — a verdict without `confirmed` is a hint, not a recommendation);
-`ungraded` is the rule ids no judge could grade, never silently dropped; `tokensPerArm` (optional)
-is `{inputTokens, outputTokens}`, present only when the run recorded token usage — never a price,
-only a count a catalog can price however it likes. `estimate` — `pointEstimate`,
+`ungraded` is the rule ids no judge could grade, never silently dropped; `unexercised` (optional)
+is the rule ids the subject carries that no task exercised — a fact about the task set, reported so
+a reader knows which rules the estimate says nothing about; `tokensPerArm` (optional) is
+`{with: {inputTokens, outputTokens}, without: {inputTokens, outputTokens}}`, present only when the
+run recorded token usage — never a price, only counts a catalog can price however it likes. `estimate` — `pointEstimate`,
 `confidenceInterval` (`confidenceLevel`, `lowerBound`, `upperBound`), and `standardError` after
 Criterion.rs/CycloneDX, computed over the pooled lift across every graded rule. No `measurement`.
 
