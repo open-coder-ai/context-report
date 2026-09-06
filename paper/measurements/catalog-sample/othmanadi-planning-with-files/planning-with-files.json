@@ -32,7 +32,7 @@
         "attribute": "reachability",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:5242e7d76fb1c19e3166cfd725d2cac0b2020d5aa97e2d9d23dd48b36d7afe2c",
+        "inputHash": "sha256:48effbd32c19138433a04a6465b29917cf457e939c29a6073092f3f73ce9294d",
         "environment": {
           "env": {
             "PYTHONDONTWRITEBYTECODE": "1",
@@ -49,7 +49,7 @@
           "hooks": [
             {
               "hook_id": "PreToolUse:0",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' pre-tool-use"
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-tool-use"
             }
           ],
           "payload": {
@@ -68,10 +68,10 @@
               ],
               "unreachable_from": [],
               "stderr_first_line": {
-                "root": "sh: 0: cannot open ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh: No such file",
-                "nested": "sh: 0: cannot open ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh: No such file",
-                "parent": "sh: 0: cannot open ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh: No such file",
-                "outside": "sh: 0: cannot open ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh: No such file"
+                "root": "",
+                "nested": "",
+                "parent": "",
+                "outside": ""
               },
               "relative_script_path": false
             }
@@ -87,31 +87,31 @@
             {
               "hook_id": "SessionStart:0",
               "event": "SessionStart",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' session-start",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh session-start",
               "reason": "v0.1 measures pre-tool hooks only"
             },
             {
               "hook_id": "UserPromptSubmit:0",
               "event": "UserPromptSubmit",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' user-prompt-submit",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh user-prompt-submit",
               "reason": "v0.1 measures pre-tool hooks only"
             },
             {
               "hook_id": "PostToolUse:0",
               "event": "PostToolUse",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' post-tool-use",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh post-tool-use",
               "reason": "v0.1 measures pre-tool hooks only"
             },
             {
               "hook_id": "PreCompact:0",
               "event": "PreCompact",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' pre-compact",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-compact",
               "reason": "v0.1 measures pre-tool hooks only"
             },
             {
               "hook_id": "Stop:0",
               "event": "Stop",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' stop",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh stop",
               "reason": "v0.1 measures pre-tool hooks only"
             }
           ]
@@ -149,7 +149,7 @@
         "attribute": "fault.malformedOutput",
         "basis": "re-derivable",
         "result": "PASSED",
-        "inputHash": "sha256:e83656d8753b0088bf75384e25157eabed602cea541a7f4fd2cb378ca8fac0b7",
+        "inputHash": "sha256:b858fb559dcbeaf01c1f0256d705dc79dfd967cc1ef7d7449c2eab1e94005b28",
         "environment": {
           "env": {
             "PYTHONDONTWRITEBYTECODE": "1",
@@ -168,7 +168,7 @@
           "hooks": [
             {
               "hook_id": "PreToolUse:0",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' pre-tool-use"
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-tool-use"
             }
           ],
           "payload": {
@@ -180,65 +180,65 @@
           "perHook": {
             "PreToolUse:0": {
               "on_malformed_json": {
-                "exit": 2,
+                "exit": 0,
                 "stdout_decision": null,
-                "would_allow": false,
-                "stderr_first_line": "sh: 0: cannot open ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh: No such file",
+                "would_allow": true,
+                "stderr_first_line": "",
                 "stdout_first_line": ""
               },
               "on_empty_stdin": {
-                "exit": 2,
+                "exit": 0,
                 "stdout_decision": null,
-                "would_allow": false,
-                "stderr_first_line": "sh: 0: cannot open ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh: No such file",
+                "would_allow": true,
+                "stderr_first_line": "",
                 "stdout_first_line": ""
               },
               "on_null_tool_input": {
-                "exit": 2,
+                "exit": 0,
                 "stdout_decision": null,
-                "would_allow": false,
-                "stderr_first_line": "sh: 0: cannot open ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh: No such file",
+                "would_allow": true,
+                "stderr_first_line": "",
                 "stdout_first_line": ""
               },
               "control_benign": {
-                "exit": 2,
+                "exit": 0,
                 "stdout_decision": null,
-                "would_allow": false,
-                "stderr_first_line": "sh: 0: cannot open ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh: No such file",
+                "would_allow": true,
+                "stderr_first_line": "",
                 "stdout_first_line": ""
               }
             }
           },
-          "wouldAllowAny": false,
+          "wouldAllowAny": true,
           "skippedHooks": [
             {
               "hook_id": "SessionStart:0",
               "event": "SessionStart",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' session-start",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh session-start",
               "reason": "v0.1 measures pre-tool hooks only"
             },
             {
               "hook_id": "UserPromptSubmit:0",
               "event": "UserPromptSubmit",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' user-prompt-submit",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh user-prompt-submit",
               "reason": "v0.1 measures pre-tool hooks only"
             },
             {
               "hook_id": "PostToolUse:0",
               "event": "PostToolUse",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' post-tool-use",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh post-tool-use",
               "reason": "v0.1 measures pre-tool hooks only"
             },
             {
               "hook_id": "PreCompact:0",
               "event": "PreCompact",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' pre-compact",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-compact",
               "reason": "v0.1 measures pre-tool hooks only"
             },
             {
               "hook_id": "Stop:0",
               "event": "Stop",
-              "command": "sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' stop",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh stop",
               "reason": "v0.1 measures pre-tool hooks only"
             }
           ]
@@ -248,15 +248,93 @@
       {
         "attribute": "cost.latency_ms",
         "basis": "re-derivable",
-        "result": "Error",
-        "inputHash": "sha256:d9fcf9ea30529ddbd0e2491e86d6ab1dcc9062124d823239d6604b412d25c79b",
+        "result": "PASSED",
+        "inputHash": "sha256:828a1b7b4b01931dad8b00c358ebec89d0c435d005454e53240d2d67a711e7cb",
+        "environmentSensitive": true,
+        "environment": {
+          "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+          "python": "3.11.15",
+          "cpu_count": 4,
+          "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning"
+          }
+        },
         "conditions": {
+          "n": 20,
+          "aggregation": "sum-across-hooks",
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-tool-use"
+            }
+          ],
           "payload": {
             "shape": "claude_code/PreToolUse/v0.1",
             "basis": "live-run"
           }
         },
-        "reasoning": "latency could not be measured for hook(s): PreToolUse:0 (no run exited 0 with a benign payload (exit codes [2]); the timing is of the failure path, not the hook, and is kept only for inspection)"
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "unit": "ms",
+              "n": 20,
+              "percentiles": {
+                "50": 5.955937000180711,
+                "95": 6.154570000035164,
+                "99": 6.1930310002935585
+              },
+              "min": 5.731104999995296,
+              "max": 6.1930310002935585,
+              "mean": 5.971199600003274,
+              "stddev": 0.1273815289254168
+            }
+          },
+          "skippedHooks": [
+            {
+              "hook_id": "SessionStart:0",
+              "event": "SessionStart",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh session-start",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "UserPromptSubmit:0",
+              "event": "UserPromptSubmit",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh user-prompt-submit",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh post-tool-use",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "PreCompact:0",
+              "event": "PreCompact",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-compact",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "Stop:0",
+              "event": "Stop",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh stop",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        },
+        "measurement": {
+          "unit": "ms",
+          "n": 20,
+          "percentiles": {
+            "50": 5.955937000180711,
+            "95": 6.154570000035164,
+            "99": 6.1930310002935585
+          },
+          "min": 5.731104999995296,
+          "max": 6.1930310002935585,
+          "mean": 5.971199600003274
+        }
       },
       {
         "attribute": "cost.context_tokens",
@@ -301,8 +379,8 @@
       }
     ],
     "metadata": {
-      "startedOn": "2026-09-06T04:06:39Z",
-      "finishedOn": "2026-09-06T04:06:40Z"
+      "startedOn": "2026-09-06T04:14:55Z",
+      "finishedOn": "2026-09-06T04:14:55Z"
     },
     "configuration": [
       {

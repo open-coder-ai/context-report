@@ -6,12 +6,14 @@ samples, on 2026-09-06.
 
 **Machine**: Linux-6.18.44-fc-v24-x86_64, Python 3.11.15, 4 CPUs.
 
-**Producer version**: `fd746de2a13b46b6f966114c168221248f43fad5`
-("produce: read manifest-declared hooks files and args; exit 126 is unreachable; no bytecode in
-the subject", `open-coder-ai/context-report#18`). This supersedes the first pass, run on the
-producer's `main` before that fix (`85cce038…`-era `context-report`); three of this sample's own
-findings from that first pass are what the fix addresses — see "What changed from the first pass"
-below.
+**Producer version**: `c285c6e4f41910736829381d7448755cf03a2636`
+("produce: args keep shell expansion; dash's missing-file wording counts as unreachable",
+`open-coder-ai/context-report#18`, on top of `fd746de2a13b46b6f966114c168221248f43fad5`, "produce:
+read manifest-declared hooks files and args; exit 126 is unreachable; no bytecode in the subject").
+This is the third run of this sample: the first ran on `context-report` `main` before either fix
+(`85cce038…`-era); the second ran on `fd746de` and itself surfaced the gap `c285c6e` closes. Five
+plugins' worth of this sample's own findings across the two passes are what these two commits
+address — see "What changed across the two producer fixes" below.
 
 ## Selection
 
@@ -68,97 +70,101 @@ stdout decision that would let the tool call through.
 
 | Marketplace | Plugin | Hooks (events) | Reach | Reach (n/4) | Allow-any | Latency p50/p95 ms (or reason) | Context tokens | Interpreter |
 | :--- | :--- | :--- | :--- | ---: | :---: | :--- | ---: | :--- |
-| official | agentforce-adlc | 2 (PreToolUse, PostToolUse) | PASSED | 4/4 | True | 26.6 / 27.5 | 29,625 | python3 |
-| official | ai-plugins | 4 (PreToolUse, PostToolUse×2, UserPromptSubmit) | PASSED | 4/4 | True | 31.7 / 33.1 | 2,289 | bash |
+| official | agentforce-adlc | 2 (PreToolUse, PostToolUse) | PASSED | 4/4 | True | 26.8 / 28.7 | 29,625 | python3 |
+| official | ai-plugins | 4 (PreToolUse, PostToolUse×2, UserPromptSubmit) | PASSED | 4/4 | True | 32.0 / 37.4 | 2,289 | bash |
 | official | altimate-code | 1 (SessionStart only) | NotApplicable — no hook on PreToolUse | — | — | NotApplicable | 3,940 | — |
-| official | aws-core | 2 (PreToolUse×2) | PASSED | 4/4 | True | 45.8 / 49.4 | 57,466 | python3 |
+| official | aws-core | 2 (PreToolUse×2) | PASSED | 4/4 | True | 45.5 / 51.8 | 57,466 | python3 |
 | official | aws-serverless | 1 (PostToolUse only) | NotApplicable — no hook on PreToolUse | — | — | NotApplicable | 20,523 | — |
 | official | aws-startup-advisor | 1 (SessionStart only) | NotApplicable — no hook on PreToolUse | — | — | NotApplicable | 43,041 | — |
 | official | azure | 1 (PostToolUse only) | NotApplicable — no hook on PreToolUse | — | — | NotApplicable | 74,359 | — |
-| official | carta-cap-table | 9 (SessionStart×3, PreToolUse×2, UserPromptSubmit, PostToolUse×2, PostModelSwitch) | **FAILED** | 0/4 | False | Error: exit 126, not executable | 127,818 | sh (see note) |
-| official | carta-crm | 7 (SessionStart×3, PreToolUse×2, UserPromptSubmit, PostModelSwitch) | **FAILED** | 0/4 | False | Error: exit 126, not executable | 44,588 | sh (see note) |
-| official | carta-investors | 8 (SessionStart×3, PreToolUse×2, UserPromptSubmit, PostModelSwitch, PostToolUse) | **FAILED** | 0/4 | False | Error: exit 126, not executable | 146,663 | sh (see note) |
-| wshobson-agents | protect-mcp | 2 (PreToolUse, PostToolUse) | PASSED | 4/4 | True | 676.4 / 708.9 | 1,845 | sh → npx (node) |
-| wshobson-agents | review-agent-governance | 2 (PreToolUse, PostToolUse) | PASSED | 4/4 | True | 682.0 / 727.5 | 1,634 | sh → npx (node) |
-| othmanadi-planning-with-files | planning-with-files | 6 (SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, PreCompact, Stop) | **PASSED (see note)** | 4/4 | False | Error: no run exited 0 (see note) | 25,179 | sh (see note) |
+| official | carta-cap-table | 9 (SessionStart×3, PreToolUse×2, UserPromptSubmit, PostToolUse×2, PostModelSwitch) | FAILED | 0/4 | False | Error: exit 126, not executable | 127,818 | sh (see note) |
+| official | carta-crm | 7 (SessionStart×3, PreToolUse×2, UserPromptSubmit, PostModelSwitch) | FAILED | 0/4 | False | Error: exit 126, not executable | 44,588 | sh (see note) |
+| official | carta-investors | 8 (SessionStart×3, PreToolUse×2, UserPromptSubmit, PostModelSwitch, PostToolUse) | FAILED | 0/4 | False | Error: exit 126, not executable | 146,663 | sh (see note) |
+| wshobson-agents | protect-mcp | 2 (PreToolUse, PostToolUse) | PASSED | 4/4 | True | 665.8 / 686.5 | 1,845 | sh → npx (node) |
+| wshobson-agents | review-agent-governance | 2 (PreToolUse, PostToolUse) | PASSED | 4/4 | True | 672.0 / 711.2 | 1,634 | sh → npx (node) |
+| othmanadi-planning-with-files | planning-with-files | 6 (SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, PreCompact, Stop) | PASSED | 4/4 | True | 6.0 / 6.2 | 25,179 | sh |
 | official | 42crunch-api-security-testing | 0 | NotApplicable — declares no hooks | — | — | NotApplicable | 17,912 | — |
 | official | activecampaign | 0 | NotApplicable — declares no hooks | — | — | NotApplicable | 9,069 | — |
 | official | adobe-for-creativity | 0 | NotApplicable — declares no hooks | — | — | NotApplicable | 43,647 | — |
 | official | agent-sdk-dev | 0 | NotApplicable — declares no hooks | — | — | NotApplicable | NotApplicable (no text files) | — |
 | official | aikido | 0 | NotApplicable — declares no hooks | — | — | NotApplicable | 1,509 | — |
 
-## What changed from the first pass
+## What changed across the two producer fixes
 
-The first (pre-fix) run of this same sample misreported four plugins; a reader of the paper should
-use the rows above, not the ones from that run.
+Three passes of this sample exist; only the rows above, from the third pass on `c285c6e`, are
+committed here. A reader of the paper should not use numbers from either earlier pass.
 
-- **`aws-core`** previously read `NotApplicable — the plugin declares no hooks`. It declares two
-  `PreToolUse` hooks through `.claude-plugin/plugin.json`'s `hooks` field
-  (`./com.anthropic.claude-code/hooks/hooks.json`), which the fixed discovery now reads; it is now
-  fully measured: reachable 4/4, `wouldAllowAny: True`, p50/p95 45.8/49.4 ms.
-- **`azure`** previously read `NotApplicable — the plugin declares no hooks`, for the same reason as
-  `aws-core` (its `hooks` field points at `./hooks/claude-hooks.json`). The fixed discovery now
-  finds that file too — but its one hook is on `PostToolUse`, not `PreToolUse`, so the row is still
-  `NotApplicable`, now correctly reasoned as "declares hooks, but none on claude_code's pre-tool
-  event" rather than "declares no hooks." This is not a regression in the fix; it is what the
-  plugin actually declares.
-- **`carta-cap-table`, `carta-crm`, `carta-investors`** previously read `reachability: PASSED (4/4)`
-  even though their shared `hooks/dispatch.sh` has no execute bit and never ran (caught only by
-  `fault.malformedOutput`/`cost.latency_ms`, both of which saw exit 126 both times). Exit 126 now
-  counts as unreachable, so all three now read `reachability: FAILED (0/4)` — the row a reader
-  would actually want, since the earlier "reachable" was true only of the path resolving, not of
-  anything running.
-- **`agentforce-adlc`** previously required two `produce` attempts: the first failed outright
-  (the plugin's own hook wrote `__pycache__` into itself, moving the subject digest mid-run) and
-  only the second, with the cache file already primed, produced a statement. With hooks now run
-  under `PYTHONDONTWRITEBYTECODE=1` (recorded in the row's `environment`), the very first attempt
-  this time produced a statement directly; no leftover `__pycache__` was written by this run
-  (a stale copy from the earlier session's first attempt was already on disk and untouched).
+- **`aws-core`** (pass 1 → pass 2, `fd746de`): `NotApplicable — the plugin declares no hooks` →
+  fully measured. It declares two `PreToolUse` hooks through `.claude-plugin/plugin.json`'s `hooks`
+  field (`./com.anthropic.claude-code/hooks/hooks.json`), which discovery started reading in
+  `fd746de`. Reachable 4/4, `wouldAllowAny: True`, p50/p95 45.5/51.8 ms; unaffected by `c285c6e`.
+- **`azure`** (pass 1 → pass 2, `fd746de`): also `NotApplicable — the plugin declares no hooks` →
+  still `NotApplicable`, but now for the true reason. Its `hooks` field (`./hooks/claude-hooks.json`)
+  is read from `fd746de` on, but its one hook is on `PostToolUse`, not `PreToolUse`, so it was never
+  going to be measured in v0.1 — the row is now reasoned "declares hooks, but none on claude_code's
+  pre-tool event" rather than the misleading "declares no hooks." This is what the plugin actually
+  declares, not a regression in either fix.
+- **`carta-cap-table`, `carta-crm`, `carta-investors`** (pass 1 → pass 2, `fd746de`):
+  `reachability: PASSED (4/4)` → `FAILED (0/4)`. Their shared `hooks/dispatch.sh` has no execute bit
+  and never ran (caught only by `fault.malformedOutput`/`cost.latency_ms`, both exit 126). Exit 126
+  now counts as unreachable — the row a reader would actually want, since the earlier "reachable"
+  was true only of the path resolving, not of anything running. Unaffected by `c285c6e`.
+- **`agentforce-adlc`** (pass 1 → pass 2, `fd746de`): previously needed two `produce` attempts (the
+  first failed outright — the hook's own `__pycache__` write moved the subject digest mid-run).
+  Hooks now run under `PYTHONDONTWRITEBYTECODE=1`; the third pass, like the second, produced a
+  statement on the first attempt.
+- **`planning-with-files`** (pass 2 → pass 3, `c285c6e`): pass 2 read `reachability: PASSED (4/4)`,
+  `wouldAllowAny: False`, `cost.latency_ms: Error` — every number spurious, because `fd746de`'s
+  `shlex.quote()` single-quoted the hook's `${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh` argument,
+  so the shell never expanded it and the script never opened; `dash`'s resulting "cannot open"
+  wording didn't match any recognized not-found fragment, so reachability read PASSED for a hook
+  that never ran. `c285c6e` quotes only arguments that need it and expands `reachability.py`'s
+  fragment list to cover dash — the hook now genuinely opens and runs: `reachability: PASSED (4/4)`
+  is now the same result but for the real reason, `wouldAllowAny: True`, and
+  `cost.latency_ms: PASSED` at 6.0/6.2 ms p50/p95, the fastest hook in the sample.
 
-All four affected statements have been fully regenerated on the fixed producer; the versions
+All statements affected by either fix have been fully regenerated on `c285c6e`; the versions
 committed here are the only ones in this repository.
 
 ## What the rows say
 
-**A discovery gap remains: `${VAR}` expansion inside a quoted `args` entry.** The fix joins a
-hook's `command` and `args` with `shlex.quote()` on each argument — correct against shell
-injection, but it defeats `${CLAUDE_PLUGIN_ROOT}`-style expansion for any argument that is itself a
-variable reference, because a single-quoted string suppresses all shell expansion. `planning-with-files`'
-one `PreToolUse` hook is exactly this shape (`{"command": "sh", "args":
-["${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh", "pre-tool-use"]}`); the producer now runs
-`sh '${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh' pre-tool-use` — the literal, unexpanded string —
-and `dash` (this machine's `/bin/sh`) reports `cannot open ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh:
-No such file`. That phrasing does not match any of `reachability.py`'s
-`_NOT_FOUND_STDERR_FRAGMENTS` (`"can't open file"`, `"No such file or directory"`, `"not found"` —
-dash says "cannot open", not "can't open", and omits "or directory"), so `_is_unreachable` returns
-`False` and the row reads `reachability: PASSED (4/4)` for a hook that never opened its script
-either before or after the fix. `fault.malformedOutput` catches the same exit-2/"No such file"
-result on all four cases (`wouldAllowAny: False`), and `cost.latency_ms` is honestly `Error: no run
-exited 0`, so the plugin's real hook behaviour is still not observed. This is a second, narrower
-instance of the args-shape gap the fix addressed, not evidence about `claude-hook.sh` itself — see
-`open-coder-ai/context-report#18` (or its successor) for whether `${VAR}`-shaped `args` entries
-should skip quoting, and `reachability.py`'s stderr-fragment list for the shell-wording gap.
+**`npx` is a two-order-of-magnitude latency cost.** `protect-mcp` and `review-agent-governance`
+(both `wshobson/agents`) invoke `npx protect-mcp@0.7.4 …` from their `PreToolUse` hook: p50 665.8 ms
+and 672.0 ms, against 6.0–51.8 ms p50 for the four plugins that shell out to a local
+`python3`/`bash`/`sh` script directly (`agentforce-adlc`, `ai-plugins`, `aws-core`,
+`planning-with-files`). Unaffected by either producer fix, since neither touches timing.
 
-**`npx` is still a two-order-of-magnitude latency cost.** `protect-mcp` and `review-agent-governance`
-(both `wshobson/agents`) invoke `npx protect-mcp@0.7.4 …` from their `PreToolUse` hook: p50 676.4 ms
-and 682.0 ms, against 26.6–49.4 ms p50 for the three plugins that shell out to a local
-`python3`/`bash` script directly. Unchanged by the producer fix, since none of the three fixes touch
-timing.
+**Every hook that actually runs exits with something other than a silent allow on malformed
+input.** Of the six plugins whose `PreToolUse` hook ran and was timed (`agentforce-adlc`,
+`ai-plugins`, `aws-core`, `planning-with-files`, `protect-mcp`, `review-agent-governance`),
+`wouldAllowAny` is `True` for all six — this sample's full working-hook set, now that
+`planning-with-files` genuinely runs. The three `carta-*` plugins are the only ones left reading
+`wouldAllowAny: False`, and for the reason above (missing exec bit): their hooks never start, so
+there is nothing to allow or deny.
 
-**Every measured hook that actually runs exits with something other than a silent allow on
-malformed input.** Of the five plugins whose `PreToolUse` hook actually ran and was timed
-(`agentforce-adlc`, `ai-plugins`, `aws-core`, `protect-mcp`, `review-agent-governance`),
-`wouldAllowAny` is `True` for all five. The three `carta-*` plugins and `planning-with-files` all
-read `wouldAllowAny: False` too, but for the reasons above (missing exec bit; `${VAR}` quoting) —
-their hooks never ran either, not because they evaluated the malformed input and denied it.
+**Reachable is still not the same claim as executable.** `carta-cap-table`, `carta-crm`, and
+`carta-investors` share one dispatch shim, `hooks/dispatch.sh`, committed with git mode `100644`
+(no execute bit) in all three plugin directories. `reachability: FAILED (0/4)` now reflects that
+directly (exit 126 counts as unreachable since `fd746de`); `fault.malformedOutput`'s
+`wouldAllowAny: False` and `cost.latency_ms`'s `Error: exit 126, not executable` agree. No open gap
+remains for these three under either fix.
 
-**Context weight is unaffected by any of this and unchanged from the first pass.** It is computed
-from the plugin's skill/manifest text files, not from running any hook, so `cost.context_tokens`
-did not move for any of the 18 plugins between the two producer versions. The smallest bundle in
-the sample (`review-agent-governance`, 1,634 tokens under `approx-regex-v1`) and the largest
-(`carta-cap-table`, 127,818) are both hook-bearing; the no-hook plugins range from 1,509 (`aikido`)
-to 74,359 (`azure`) tokens. `agent-sdk-dev` has no skill or hooks text at all —
-`cost.context_tokens` reports `NotApplicable: no text files to count`, not zero.
+**Context weight is unaffected by either fix.** It is computed from the plugin's skill/manifest text
+files, not from running any hook, so `cost.context_tokens` has not moved for any of the 18 plugins
+across all three passes. The smallest bundle in the sample (`review-agent-governance`, 1,634 tokens
+under `approx-regex-v1`) and the largest (`carta-cap-table`, 127,818) are both hook-bearing; the
+no-hook plugins range from 1,509 (`aikido`) to 74,359 (`azure`) tokens. `agent-sdk-dev` has no skill
+or hooks text at all — `cost.context_tokens` reports `NotApplicable: no text files to count`, not
+zero.
+
+**Nothing still looks surprising or unaddressed in this sample.** Every plugin's rows now match
+what its own manifest and files declare: `NotApplicable` where the hook is on the wrong event or
+absent, `FAILED`/`Error` where the shipped file cannot execute, and a real measurement everywhere
+else. This sample raised several distinct producer gaps across its first two passes (the
+`plugin.json`-declared hooks path, `args` being dropped and then over-quoted, exit 126 reading as
+reachable, and a hook's own bytecode write mutating its subject); all of them are now closed for
+every plugin in this sample. That does not mean discovery is complete in general — only that
+nothing in these particular 18 plugins currently exposes a further gap.
 
 No plugin in this sample is named here as broken, misconfigured, or unsafe: every `Error` and
 `NotApplicable` row above states what v0.1 measured and why it stopped there, per the reasoning the
@@ -168,7 +174,7 @@ threshold to set, not this report's.
 ## Reproduce
 
 ```bash
-pip install -e /path/to/context-report          # base install, no [efficacy] extra needed; at fd746de or later
+pip install -e /path/to/context-report          # base install, no [efficacy] extra needed; at c285c6e or later
 git clone https://github.com/<owner>/<repo> <dest> && git -C <dest> checkout <commit>   # per inventory.json
 context-report produce --subject <plugin dir> --kind plugin --target claude_code --n 20 \
   --out paper/measurements/catalog-sample/<marketplace>/<plugin>.json
@@ -177,7 +183,7 @@ context-report verify paper/measurements/catalog-sample/<marketplace>/<plugin>.j
 
 `inventory.json` lists, per plugin, the marketplace, repo URL, path inside the repo, commit, and
 subject digest recorded in its statement; re-cloning at that commit and re-running `produce` on a
-producer at or after `fd746de` should reproduce every re-derivable row (`reachability`,
+producer at or after `c285c6e` should reproduce every re-derivable row (`reachability`,
 `fault.malformedOutput`, `cost.context_tokens`) exactly and `cost.latency_ms` as a comparable
-distribution. Running against a producer before `fd746de` reproduces the misreported first-pass
-rows described above, not these.
+distribution. Running against an earlier producer reproduces one of the two misreported earlier
+passes described above, not these rows.
