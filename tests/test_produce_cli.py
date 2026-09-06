@@ -26,6 +26,54 @@ def hook_dir(tmp_path: Path) -> Path:
     return tmp_path
 
 
+@pytest.fixture
+def plugin_dir(tmp_path: Path) -> Path:
+    """A fake claude_code plugin bundle: two PreToolUse hooks and one SessionStart hook."""
+    plugin = tmp_path / "plugin"
+    scripts = plugin / "scripts"
+    scripts.mkdir(parents=True)
+    for name in ("one", "two", "session"):
+        (scripts / f"{name}.py").write_text(GATE)
+    hooks_dir = plugin / "hooks"
+    hooks_dir.mkdir()
+    hooks_json = {
+        "hooks": {
+            "PreToolUse": [
+                {
+                    "matcher": "Bash",
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": 'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/one.py"',
+                        }
+                    ],
+                },
+                {
+                    "matcher": "Bash",
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": 'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/two.py"',
+                        }
+                    ],
+                },
+            ],
+            "SessionStart": [
+                {
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": 'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/session.py"',
+                        }
+                    ]
+                }
+            ],
+        }
+    }
+    (hooks_dir / "hooks.json").write_text(json.dumps(hooks_json))
+    return plugin
+
+
 def _rows(stmt: dict) -> dict[str, dict]:
     return {a["attribute"]: a for a in stmt["predicate"]["attributes"]}
 
@@ -113,13 +161,14 @@ def test_instruction_file_marks_executable_rows_not_applicable(tmp_path: Path) -
     assert rows["cost.context_tokens"]["measurement"]["mean"] > 0
 
 
-def test_plugin_without_hook_command_says_so(tmp_path: Path) -> None:
+def test_plugin_without_hooks_says_so(tmp_path: Path) -> None:
+    """A plugin with no hooks.json is self-describing too: there is simply nothing to discover."""
     (tmp_path / "skills" / "s").mkdir(parents=True)
     (tmp_path / "skills" / "s" / "SKILL.md").write_text("# skill\nDo the thing.\n")
     stmt = produce_statement(subject=tmp_path, subject_kind="plugin", target="copilot")
     rows = _rows(stmt)
     assert rows["reachability"]["result"] == NOT_APPLICABLE
-    assert "no hook command" in rows["reachability"]["reasoning"]
+    assert "the plugin declares no hooks" in rows["reachability"]["reasoning"]
     assert rows["cost.context_tokens"]["result"] == PASSED
 
 
@@ -229,3 +278,174 @@ def test_env_does_not_leak_between_runs(hook_dir: Path) -> None:
     )
     assert _rows(resolved)["reachability"]["result"] == PASSED
     assert _rows(unresolved)["reachability"]["result"] != PASSED
+
+
+def test_plugin_discovers_hooks_and_derives_plugin_root(plugin_dir: Path) -> None:
+    """No --hook-command, no --env: the plugin's own hooks.json and root var carry the whole run."""
+    stmt = produce_statement(subject=plugin_dir, subject_kind="plugin", target="claude_code", n=2)
+    assert validate(stmt) == []
+    rows = _rows(stmt)
+
+    reach = rows["reachability"]
+    assert reach["result"] == PASSED
+    assert set(reach["values"]["perHook"]) == {"PreToolUse:0", "PreToolUse:1"}
+    assert reach["environment"]["env"]["CLAUDE_PLUGIN_ROOT"] == str(plugin_dir)
+    for hook_values in reach["values"]["perHook"].values():
+        assert set(hook_values["reachable_from"]) == {"root", "nested", "parent", "outside"}
+    assert reach["values"]["reachable_from"] == ["root", "nested", "parent", "outside"]
+    assert reach["values"]["unreachable_from"] == []
+    skipped = reach["values"]["skippedHooks"]
+    assert [s["hook_id"] for s in skipped] == ["SessionStart:0"]
+    assert skipped[0]["reason"] == "v0.1 measures pre-tool hooks only"
+
+    fault = rows["fault.malformedOutput"]
+    assert fault["result"] == PASSED
+    assert set(fault["values"]["perHook"]) == {"PreToolUse:0", "PreToolUse:1"}
+    assert fault["values"]["wouldAllowAny"] is True
+    assert [s["hook_id"] for s in fault["values"]["skippedHooks"]] == ["SessionStart:0"]
+
+    latency = rows["cost.latency_ms"]
+    assert latency["result"] == PASSED
+    assert set(latency["values"]["perHook"]) == {"PreToolUse:0", "PreToolUse:1"}
+    per_hook_means = [h["mean"] for h in latency["values"]["perHook"].values()]
+    assert latency["measurement"]["mean"] == pytest.approx(sum(per_hook_means))
+    assert latency["measurement"]["n"] == 2
+    assert latency["conditions"]["aggregation"] == "sum-across-hooks"
+    assert [s["hook_id"] for s in latency["values"]["skippedHooks"]] == ["SessionStart:0"]
+
+
+def test_plugin_input_hash_changes_when_a_hook_is_added(plugin_dir: Path) -> None:
+    before = produce_statement(subject=plugin_dir, subject_kind="plugin", target="claude_code", n=2)
+    before_hash = _rows(before)["reachability"]["inputHash"]
+
+    hooks_path = plugin_dir / "hooks" / "hooks.json"
+    doc = json.loads(hooks_path.read_text())
+    doc["hooks"]["PreToolUse"].append(
+        {
+            "matcher": "Bash",
+            "hooks": [
+                {"type": "command", "command": 'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/one.py"'}
+            ],
+        }
+    )
+    hooks_path.write_text(json.dumps(doc))
+
+    after = produce_statement(subject=plugin_dir, subject_kind="plugin", target="claude_code", n=2)
+    after_hash = _rows(after)["reachability"]["inputHash"]
+    assert after_hash != before_hash
+
+
+def test_plugin_caller_env_overrides_discovered_root(plugin_dir: Path) -> None:
+    """--env can still override the plugin-root value discovery would otherwise pass in."""
+    other_root = plugin_dir.parent / "elsewhere"
+    other_root.mkdir()
+    (other_root / "scripts").symlink_to(plugin_dir / "scripts")
+    stmt = produce_statement(
+        subject=plugin_dir,
+        subject_kind="plugin",
+        target="claude_code",
+        env={"CLAUDE_PLUGIN_ROOT": str(other_root)},
+        n=2,
+    )
+    rows = _rows(stmt)
+    assert rows["reachability"]["environment"]["env"]["CLAUDE_PLUGIN_ROOT"] == str(other_root)
+    assert rows["reachability"]["result"] == PASSED
+
+
+def test_plugin_single_hook_still_emits_perhook(tmp_path: Path) -> None:
+    """Exactly one hook still gets the perHook shape, with one key, not a flattened single row."""
+    plugin = tmp_path / "plugin"
+    scripts = plugin / "scripts"
+    scripts.mkdir(parents=True)
+    (scripts / "guard.py").write_text(GATE)
+    hooks_dir = plugin / "hooks"
+    hooks_dir.mkdir()
+    hooks_json = {
+        "hooks": {
+            "PreToolUse": [
+                {
+                    "matcher": "Bash",
+                    "hooks": [
+                        {
+                            "type": "command",
+                            "command": 'python3 "${CLAUDE_PLUGIN_ROOT}/scripts/guard.py"',
+                        }
+                    ],
+                }
+            ]
+        }
+    }
+    (hooks_dir / "hooks.json").write_text(json.dumps(hooks_json))
+
+    stmt = produce_statement(subject=plugin, subject_kind="plugin", target="claude_code", n=2)
+    rows = _rows(stmt)
+    assert list(rows["reachability"]["values"]["perHook"]) == ["PreToolUse:0"]
+    assert "skippedHooks" not in rows["reachability"]["values"]
+
+
+def test_plugin_flat_hook_entry_is_discovered(tmp_path: Path) -> None:
+    """Cursor's hooks.json uses a flat {"command": ...} entry, not claude/copilot's nested shape."""
+    plugin = tmp_path / "plugin"
+    scripts = plugin / "scripts"
+    scripts.mkdir(parents=True)
+    (scripts / "guard.py").write_text(GATE)
+    hooks_dir = plugin / "hooks"
+    hooks_dir.mkdir()
+    hooks_json = {
+        "hooks": {
+            "beforeShellExecution": [
+                {"command": 'python3 "${CURSOR_PLUGIN_ROOT}/scripts/guard.py"'}
+            ]
+        }
+    }
+    (hooks_dir / "hooks.json").write_text(json.dumps(hooks_json))
+
+    stmt = produce_statement(subject=plugin, subject_kind="plugin", target="cursor", n=2)
+    rows = _rows(stmt)
+    assert rows["reachability"]["result"] == PASSED
+    assert rows["reachability"]["environment"]["env"]["CURSOR_PLUGIN_ROOT"] == str(plugin)
+
+
+def test_plugin_with_hooks_but_none_pre_tool_stays_not_applicable(tmp_path: Path) -> None:
+    plugin = tmp_path / "plugin"
+    hooks_dir = plugin / "hooks"
+    hooks_dir.mkdir(parents=True)
+    hooks_json = {"hooks": {"SessionStart": [{"hooks": [{"type": "command", "command": "true"}]}]}}
+    (hooks_dir / "hooks.json").write_text(json.dumps(hooks_json))
+
+    stmt = produce_statement(subject=plugin, subject_kind="plugin", target="claude_code")
+    rows = _rows(stmt)
+    assert rows["reachability"]["result"] == NOT_APPLICABLE
+    assert "none on claude_code's pre-tool event" in rows["reachability"]["reasoning"]
+
+
+def test_cli_rejects_hook_command_with_plugin_kind(plugin_dir: Path, capsys) -> None:
+    rc = main(
+        [
+            "produce",
+            "--subject",
+            str(plugin_dir),
+            "--kind",
+            "plugin",
+            "--target",
+            "claude_code",
+            "--hook-command",
+            "echo hi",
+        ]
+    )
+    assert rc == 2
+    assert "self-describing" in capsys.readouterr().err
+
+
+def test_produce_statement_ignores_hook_command_for_a_plugin(plugin_dir: Path) -> None:
+    """The CLI rejects --hook-command with --kind plugin; the library function just ignores it."""
+    stmt = produce_statement(
+        subject=plugin_dir,
+        subject_kind="plugin",
+        target="claude_code",
+        hook_command="definitely-not-used",
+        n=2,
+    )
+    rows = _rows(stmt)
+    assert rows["reachability"]["result"] == PASSED
+    assert "definitely-not-used" not in json.dumps(rows["reachability"])
