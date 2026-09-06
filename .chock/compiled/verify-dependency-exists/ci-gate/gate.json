@@ -1,0 +1,17 @@
+{
+  "kind": "dependency_allowlist",
+  "on": [
+    "commit"
+  ],
+  "action": "block",
+  "message": "Unknown dependency blocked. Verify the package exists in the official registry, then add it to .chock/dependency-allowlist.txt to allow it.",
+  "params": {
+    "manifests": [
+      "requirements.txt",
+      "pyproject.toml",
+      "package.json",
+      "go.mod"
+    ],
+    "allowlist_file": ".chock/dependency-allowlist.txt"
+  }
+}

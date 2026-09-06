@@ -1,0 +1,11 @@
+chock:
+  version: 0.0.1
+  supported_agents: [aider, claude, codex, copilot, cursor, devin, gemini, grok, kimi-code,
+    replit, tabnine, vscode, windsurf]
+  agent_agnostic: false
+  onboarded_at: 2026-09-06 02:18:13.029870+00:00
+  defaults:
+    protected_branches: [main, master]
+policies:
+  disabled: []
+  overrides: {}
