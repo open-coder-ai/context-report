@@ -21,10 +21,9 @@ Specification = "https://open-coder-ai.github.io/context-report/attestation/v0.1
 context-report = "context_report.cli:main"
 
 [tool.hatch.build.targets.wheel]
+# `data/` is a package (it has __init__.py), so it ships with the package; a force-include of the
+# same directory added every file twice and broke every `pip install` from source.
 packages = ["src/context_report"]
-
-[tool.hatch.build.targets.wheel.force-include]
-"src/context_report/data" = "context_report/data"
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
