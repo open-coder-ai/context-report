@@ -78,7 +78,7 @@ def malformed_output_row(  # noqa: PLR0913 -- keyword-only; the probe's whole co
     cases = malformed_cases(control_payload)
     for case, stdin_text in cases.items():
         try:
-            proc = subprocess.run(  # noqa: S602 -- command is the hook string as registered
+            proc = subprocess.run(  # noqa: S602  # nosemgrep -- run as the client runs it
                 command,
                 shell=True,
                 input=stdin_text,

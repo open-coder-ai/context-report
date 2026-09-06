@@ -129,7 +129,7 @@ def _measure(  # noqa: PLR0913 -- the run loop, split out so cleanup is a single
         stderr_first_line: dict[str, str] = {}
         for label in CWD_LABELS:
             try:
-                proc = subprocess.run(  # noqa: S602 -- command is the hook string as registered
+                proc = subprocess.run(  # noqa: S602  # nosemgrep -- run as the client runs it
                     command,
                     shell=True,
                     input=payload_json,

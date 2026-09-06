@@ -65,7 +65,7 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
     for _ in range(n):
         started = time.perf_counter()
         try:
-            proc = subprocess.run(  # noqa: S602 -- shell=True is the point: real tool invocation
+            proc = subprocess.run(  # noqa: S602  # nosemgrep -- run as the client runs it
                 command,
                 shell=True,
                 input=stdin_blob,
