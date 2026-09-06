@@ -11,6 +11,7 @@ import subprocess
 import time
 from pathlib import Path
 
+from context_report.produce.discover import known_layouts
 from context_report.rows import (
     ERROR,
     NOT_APPLICABLE,
@@ -194,9 +195,13 @@ def injected_text_paths(subject_path: Path, subject_kind: str) -> list[Path]:
     if subject_kind == "plugin":
         paths = sorted((subject_path / "skills").rglob("SKILL.md"))
         paths += sorted((subject_path / "rules").rglob("*.md"))
-        hooks_json = subject_path / "hooks" / "hooks.json"
-        if hooks_json.exists():
-            paths.append(hooks_json)
+        # The hooks file sits where the target agent looks for it; Copilot's is not under hooks/.
+        # A plugin is measured per target, but its declared triggers are the same text wherever
+        # the bundle keeps them, so every known layout's file is counted once.
+        for hooks_file in sorted({lay["hooks_file"] for lay in known_layouts().values()}):
+            candidate = subject_path / hooks_file
+            if candidate.exists() and candidate not in paths:
+                paths.append(candidate)
         return paths
     if subject_kind == "hook":
         return []

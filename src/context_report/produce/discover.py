@@ -14,6 +14,11 @@ def _table() -> dict[str, Any]:
     return json.loads(blob)["targets"]
 
 
+def known_layouts() -> dict[str, dict[str, Any]]:
+    """Every target's bundle-layout facts, keyed by target id."""
+    return dict(_table())
+
+
 def layout(target: str) -> dict[str, Any] | None:
     """The bundle-layout facts for `target` (hooks file, plugin-root var), or None if unknown."""
     return _table().get(target)
