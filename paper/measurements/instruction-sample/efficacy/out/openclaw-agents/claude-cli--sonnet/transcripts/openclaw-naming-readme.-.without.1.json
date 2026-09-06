@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "db4e4a9e7cfdc5507e6a0119d59cf8d28cd4ee80d052dc9dd405121d0e2246ab",
+  "model": "claude-cli/sonnet",
+  "output": "- **Discord extension**: Connect openclaw to your Discord server for real-time notifications and slash-command control, with customisable embed/status colours to match your server's branding.\n\nWant me to add this directly to a README.md file, or is this just for you to paste in yourself?",
+  "recorded_on": "2026-09-06T05:11:42Z",
+  "rule_id": "-",
+  "subject_id": "openclaw-agents",
+  "task_id": "openclaw-naming-readme",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 314
+  }
+}

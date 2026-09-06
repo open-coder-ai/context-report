@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "ee0f64b27362658a9f54afcafd16b317e9a9d9984a043cf664ef2820370c34f0",
+  "model": "claude-cli/opus",
+  "output": "There is no code change in the working tree, so I wrote the description from your brief only \u2014 no implementation details are invented.\n\n**PR description:**\n\n> This change corrects a race condition in the queue handling of the workflow executor. Two workers could get the same queue item at the same time; the executor now prevents this.\n\nIf you point me at the actual diff or branch, I will add the specific mechanism (lock, atomic claim, or single-consumer change) to the second sentence.",
+  "recorded_on": "2026-09-06T06:07:05Z",
+  "rule_id": "write-all-technical-text-code-comments",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-pr-desc",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 6,
+    "outputTokens": 772
+  }
+}

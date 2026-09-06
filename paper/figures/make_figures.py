@@ -26,6 +26,7 @@ from matplotlib.patches import Patch  # noqa: E402
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 CATALOG_DIR = REPO / "paper" / "measurements" / "catalog-sample"
+INSTRUCTION_OUT = REPO / "paper" / "measurements" / "instruction-sample" / "efficacy" / "out"
 DATA_DIR = HERE / "data"
 
 SAVE_KW: dict[str, Any] = {"metadata": {"Date": None, "Creator": None}}
@@ -570,6 +571,89 @@ def fig_chock_reachability(path: Path, chock: list[dict]) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Figure 7: fig-efficacy-lift.svg
+
+
+MODEL_COLORS = {"claude-cli/opus": BLUE, "claude-cli/sonnet": AQUA, "claude-cli/fable": ORANGE}
+MODEL_ORDER = ["claude-cli/opus", "claude-cli/sonnet", "claude-cli/fable"]
+
+
+def _load_instruction_efficacy() -> list[dict]:
+    """One record per (subject, model) statement of the instruction sample: lift and its CI."""
+    records = []
+    for stmt_path in sorted(INSTRUCTION_OUT.glob("*/claude-cli--*.json")):
+        stmt = _load_json(stmt_path)
+        row = _rows_by_attribute(stmt)["efficacy"]
+        est = row.get("estimate") or {}
+        ci = est.get("confidenceInterval") or {}
+        records.append(
+            {
+                "subject": stmt_path.parent.name,
+                "model": row["conditions"]["model"],
+                "result": row["result"],
+                "point": est.get("pointEstimate"),
+                "lower": ci.get("lowerBound"),
+                "upper": ci.get("upperBound"),
+                "n": row["conditions"].get("nPerArm"),
+            }
+        )
+    return records
+
+
+def fig_efficacy_lift(path: Path, records: list[dict]) -> None:
+    """Pooled lift with its 95% interval per subject, one marker per subject model."""
+    subjects = sorted({r["subject"] for r in records})
+    offsets = {m: (i - 1) * 0.24 for i, m in enumerate(MODEL_ORDER)}
+
+    fig, ax = plt.subplots(figsize=(6.4, 3.2))
+    ax.axvline(0, color=INK_SECONDARY, linewidth=0.8, linestyle="--")
+    for r in records:
+        if r["point"] is None:
+            continue
+        y = subjects.index(r["subject"]) + offsets[r["model"]]
+        color = MODEL_COLORS[r["model"]]
+        ax.plot([r["lower"], r["upper"]], [y, y], color=color, linewidth=2.2, solid_capstyle="butt")
+        ax.plot(r["point"], y, marker="o", color=color, markersize=6, markeredgecolor=BG)
+        ax.text(
+            r["upper"] + 0.02,
+            y,
+            r["result"],
+            fontsize=7,
+            color=INK_SECONDARY,
+            va="center",
+        )
+
+    ax.set_yticks(range(len(subjects)))
+    ax.set_yticklabels(subjects, fontsize=9)
+    ax.set_ylim(-0.6, len(subjects) - 0.4)
+    ax.invert_yaxis()
+    ax.set_xlim(-0.6, 0.9)
+    ax.set_xlabel("pooled lift in adherence, with minus without the rules (95% interval)")
+    ax.grid(axis="x", linewidth=0.5, alpha=0.6)
+    ax.set_axisbelow(True)
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)
+    handles = [
+        Line2D([0], [0], marker="o", color=MODEL_COLORS[m], linewidth=2.2, label=m.split("/")[1])
+        for m in MODEL_ORDER
+    ]
+    ax.legend(
+        handles=handles,
+        loc="center left",
+        bbox_to_anchor=(1.02, 0.5),
+        frameon=False,
+        fontsize=8,
+        title="subject model",
+        title_fontsize=8,
+    )
+    ax.set_title(
+        "instruction sample: lift per subject and model, four observations per arm", fontsize=10
+    )
+    fig.savefig(path, format="svg", bbox_inches="tight", **SAVE_KW)
+    plt.close(fig)
+
+
+# ---------------------------------------------------------------------------
 
 
 def main() -> None:
@@ -600,6 +684,7 @@ def main() -> None:
     fig_latency(out_dir / "fig-latency.svg", plugins, chock)
     fig_context_tokens(out_dir / "fig-context-tokens.svg", plugins)
     fig_chock_reachability(out_dir / "fig-chock-reachability.svg", chock)
+    fig_efficacy_lift(out_dir / "fig-efficacy-lift.svg", _load_instruction_efficacy())
 
 
 if __name__ == "__main__":

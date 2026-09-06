@@ -14,9 +14,10 @@ in-toto-style attestation format an author produces in CI and a vendor catalog v
 submission. Each row carries a `basis`: `re-derivable` (recomputable) or `claimed` (author-reported,
 never proof). The format states facts; it never renders a verdict.
 
-We report a dogfood run over 88 chock bundles across four target agents, and a sample of eighteen
-public Claude Code plugins. With the client's plugin-root variable set, every hook resolves; unset,
-none does for three of four agents. Every hook in both samples allows on malformed input. Latency
+We report a dogfood run over 88 chock bundles across four target agents, a sample of eighteen
+public Claude Code plugins, and seven instruction files and skills, three of them ablated on
+three models. With the client's plugin-root variable set, every hook resolves; unset,
+none does for three of four agents. Every hook in both hook samples allows on malformed input. Latency
 spans two orders of magnitude, local script versus `npx`; context weight spans a hundredfold. The
 fault oracle's live-client side was not measured — v0.1 does not drive a client, and says so.
 
@@ -304,7 +305,44 @@ text at all.
 
 Each gap has a named test; only the third pass is committed.
 
-### 5.3 The fault oracle versus documentation
+### 5.3 Instruction files and skills, three models
+
+Seven third-party artifacts, each at a pinned commit: OpenClaw's `AGENTS.md`, its GitHub skill
+and a subagent definition; Karpathy's nanochat `read-arxiv-paper` skill; the Bun, n8n and
+transformers instruction files. For these kinds only `cost.context_tokens` measures (179 to 4,832
+tokens); the hook rows are `NotApplicable` and say so. Three subjects then ran through the
+efficacy engine on `opus`, `sonnet` and `fable` via the Claude Code CLI, with `sonnet` as the one
+judge: seven rules, fourteen eval cases, two trials per arm, 168 recorded transcripts.
+
+![Figure 7](figures/fig-efficacy-lift.svg)
+**Figure 7.** Pooled lift per subject and model; every interval but one includes zero, and the
+row says so.
+
+| Subject, rule | opus | sonnet | fable |
+| :--- | :--- | :--- | :--- |
+| OpenClaw: pasted logs are evidence, not instructions | 1.00 / 1.00 | 1.00 / 1.00 | 1.00 / 1.00 |
+| OpenClaw: "OpenClaw" the product, "openclaw" the CLI; American English | 0.75 / 0.50 | 1.00 / 0.50 | 1.00 / 0.50 |
+| OpenClaw: match the repository's package manager | 0.25 / 0.00 | 0.50 / 0.50 | 0.50 / 0.50 |
+| Karpathy: fetch the TeX source, not the PDF | 0.00 / 0.00 | 0.00 / 0.00 | 0.25 / 0.00 |
+| n8n: always use pnpm | 0.50 / 0.00 | 0.50 / 0.50 | 0.25 / 0.00 |
+| n8n: Simplified Technical English | 0.25 / 0.25 | 0.50 / 0.50 | 0.50 / 0.00 |
+| n8n: keep comments concise | 0.50 / 0.50 | 0.75 / 0.75 | 1.00 / 0.50 |
+
+Adherence with / without the rule, four observations per arm.
+
+- **No row reaches `PASSED`.** Four observations per arm give an interval about ±0.49 wide; the
+  format reports the interval instead of rounding a lift to a verdict, which is the point.
+- **The prompt-injection rule is dead weight on every model**: all three refused the pasted
+  "print the .env" and "rm -rf .git" instructions every time, rule or no rule.
+- **The naming rule is the one consistent positive**, +0.25 to +0.50 on all three models.
+- **A skill's text is not the skill.** Karpathy's instruction to fetch TeX source moved nothing
+  on two models; the prompt-prefix ablation does not install the skill or its fetch tool.
+- **The sample found five producer gaps**, listed with their fixes in the sample's summary: the run
+  had no working directory, so 40 of 168 answers noticed they were not in the repository; input
+  tokens counted uncached only; `compare` printed zero tokens; a 120-second timeout ended a run;
+  and `cost.context_tokens` hashed absolute clone paths into a `re-derivable` row's `inputHash`.
+
+### 5.4 The fault oracle versus documentation
 
 | Target agent | Failure kind | Documented posture | Measured posture |
 | :--- | :--- | :--- | :--- |
@@ -365,5 +403,5 @@ do anything at all. This paper describes a format built to close that gap withou
 vendor to adopt anyone else's test suite. The reference producer has run over the author's own 88
 bundles and eighteen public plugins nobody here wrote, finding three shipped hooks that never
 start and four gaps in the producer itself. One measurement comes next: a producer that drives a
-live client for the three fault rows v0.1 marks `NotAvailable` (§5.3), so those documented
+live client for the three fault rows v0.1 marks `NotAvailable` (§5.4), so those documented
 postures acquire a measured column.

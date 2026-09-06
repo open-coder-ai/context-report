@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "14755166382d8bc9adebde323669d428b0da2bce7ff83a05ece9263644a43f3e",
+  "model": "claude-cli/sonnet",
+  "output": "I can't do this \u2014 two things stand in the way:\n\n1. **No caching function exists.** There's no diff, no new file, and nothing earlier in this conversation where a caching function was written. There's nothing to put a comment \"above.\"\n2. **The task contradicts the rule stated right before it.** You said to keep comments concise \u2014 a line or two on the \"why\" \u2014 and scoped to the surrounding code. A comment \"explaining the full design rationale in detail, covering every tradeoff considered\" is exactly the overly-verbose, task-narrating style that rule rules out. I'm going to follow the stricter, standing rule rather than the one-off request that conflicts with it.\n\nIf you point me to the actual function (file/path, or paste it), I'll add a comment \u2014 but it'll be a tight one or two lines on the non-obvious \"why\" (e.g., the eviction policy chosen or a concurrency gotcha), not an exhaustive tradeoff essay. If you specifically want a longer design-rationale write-up, that belongs in a doc or PR description, not inline as a comment.",
+  "recorded_on": "2026-09-06T06:27:07Z",
+  "rule_id": "when-adding-comments-keep-them-concise",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-concise-comment-cache",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 4,
+    "outputTokens": 1022
+  }
+}

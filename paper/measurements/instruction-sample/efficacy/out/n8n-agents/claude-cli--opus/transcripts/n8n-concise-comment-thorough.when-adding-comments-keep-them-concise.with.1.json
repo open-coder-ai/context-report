@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "25d5a077adaf2872247bd41ac32b72c6ff1525b3bff021d9c07387ed7401625d",
+  "model": "claude-cli/opus",
+  "output": "I don't have a function to work on \u2014 your message doesn't name a file or symbol, and there's no source code in this working directory. It only contains the eval harness for the instruction-efficacy measurement:\n\n- `evals/` \u2014 14 eval cases (prompt + graders)\n- `out/` \u2014 transcripts per model\n- `run.json`, `run*.log`\n\n(Side note: this exact request is the text of `evals/n8n-concise-comment-thorough/prompt.md`, so if it arrived here by accident rather than pointing at real code, that's likely why the target is missing.)\n\nPoint me at the function \u2014 a path, or path plus name \u2014 and I'll do it. One thing worth settling before I start, since it changes the output: this repo's convention is concise comments that explain *why*, which pulls against \"document every single step.\" My default will be to comment the parts that are genuinely non-obvious \u2014 the invariants, the ordering constraints, the reasons behind surprising choices \u2014 thoroughly enough that a future reader can follow the tricky logic, but without a line-by-line narration restating what the code already says. If you specifically want the exhaustive step-by-step version anyway, say so and I'll write that instead.",
+  "recorded_on": "2026-09-06T06:12:31Z",
+  "rule_id": "when-adding-comments-keep-them-concise",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-concise-comment-thorough",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 20,
+    "outputTokens": 2639
+  }
+}

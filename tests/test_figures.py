@@ -32,6 +32,7 @@ EXPECTED_NAMES = {
     "fig-latency.svg",
     "fig-context-tokens.svg",
     "fig-chock-reachability.svg",
+    "fig-efficacy-lift.svg",
 }
 
 

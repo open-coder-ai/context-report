@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "d8a06657f50c8ab1bd0efaacc72413e1a550f35f8867e35df45b9a73af01f59d",
+  "model": "claude-cli/fable",
+  "output": "Here's a draft README bullet that follows the naming and spelling rule:\n\n- **Discord plugin** \u2014 OpenClaw now ships a Discord plugin that connects your workspace to Discord channels for notifications and slash commands. Enable it with `openclaw plugins enable discord`, then set embed and role colors in `openclaw.toml` under the plugin's `color` block to match your server's theme.\n\nNotes on the wording: I called it a \"plugin\" rather than an \"extension\" since that is the user-facing term, used OpenClaw for the product and lowercase openclaw for the CLI and config names, and switched \"colour customisation\" to American English \"color customization.\"",
+  "recorded_on": "2026-09-06T05:33:47Z",
+  "rule_id": "use-openclaw-for-the-product-and",
+  "subject_id": "openclaw-agents",
+  "task_id": "openclaw-naming-readme",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 212
+  }
+}
