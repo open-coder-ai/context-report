@@ -1,0 +1,134 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "api-security-testing",
+      "digest": {
+        "sha256": "d2232a5da2c2cdf5a207105eb55228ae35f67a5bcd738a5273cd6d6cd43c691f"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:8f2e5268984b12b2c39a93ddb489efbb3cbea39276b866de9f27e67b173854a0",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:10fb0f90494506d928c1b9d2073a8c8bbb52a89d2e09de82ad59d34ce5acd80a",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:cb2af58ad28ac71b0dd2af9d4a7cfe6260b08267360d5792a6a0044396d5d506",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:5690ac3e6a4b2334296523f175702420c66b014fcadc31e7a18062811fdafe49",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:756c8acd932f5df81b81fa1c86ea547b76d77cc75a04d04bc30f2349efd3df8c",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:87a89737d9bcf7cc3a5abf859f9d3d0f10b00e324cd830e9fd027cb71ca33547",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:f842215c855d2cdde381757575a87653064163b9a93a194d68f1c36e2e5f37b1",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:9e3767cba783d84858ddc7cf83b1900fadc3c4cccc92cbd511f0a19fa62457a8",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:8bcb8cf8bdf7d3323652c33ac74280b57189e69f87d99410c203fa3f3631494f",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 5
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/42crunch/plugins/api-security-testing/skills/42crunch-api-security-testing/SKILL.md": 2160,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/42crunch/plugins/api-security-testing/skills/42crunch-audit/SKILL.md": 998,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/42crunch/plugins/api-security-testing/skills/42crunch-scan/SKILL.md": 1734,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/42crunch/plugins/api-security-testing/skills/42crunch-setup/SKILL.md": 2017,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/42crunch/plugins/api-security-testing/skills/generate-oas/SKILL.md": 11003
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 17912,
+          "max": 17912,
+          "mean": 17912
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:edf9c463b7c801b64cd3b213a524bae7afc7bb5ea1d17bae5b16cd0b98ca33ed",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T04:14:55Z",
+      "finishedOn": "2026-09-06T04:14:55Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

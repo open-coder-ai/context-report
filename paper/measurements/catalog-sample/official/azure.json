@@ -1,0 +1,167 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "azure-skills",
+      "digest": {
+        "sha256": "126f3d2b1a9756f27ffbb1e326ec26fb76185bb99d0d77d4a2955ced05470f47"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:8d1ac62a3b6ea2f1bb99134cd11430fcfb8f423e54c348a1f180391a13ed9b4e",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:6d9f5dc2867302e89136ca7b50a890255fea933960c75c69a409e81d66e38819",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:ad8d727ebe36ee09cfbc674cd548faa01f57815de9203b742404776b093b69d2",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:d23f2da720306ac885397ffb67911bdc4bc95693f7f257b4fc053a0360eb096b",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:a70a703690cfc635ec0ee1fc65f2719a39c2d84a2e607cdefacae7caf09bd13b",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:31437ec926270052e810bf7f7d2bac0b8b994cb6f5a71671a1ce6ce3f14dd7ef",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:f0b145893679607ca31c9b078ad8a88c14a8c57f6229c9bc2faf369398e03144",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:52cbcc8a4c70194260bdcba4a0b0793fd7e24812167cbd56b92a52d4c15bd4c6",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:33091b308c30100318e5552fd0d87599bb95e14452550e979d44c494504a036e",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 38
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/airunway-aks-setup/SKILL.md": 1103,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/appinsights-instrumentation/SKILL.md": 834,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-ai/SKILL.md": 936,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-aigateway/SKILL.md": 1472,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-app-onboard-prereq/SKILL.md": 2756,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-app-onboard/SKILL.md": 1722,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-app-onboard/deploy/SKILL.md": 2101,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-app-onboard/prepare/SKILL.md": 1685,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-app-onboard/scaffold/SKILL.md": 3820,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-cloud-migrate/SKILL.md": 1117,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-compliance/SKILL.md": 1054,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-compute/SKILL.md": 616,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-cost/SKILL.md": 552,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-deploy/SKILL.md": 1737,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-diagnostics/SKILL.md": 1440,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-enterprise-infra-planner/SKILL.md": 1514,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-kubernetes/SKILL.md": 2525,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-kubernetes/azure-kubernetes-app-deploy/SKILL.md": 501,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-kubernetes/azure-kubernetes-automatic-readiness/SKILL.md": 3465,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-kusto/SKILL.md": 2074,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-messaging/SKILL.md": 672,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-prepare/SKILL.md": 3176,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-quotas/SKILL.md": 3247,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-reliability/SKILL.md": 6055,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-resource-lookup/SKILL.md": 1413,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-resource-visualizer/SKILL.md": 1805,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-storage/SKILL.md": 1303,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-upgrade/SKILL.md": 1540,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/azure-validate/SKILL.md": 813,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/entra-agent-id/SKILL.md": 3892,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/entra-app-registration/SKILL.md": 2067,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/microsoft-foundry/SKILL.md": 6228,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/microsoft-foundry/finetuning/SKILL.md": 1469,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/microsoft-foundry/models/deploy-model/SKILL.md": 1790,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/microsoft-foundry/models/deploy-model/capacity/SKILL.md": 1785,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/microsoft-foundry/models/deploy-model/customize/SKILL.md": 2127,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/microsoft-foundry/models/deploy-model/preset/SKILL.md": 1126,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/azure-skills/skills/python-appservice-deploy/SKILL.md": 827
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 74359,
+          "max": 74359,
+          "mean": 74359
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:15242d87f7d3e31399e8082df5104090738a5f8cb47fa441f172f3ccd09e5702",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T04:14:16Z",
+      "finishedOn": "2026-09-06T04:14:16Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,390 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "carta-crm",
+      "digest": {
+        "sha256": "f8b2b4540568d5cb7fc7bb9907c5d4cb87e376c78384232c6b7f8688c37d91af"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:2003877d51c12168afb5686ad0e27df57786d6b205527e6fa47f84d8c6cd1d81",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "FAILED",
+        "inputHash": "sha256:ab6eb7258f269468728dea40787fedb434146f07cf89b3c6e5e89d5c5a43a88b",
+        "environment": {
+          "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm"
+          }
+        },
+        "conditions": {
+          "cwdTested": [
+            "root",
+            "nested",
+            "parent",
+            "outside"
+          ],
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" capture-active-skill"
+            },
+            {
+              "hook_id": "PreToolUse:1",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" inject-instrumentation"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "reachable_from": [],
+              "unreachable_from": [
+                "root",
+                "nested",
+                "parent",
+                "outside"
+              ],
+              "stderr_first_line": {
+                "root": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "nested": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "parent": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "outside": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied"
+              },
+              "relative_script_path": false
+            },
+            "PreToolUse:1": {
+              "reachable_from": [],
+              "unreachable_from": [
+                "root",
+                "nested",
+                "parent",
+                "outside"
+              ],
+              "stderr_first_line": {
+                "root": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "nested": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "parent": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "outside": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied"
+              },
+              "relative_script_path": false
+            }
+          },
+          "reachable_from": [],
+          "unreachable_from": [
+            "root",
+            "nested",
+            "parent",
+            "outside"
+          ],
+          "skippedHooks": [
+            {
+              "hook_id": "SessionStart:0",
+              "event": "SessionStart",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" inject-context",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "SessionStart:1",
+              "event": "SessionStart",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" prune-session-data",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "SessionStart:2",
+              "event": "SessionStart",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" capture-model",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "PostModelSwitch:0",
+              "event": "PostModelSwitch",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" capture-model-switch",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "UserPromptSubmit:0",
+              "event": "UserPromptSubmit",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" capture-slash-skill",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        }
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:dff9b4ac74c552be8cfd3d2bcb4bd42cc150185b1ca6494945a9f04faa25609e",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:60f27e81965ca4c75065167466d57286151b21078c26b50aec7ac793d503e2af",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:f0d404fabea13dd539fb34c610397545ff42f0ff2d29194be3277a58efdd35dc",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:940f3d959c18f1f6985a1c7652ab637778d832f2bccd4025d43959d2f82f8637",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:f5a01084c53bfcb34dad48329cefceb7c8d41146d37e952b69f8dc718a944ec0",
+        "environment": {
+          "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm"
+          }
+        },
+        "conditions": {
+          "cwd": "root",
+          "cases": [
+            "on_malformed_json",
+            "on_empty_stdin",
+            "on_null_tool_input",
+            "control_benign"
+          ],
+          "target": "claude_code",
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" capture-active-skill"
+            },
+            {
+              "hook_id": "PreToolUse:1",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" inject-instrumentation"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "on_malformed_json": {
+                "exit": 126,
+                "stdout_decision": null,
+                "would_allow": false,
+                "stderr_first_line": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "stdout_first_line": ""
+              },
+              "on_empty_stdin": {
+                "exit": 126,
+                "stdout_decision": null,
+                "would_allow": false,
+                "stderr_first_line": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "stdout_first_line": ""
+              },
+              "on_null_tool_input": {
+                "exit": 126,
+                "stdout_decision": null,
+                "would_allow": false,
+                "stderr_first_line": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "stdout_first_line": ""
+              },
+              "control_benign": {
+                "exit": 126,
+                "stdout_decision": null,
+                "would_allow": false,
+                "stderr_first_line": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "stdout_first_line": ""
+              }
+            },
+            "PreToolUse:1": {
+              "on_malformed_json": {
+                "exit": 126,
+                "stdout_decision": null,
+                "would_allow": false,
+                "stderr_first_line": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "stdout_first_line": ""
+              },
+              "on_empty_stdin": {
+                "exit": 126,
+                "stdout_decision": null,
+                "would_allow": false,
+                "stderr_first_line": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "stdout_first_line": ""
+              },
+              "on_null_tool_input": {
+                "exit": 126,
+                "stdout_decision": null,
+                "would_allow": false,
+                "stderr_first_line": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "stdout_first_line": ""
+              },
+              "control_benign": {
+                "exit": 126,
+                "stdout_decision": null,
+                "would_allow": false,
+                "stderr_first_line": "/bin/sh: 1: /tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/dispatch.sh: Permission denied",
+                "stdout_first_line": ""
+              }
+            }
+          },
+          "wouldAllowAny": false,
+          "skippedHooks": [
+            {
+              "hook_id": "SessionStart:0",
+              "event": "SessionStart",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" inject-context",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "SessionStart:1",
+              "event": "SessionStart",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" prune-session-data",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "SessionStart:2",
+              "event": "SessionStart",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" capture-model",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "PostModelSwitch:0",
+              "event": "PostModelSwitch",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" capture-model-switch",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "UserPromptSubmit:0",
+              "event": "UserPromptSubmit",
+              "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.sh\" capture-slash-skill",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        },
+        "reasoning": "exit 0 on malformed input is how a Claude Code hook fails open; whether that is acceptable is the consumer's threshold."
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "Error",
+        "inputHash": "sha256:fb61353bf421edcc5afa7255da7f47abc7352b25223df22d3daee1f1b78d5ba7",
+        "conditions": {
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "reasoning": "latency could not be measured for hook(s): PreToolUse:0 (command never started: shell exit 126 (not executable) on all 20 runs; nothing to time); PreToolUse:1 (command never started: shell exit 126 (not executable) on all 20 runs; nothing to time)"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:d8197432d0976974515ed3576105a6f32563da9ae687702a6de23eded802344a",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 26
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/hooks/hooks.json": 438,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-company/SKILL.md": 822,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-contact/SKILL.md": 987,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-deal/SKILL.md": 1108,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-fundraising/SKILL.md": 892,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-investor/SKILL.md": 810,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/add-note/SKILL.md": 853,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/deal-flow-analytics/SKILL.md": 2150,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/enrich-company/SKILL.md": 1326,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/get-angles/SKILL.md": 7128,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/home/SKILL.md": 2338,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/prepare-for-meeting/SKILL.md": 5605,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-companies/SKILL.md": 1598,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-contacts/SKILL.md": 1566,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-deals/SKILL.md": 1253,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-fundraisings/SKILL.md": 1488,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-investors/SKILL.md": 1435,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-notes/SKILL.md": 852,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/search-reports/SKILL.md": 1213,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/tutorial/SKILL.md": 4677,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-company/SKILL.md": 987,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-contact/SKILL.md": 1105,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-deal/SKILL.md": 1235,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-fundraising/SKILL.md": 967,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-investor/SKILL.md": 949,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/carta/plugins/carta-crm/skills/update-note/SKILL.md": 806
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 44588,
+          "max": 44588,
+          "mean": 44588
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:d62de659a0585e97b0d031e845c474e10f422238eea8ca234577fe58ce6ddf70",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T04:14:16Z",
+      "finishedOn": "2026-09-06T04:14:16Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

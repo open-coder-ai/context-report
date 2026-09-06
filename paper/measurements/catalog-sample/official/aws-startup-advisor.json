@@ -1,0 +1,139 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "aws-startup-advisor",
+      "digest": {
+        "sha256": "b80b19f6c0d2f2c1ed468c73b8fd0a60e84383df54452c77b6a6987545946340"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:79be3ed25459a53155b01fe364bee22b51dcbb65da791863724298f1ca144d14",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:4f449a76fed2f2b909f5bd0bebb300327c9f5a3e1685a1bc78e3b6805c3a3ee0",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:f0f1d2eacab6b019d4d503e3d850f4d13d638502ced4889153883f5669b0b5ae",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:37f08f5b4e9dd62d640fa9d2e50a7672b7095b69feca3c02dfbc3de4650a05ca",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:1ed59c985bcbdfe869c8867b6b9e54bfdfed68f5196267769f2e6ed2ae61ad72",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:ed1807a5b5ab8a5017855fc21af1b3fc80bf5a7b515deceeaa2a50b09a8d1f01",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:3d8515d22ce0ef8d4e9c9fef542f10a7d3b643482c46d09bbce139c36a2d598a",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:34f697e2a1c1319587de57508d3a6eeb90913a551f2897e78b701d00e61440e6",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:647ff34423dc37037b0f7c68dede4ccff33ca0bcd2d16ae214f928fc4ac6574d",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 10
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/hooks/hooks.json": 83,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/agent-advisor/SKILL.md": 3770,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/architect-for-startups/SKILL.md": 2163,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/gcp-to-aws/SKILL.md": 11221,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/heroku-to-aws/SKILL.md": 4406,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/knowledge-base-for-startups/SKILL.md": 2700,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/llm-to-bedrock/SKILL.md": 8957,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/prompt-library-for-startups/SKILL.md": 2670,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/start-building-for-startups/SKILL.md": 4137,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/awslabs-startups/advisor/plugins/aws-startup-advisor/skills/tf-best-practices/SKILL.md": 2934
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 43041,
+          "max": 43041,
+          "mean": 43041
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:773d0fb2f77bc96a2bf4a6f6e8c0ee54038c7e011da64b1076d6fcd57ea7e611",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T04:14:15Z",
+      "finishedOn": "2026-09-06T04:14:15Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

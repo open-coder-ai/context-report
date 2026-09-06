@@ -1,0 +1,395 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "othman-planning",
+      "digest": {
+        "sha256": "86bef242d98dc690605310a3883617a847abf48d67b7fdeccbfbdfb48fd84f50"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:406f596285eb07adef740d357d28e66451a5e13d114fde07dfa734be86278478",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:48effbd32c19138433a04a6465b29917cf457e939c29a6073092f3f73ce9294d",
+        "environment": {
+          "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning"
+          }
+        },
+        "conditions": {
+          "cwdTested": [
+            "root",
+            "nested",
+            "parent",
+            "outside"
+          ],
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-tool-use"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "reachable_from": [
+                "root",
+                "nested",
+                "parent",
+                "outside"
+              ],
+              "unreachable_from": [],
+              "stderr_first_line": {
+                "root": "",
+                "nested": "",
+                "parent": "",
+                "outside": ""
+              },
+              "relative_script_path": false
+            }
+          },
+          "reachable_from": [
+            "root",
+            "nested",
+            "parent",
+            "outside"
+          ],
+          "unreachable_from": [],
+          "skippedHooks": [
+            {
+              "hook_id": "SessionStart:0",
+              "event": "SessionStart",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh session-start",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "UserPromptSubmit:0",
+              "event": "UserPromptSubmit",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh user-prompt-submit",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh post-tool-use",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "PreCompact:0",
+              "event": "PreCompact",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-compact",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "Stop:0",
+              "event": "Stop",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh stop",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        }
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:b1419e1d83dea1c2783ffe9ce918aa431642c8988e8f10f9a6b6cec9e7fe8cfb",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:ac4d9199d10ed4dd74fadd9d7b74aeb1681630dbf5ea46bdd9b2604238e08f25",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:14b80ff7eac288231f38a82cc85567101289cb30d20420b7dcc2c06d612ff627",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:7329f4605ed0a1d281c95daf971731e0990f193d2dfb01f26dec8ff14d8ef41c",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:b858fb559dcbeaf01c1f0256d705dc79dfd967cc1ef7d7449c2eab1e94005b28",
+        "environment": {
+          "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning"
+          }
+        },
+        "conditions": {
+          "cwd": "root",
+          "cases": [
+            "on_malformed_json",
+            "on_empty_stdin",
+            "on_null_tool_input",
+            "control_benign"
+          ],
+          "target": "claude_code",
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-tool-use"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "on_malformed_json": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": ""
+              },
+              "on_empty_stdin": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": ""
+              },
+              "on_null_tool_input": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": ""
+              },
+              "control_benign": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": ""
+              }
+            }
+          },
+          "wouldAllowAny": true,
+          "skippedHooks": [
+            {
+              "hook_id": "SessionStart:0",
+              "event": "SessionStart",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh session-start",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "UserPromptSubmit:0",
+              "event": "UserPromptSubmit",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh user-prompt-submit",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh post-tool-use",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "PreCompact:0",
+              "event": "PreCompact",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-compact",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "Stop:0",
+              "event": "Stop",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh stop",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        },
+        "reasoning": "exit 0 on malformed input is how a Claude Code hook fails open; whether that is acceptable is the consumer's threshold."
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:828a1b7b4b01931dad8b00c358ebec89d0c435d005454e53240d2d67a711e7cb",
+        "environmentSensitive": true,
+        "environment": {
+          "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+          "python": "3.11.15",
+          "cpu_count": 4,
+          "env": {
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning"
+          }
+        },
+        "conditions": {
+          "n": 20,
+          "aggregation": "sum-across-hooks",
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-tool-use"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "unit": "ms",
+              "n": 20,
+              "percentiles": {
+                "50": 5.955937000180711,
+                "95": 6.154570000035164,
+                "99": 6.1930310002935585
+              },
+              "min": 5.731104999995296,
+              "max": 6.1930310002935585,
+              "mean": 5.971199600003274,
+              "stddev": 0.1273815289254168
+            }
+          },
+          "skippedHooks": [
+            {
+              "hook_id": "SessionStart:0",
+              "event": "SessionStart",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh session-start",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "UserPromptSubmit:0",
+              "event": "UserPromptSubmit",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh user-prompt-submit",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh post-tool-use",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "PreCompact:0",
+              "event": "PreCompact",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh pre-compact",
+              "reason": "v0.1 measures pre-tool hooks only"
+            },
+            {
+              "hook_id": "Stop:0",
+              "event": "Stop",
+              "command": "sh ${CLAUDE_PLUGIN_ROOT}/hooks/claude-hook.sh stop",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        },
+        "measurement": {
+          "unit": "ms",
+          "n": 20,
+          "percentiles": {
+            "50": 5.955937000180711,
+            "95": 6.154570000035164,
+            "99": 6.1930310002935585
+          },
+          "min": 5.731104999995296,
+          "max": 6.1930310002935585,
+          "mean": 5.971199600003274
+        }
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:19a467980b4415544cb69cf65599c3f943a105362b423c540b3c1aad38802273",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 7
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/hooks/hooks.json": 486,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/i18n/planning-with-files-ar/SKILL.md": 3482,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/i18n/planning-with-files-de/SKILL.md": 3316,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/i18n/planning-with-files-es/SKILL.md": 3575,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/i18n/planning-with-files-zh/SKILL.md": 2566,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/i18n/planning-with-files-zht/SKILL.md": 2567,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/othman-planning/skills/planning-with-files/SKILL.md": 9187
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 25179,
+          "max": 25179,
+          "mean": 25179
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:3dd41ab8e3bc759d1ed121504e55a0a6f53f26cf51f2f69cf825b99e9df4f391",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T04:14:55Z",
+      "finishedOn": "2026-09-06T04:14:55Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}
