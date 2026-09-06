@@ -71,6 +71,46 @@ A task is `{id, prompt, subjects?, rules?, criteria?}`:
   task-specific standard ("the API key sk-live-... never lands in a committed file") instead of
   a judge re-reading the abstract rule text on every task.
 
+## Tasks as eval cases
+
+`tasks` may instead name a directory: the `claude plugin eval` case layout plugin developers
+already write, from Claude Code's early-access reference. `context_report.run.evalcases` compiles
+it into exactly the task list above — **the JSON tasks file above is the compiled form**; nobody
+is expected to hand-write it. [`examples/evals/`](examples/evals/) is a worked example; the
+worked `run.json` points `tasks` at it.
+
+```
+<tasks-dir>/                      # the manifest's `tasks` value, e.g. "evals"
+  <case-name>/
+    prompt.md                     # YAML frontmatter + the prompt body
+    graders/<grader-name>.md      # YAML frontmatter with `type` + fields; body may hold a rubric
+    case.yaml                     # optional: setup, history replay — ignored in v0.1
+  mocks/<server>/<tool>.md        # optional — ignored in v0.1
+```
+
+One case directory is one task; its directory name is the task's `id`. `prompt.md` and each
+grader file are parsed as YAML frontmatter (the block between the first two `---` lines) followed
+by a body; a missing or malformed frontmatter block is a manifest error naming the file.
+
+| Case field | Task field | Notes |
+|---|---|---|
+| `prompt.md` body | `prompt` | Frontmatter stripped, whitespace trimmed. |
+| `prompt.md` frontmatter `plugins` | `subjects` | Each entry is a path relative to the case directory, resolved and matched against a subject's own resolved `path`. A `plugins` entry matching no subject is a manifest error naming both the entry and the known subjects. No `plugins` → every subject, same as a JSON task with no `subjects`. |
+| `prompt.md` frontmatter `tags` | `rules` + `tags` | A tag of the form `rule:<id>` contributes `<id>` to `rules`; every other tag is kept verbatim on the new `Task.tags` (the v0.1 runner ignores it). |
+| `prompt.md` frontmatter `runs` | `runs` | Recorded on the new `Task.runs`. **`arms.nPerArm` is still what v0.1 runs** — a per-case `runs` is honoured only by the vendor's own runner. |
+| `graders/*.md` with `type: llm` | `criteria` | The grader's `criteria` text binds to the rule id in its own `rule:` frontmatter field if it has one; otherwise to every rule id the case names via `rule:` tags; otherwise (no `rule:` tags at all) it is kept under the key `"*"`. |
+| `graders/*.md` with `type: regex` and `target: last_message` (or no `target`) | — | Compiled to a deterministic `Checker` (`GraderRegex` in `efficacy/fastjudge.py`), not into `criteria`. `context_report.run.evalcases.checkers_for(tasks)` builds them; wiring them into `efficacy.grade.grade` is left to whoever assembles the run (see below). |
+| everything else | `vendor_graders` | `type: tool_used`, `tool_order`, `file_exists`, `baseline`; a `regex` grader whose `target` is not `last_message` (e.g. `mock_calls`, `trace`, `files`). v0.1's runner is single-turn with no tool trace, filesystem diff, or baseline run to check these against, so they are recorded on the new `Task.vendor_graders` (so a row can say which graders it skipped) rather than errored on. |
+| `case.yaml`, `mocks/` | — | Ignored in v0.1 (setup/history replay and mock tool responses need a multi-turn vendor runner); their presence must not raise an error. |
+| `prompt.md` frontmatter `name`, `max_turns`, `timeout_seconds`, `allowed_tools`, `model`, `append_system_prompt`, `env` | — | Vendor-runner-only: v0.1 runs one prompt against one target agent per manifest, so there is no per-case turn budget, tool allowlist, or model override to carry. `name` is not used either — the case *directory name* is the task `id`. |
+
+**The `criteria["*"]` key is an extension of `cards_for`'s consumer contract**
+(`src/context_report/run/cards.py`): it means "the default criterion for every rule of this
+task's named subjects that has no more specific entry". `cards_for` does not read it as of this
+writing — it resolves a scenario's criterion as `task.criteria.get(rule.id, rule.text)` — so an
+eval case with `llm` graders but no `rule:` tags gets the rule's own text as its criterion until
+`cards_for` is extended to fall back to `criteria.get("*")` before `rule.text`.
+
 ## What this manifest deliberately does not contain
 
 - **Prices.** A row records tokens; what a token costs is a catalog's own arithmetic over its own
