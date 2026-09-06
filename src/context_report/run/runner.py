@@ -5,7 +5,7 @@ from __future__ import annotations
 import dataclasses
 import json
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -38,7 +38,7 @@ def default_asker_factory(model: ModelRef, *, effort: str | None = None) -> Aske
 
 
 def _today() -> str:
-    return datetime.now(UTC).date().isoformat()
+    return datetime.now(timezone.utc).date().isoformat()
 
 
 def _resolved_manifest_doc(manifest: Manifest) -> dict[str, Any]:
