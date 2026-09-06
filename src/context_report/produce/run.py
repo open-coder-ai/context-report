@@ -271,7 +271,11 @@ def produce_statement(  # noqa: PLR0913 -- keyword-only; these are the CLI's fla
     else:
         rows.extend(_unmeasured_exec_rows(subject_kind, binding))
 
-    rows.append(context_tokens_row(injected_text_paths(subject, subject_kind), binding=binding))
+    rows.append(
+        context_tokens_row(
+            injected_text_paths(subject, subject_kind), root=subject, binding=binding
+        )
+    )
     inputs = (subject_kind,)
     rows.append(
         not_measured(

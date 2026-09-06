@@ -130,9 +130,16 @@ def latency_rows(  # noqa: PLR0913 -- keyword-only; this is the measurement's wh
 
 
 def context_tokens_row(
-    paths: list[str | Path], *, method: str = "approx-regex-v1", binding: tuple[object, ...] = ()
+    paths: list[str | Path],
+    *,
+    root: Path | None = None,
+    method: str = "approx-regex-v1",
+    binding: tuple[object, ...] = (),
 ) -> Row:
-    """Sum an estimated token count over `paths`.
+    """Sum an estimated token count over `paths`, named relative to `root` (the subject).
+
+    Names, not absolute paths, go into `values["per_file"]` and the `inputHash`, so the row
+    recomputes to the same hash wherever the subject is checked out.
 
     `approx-regex-v1` is fully specified and deterministic: for each readable text file, tokens
     are the matches of `re.compile(r"\\w+|[^\\w\\s]")` against its decoded (utf-8) content -- each
@@ -145,24 +152,23 @@ def context_tokens_row(
     per_file: dict[str, int] = {}
     skipped: list[str] = []
     hashed: list[tuple[str, str]] = []
-    ordered = sorted(str(p) for p in paths)
-    for raw in ordered:
-        file_path = Path(raw)
+    named = sorted((_subject_relative(Path(p), root), Path(p)) for p in paths)
+    for name, file_path in named:
         try:
             data = file_path.read_bytes()
             text = data.decode("utf-8")
         except (OSError, UnicodeDecodeError):
-            skipped.append(raw)
+            skipped.append(name)
             continue
-        per_file[raw] = len(TOKEN_RE.findall(text))
-        hashed.append((raw, hashlib.sha256(data).hexdigest()))
+        per_file[name] = len(TOKEN_RE.findall(text))
+        hashed.append((name, hashlib.sha256(data).hexdigest()))
 
     if not per_file:
         return not_measured(
             "cost.context_tokens",
             NOT_APPLICABLE,
             reasoning="no text files to count",
-            inputs=(ordered,),
+            inputs=([name for name, _ in named],),
             binding=binding,
         )
 
@@ -182,6 +188,18 @@ def context_tokens_row(
         conditions={"tokenizer": method, "files": len(per_file)},
         values=values,
     )
+
+
+def _subject_relative(path: Path, root: Path | None) -> str:
+    """`path` as a name relative to the subject root; a file subject is named by its basename."""
+    if root is None:
+        return path.name
+    root = Path(root)
+    base = root if root.is_dir() else root.parent
+    try:
+        return path.resolve().relative_to(base.resolve()).as_posix()
+    except ValueError:
+        return path.name
 
 
 def injected_text_paths(subject_path: Path, subject_kind: str) -> list[Path]:

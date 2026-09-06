@@ -108,7 +108,7 @@ def test_context_tokens_row_matches_independent_count(tmp_path):
     a.write_text("Hello, world! This is a test.")
     b.write_text("Another file: with punctuation, and words.")
 
-    row = context_tokens_row([a, b])
+    row = context_tokens_row([a, b], root=tmp_path)
     expected = _independent_token_count(a.read_text()) + _independent_token_count(b.read_text())
 
     assert row.result == rows.PASSED
@@ -116,9 +116,9 @@ def test_context_tokens_row_matches_independent_count(tmp_path):
     assert row.measurement.min == expected
     assert row.measurement.max == expected
     assert row.measurement.n == 1
-    assert set(row.values["per_file"]) == {str(a), str(b)}
-    assert row.values["per_file"][str(a)] == _independent_token_count(a.read_text())
-    assert row.values["per_file"][str(b)] == _independent_token_count(b.read_text())
+    assert set(row.values["per_file"]) == {"a.md", "b.md"}  # subject-relative, never absolute
+    assert row.values["per_file"]["a.md"] == _independent_token_count(a.read_text())
+    assert row.values["per_file"]["b.md"] == _independent_token_count(b.read_text())
 
 
 def test_context_tokens_row_input_hash_changes_on_byte_change(tmp_path):
@@ -140,10 +140,27 @@ def test_context_tokens_row_skips_binary_and_lists_it(tmp_path):
     binary_file = tmp_path / "bad.bin"
     binary_file.write_bytes(b"\xff\xfe\x00\x01\x80\x81")
 
-    row = context_tokens_row([text_file, binary_file])
+    row = context_tokens_row([text_file, binary_file], root=tmp_path)
     assert row.result == rows.PASSED
-    assert str(binary_file) in row.values["skipped"]
-    assert str(text_file) in row.values["per_file"]
+    assert "bad.bin" in row.values["skipped"]
+    assert "ok.txt" in row.values["per_file"]
+
+
+def test_context_tokens_input_hash_does_not_depend_on_where_the_subject_sits(tmp_path):
+    """The same subject checked out in two places recomputes to the same inputHash."""
+    here = tmp_path / "clone-a" / "skill"
+    there = tmp_path / "elsewhere" / "deeper" / "skill"
+    for root in (here, there):
+        root.mkdir(parents=True)
+        (root / "SKILL.md").write_text("Fetch the source, not the PDF.")
+        (root / "notes.md").write_text("Some notes.")
+    first = context_tokens_row(sorted(here.glob("*.md")), root=here)
+    second = context_tokens_row(sorted(there.glob("*.md")), root=there)
+    assert first.input_hash == second.input_hash
+    assert set(first.values["per_file"]) == {"SKILL.md", "notes.md"}
+
+    as_file = context_tokens_row([here / "SKILL.md"], root=here / "SKILL.md")
+    assert set(as_file.values["per_file"]) == {"SKILL.md"}  # a file subject is named by basename
 
 
 def test_context_tokens_row_empty_dir_is_not_applicable():
