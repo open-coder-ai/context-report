@@ -24,6 +24,10 @@ from context_report.efficacy.suite import CacheSpec, measure_suite
 DEFAULT_CACHE = ".efficacy-cache.json"
 ARMS = 2
 CALLS_PER_RUN = 2  # one generation, one judgement
+MODEL_REQUIRED = (
+    "--model is required: the tool ships no default model. Name the subject model "
+    "(an alias such as `sonnet` for --backend cli, an API id for --backend api)."
+)
 
 
 def add_efficacy_parser(subparsers: Any) -> None:
@@ -42,7 +46,12 @@ def add_efficacy_parser(subparsers: Any) -> None:
     p.add_argument("--scenarios-per-rule", type=int, default=scenarios_mod.DEFAULT_COUNT)
     p.add_argument("--scenarios", type=Path, help="JSON file of hand-written scenarios")
     p.add_argument("--backend", choices=("cli", "api"), default="cli")
-    p.add_argument("--model", default=None, help="model id (api backend)")
+    p.add_argument(
+        "--model",
+        default=None,
+        help="subject model: an API id for --backend api, an alias or id for --backend cli "
+        "(required unless --dry-run)",
+    )
     p.add_argument("--cache", type=Path, default=Path(DEFAULT_CACHE))
     p.add_argument("--only", action="append", default=[], help="measure only these rule ids")
     p.add_argument("--json", action="store_true", help="machine-readable output")
@@ -68,16 +77,17 @@ def _budget(rules: int, scenarios: int, trials: int, *, generating: bool) -> int
 
 def _askers(args: argparse.Namespace) -> tuple[object, object]:
     """(runner asker, judge asker) — the judge runs at low effort where the backend supports it."""
+    if not args.model:
+        raise SystemExit(MODEL_REQUIRED)
     if args.backend == "api":
-        from context_report.efficacy.api_backend import DEFAULT_MODEL, JUDGE_EFFORT, ApiAsker
+        from context_report.efficacy.api_backend import JUDGE_EFFORT, ApiAsker
 
-        model = args.model or DEFAULT_MODEL
-        return ApiAsker(model=model), ApiAsker(model=model, effort=JUDGE_EFFORT)
+        return ApiAsker(model=args.model), ApiAsker(model=args.model, effort=JUDGE_EFFORT)
     from context_report.efficacy.cli_backend import CliAsker, available
 
     if not available():
         raise SystemExit("the `claude` CLI is not on PATH — install it or use --backend api")
-    return CliAsker(), CliAsker()
+    return CliAsker(model=args.model), CliAsker(model=args.model)
 
 
 def _as_dict(report: AdherenceReport) -> dict:

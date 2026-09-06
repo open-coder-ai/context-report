@@ -15,8 +15,9 @@ from context_report.efficacy.row import VALUES_UNEXERCISED, efficacy_row
 from context_report.efficacy.transcripts import Bundle, MissingTranscriptError, ReplayRunner
 from context_report.run.cards import cards_for
 from context_report.run.evalcases import checkers_for
-from context_report.run.manifest import Manifest
+from context_report.run.manifest import Manifest, ModelRef
 from context_report.run.manifest import load as load_manifest
+from context_report.run.runner import PROVIDERS
 from context_report.statement import now_utc
 from context_report.statement import validate as validate_statement
 
@@ -33,18 +34,19 @@ def parse_judge_ref(spec: str) -> tuple[str, str]:
     provider, sep, model_id = spec.partition("/")
     if not sep or not provider or not model_id:
         raise ValueError(f"--judge must be provider/id, not {spec!r}")
-    if provider != ANTHROPIC:
+    if provider not in PROVIDERS:
         raise UnsupportedJudgeProviderError(
-            f"--judge provider {provider!r} has no backend in v0.1 (only {ANTHROPIC!r})"
+            f"--judge provider {provider!r} has no backend in v0.1 (have {PROVIDERS})"
         )
     return provider, model_id
 
 
-def _default_asker_factory(model_id: str) -> Asker:
-    # Lazy: importing api_backend imports `anthropic`, which most callers of this module never need.
-    from context_report.efficacy.api_backend import JUDGE_EFFORT, ApiAsker
+def _default_asker_factory(model: ModelRef) -> Asker:
+    """The real judge backend for either provider, at the judge's low effort where it applies."""
+    from context_report.efficacy.api_backend import JUDGE_EFFORT
+    from context_report.run.runner import default_asker_factory
 
-    return ApiAsker(model_id, effort=JUDGE_EFFORT)
+    return default_asker_factory(model, effort=JUDGE_EFFORT)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -144,7 +146,7 @@ def judge_out(
     """
     provider, model_id = parse_judge_ref(judge_spec)  # before anything: no manifest, no asker
     manifest = load_manifest(out / "manifest.json")
-    aj = AskerJudge(asker_factory(model_id))
+    aj = AskerJudge(asker_factory(ModelRef(provider, model_id)))
     judge_model = f"{provider}/{model_id}"
     outcomes = [
         _judge_one(manifest, ref, judge_model, aj) for ref in _statement_files(out, manifest)

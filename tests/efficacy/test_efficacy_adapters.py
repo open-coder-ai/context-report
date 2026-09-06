@@ -1,5 +1,6 @@
 """Backend tests — mock the `claude` subprocess so no live model call happens in CI."""
 
+import json
 from unittest import mock
 
 import pytest
@@ -81,3 +82,31 @@ def test_missing_cli_raises():
         pytest.raises(RuntimeError),
     ):
         CliAsker().ask("anything")
+
+
+def test_cli_asker_pins_the_model_and_reads_json_usage():
+    """`--model` selects the subject model; the JSON output carries tokens and the exact model."""
+    payload = json.dumps(
+        {
+            "result": "  ok  ",
+            "usage": {"input_tokens": 12, "output_tokens": 3},
+            "modelUsage": {"claude-opus-5": {"inputTokens": 12}},
+        }
+    )
+    which, run = _patched(payload)
+    with which, run as m:
+        asker = CliAsker(model="opus")
+        assert asker.ask("hi") == "ok"
+        argv = m.call_args.args[0]
+        assert argv[argv.index("--model") + 1] == "opus"
+        assert "--output-format" in argv
+    assert asker.last_usage == {"inputTokens": 12, "outputTokens": 3}
+    assert asker.last_model == "claude-opus-5"
+
+
+def test_cli_asker_falls_back_to_plain_text():
+    which, run = _patched("plain answer\n")
+    with which, run:
+        asker = CliAsker()
+        assert asker.ask("hi") == "plain answer"
+    assert asker.last_usage is None

@@ -177,3 +177,17 @@ def test_invalid_manifest_exits_2(tmp_path: Path, capsys: pytest.CaptureFixture[
     args = parser.parse_args(["run", str(tmp_path / "run.json")])
     assert run_run(args) == 2
     assert "error:" in capsys.readouterr().err
+
+
+def test_claude_cli_provider_runs_the_arms(tmp_path: Path) -> None:
+    """`claude-cli/<alias>` is a real backend: arms run, transcripts recorded, row measured."""
+    manifest = _build_manifest(tmp_path, provider="claude-cli")
+    askers: list[FakeAsker] = []
+    run(manifest, asker_factory=_fake_asker_factory(askers))
+    stmt = json.loads(
+        (manifest.out / "house-rules" / "claude-cli--claude-sonnet-5.json").read_text()
+    )
+    efficacy = next(a for a in stmt["predicate"]["attributes"] if a["attribute"] == "efficacy")
+    assert efficacy["conditions"]["model"] == "claude-cli/claude-sonnet-5"
+    assert efficacy["result"] != "NotAvailable" or "no backend" not in efficacy["reasoning"]
+    assert askers, "the factory was used for the claude-cli provider"

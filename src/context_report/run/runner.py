@@ -22,6 +22,8 @@ from context_report.run.evalcases import checkers_for
 from context_report.run.manifest import MODE_LEAVE_ONE_OUT, Manifest, ModelRef, Subject
 
 ANTHROPIC = "anthropic"
+CLAUDE_CLI = "claude-cli"
+PROVIDERS = (ANTHROPIC, CLAUDE_CLI)  # the API with a key; the local Claude Code CLI with its login
 MANIFEST_FILENAME = "manifest.json"
 SUMMARY_FILENAME = "SUMMARY.md"
 
@@ -34,7 +36,11 @@ class RunError(ValueError):
 
 
 def default_asker_factory(model: ModelRef, *, effort: str | None = None) -> Asker:
-    """The real backend: the Claude API. Only reached for a provider/effort actually used."""
+    """The real backends, built only for a provider actually used: the API, or the `claude` CLI."""
+    if model.provider == CLAUDE_CLI:
+        from context_report.efficacy.cli_backend import CliAsker  # noqa: PLC0415
+
+        return CliAsker(model=model.id)  # the CLI has no effort knob; the judge runs as-is
     return ApiAsker(model.id, effort=effort)
 
 
@@ -81,8 +87,10 @@ def preflight(manifest: Manifest) -> None:
     """Reject what v0.1 cannot run at all, before a single call is made."""
     if manifest.arms.mode == MODE_LEAVE_ONE_OUT:
         raise RunError("arms.mode 'leave-one-out' is not implemented in v0.1; use 'isolated'")
-    if manifest.judge is not None and manifest.judge.provider != ANTHROPIC:
-        raise RunError(f"no backend for judge provider {manifest.judge.provider!r} in v0.1")
+    if manifest.judge is not None and manifest.judge.provider not in PROVIDERS:
+        raise RunError(
+            f"no backend for judge provider {manifest.judge.provider!r} in v0.1 (have {PROVIDERS})"
+        )
 
 
 def dry_run_report(manifest: Manifest) -> str:
@@ -165,7 +173,7 @@ def _run_model(  # noqa: PLR0913, PLR0917 -- one (subject, model) pair needs all
     """Run (or skip, for an unsupported provider) one (subject, model) pair."""
     measured_on = _today()
     n_per_arm = manifest.arms.n_per_arm
-    if model.provider != ANTHROPIC:
+    if model.provider not in PROVIDERS:
         row = _no_backend_row(
             cards,
             unexercised,
