@@ -2,7 +2,8 @@
 
 `pip install context-report` gets a catalog or CI job the same functions the CLI wraps:
 `context_report.validate`, `verify`, `produce_statement`, `load_manifest`, `run`,
-`resolve_run_dir`, `history_markdown`, `render_table`, `render_history`. See `__all__` in
+`resolve_run_dir`, `history_markdown`, `rule_history_markdown`, `render_table`, `render_history`. See
+`__all__` in
 `context_report/__init__.py` for the exact list; nothing else in the package is public API.
 
 ## A catalog verifying a submitted statement
@@ -69,4 +70,5 @@ Path("context-report.json").write_text(json.dumps(stmt, indent=2))
 `load_manifest("run.json")` plus `run(manifest)` drive the same batch measurement
 `context-report run` does from the CLI, writing into `out/runs/<run id>/`. `resolve_run_dir(out)`
 finds the latest run; `render_table(out)` and `render_history(out)` (or the lower-level
-`history_markdown`) produce the same tables `SUMMARY.md` holds, for a script to print or diff.
+`history_markdown`, and `rule_history_markdown` for the per-rule view) produce the same tables
+`SUMMARY.md` holds, for a script to print or diff.

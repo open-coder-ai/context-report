@@ -25,6 +25,7 @@ def test_all_lists_the_intended_surface():
         "render_history",
         "render_table",
         "resolve_run_dir",
+        "rule_history_markdown",
         "run",
         "validate",
         "verify",
