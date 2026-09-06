@@ -1,11 +1,12 @@
 # Context Report: an attested, re-derivable record of what an agent context artifact does
 
-Status: **draft with dogfood numbers** (2026-09-05). Section 5 reports the first run of the reference
-producer over chock's own bundles. The statements belong with the artifact they measure and will be
+Status: **draft with dogfood and catalog-sample numbers** (2026-09-06). Section 5 reports the first
+run of the reference producer over chock's own bundles and a sample of eighteen public Claude Code
+plugins (`paper/measurements/catalog-sample/`). The statements belong with the artifact they measure and will be
 published in `open-coder-ai/chock-catalog` under `measurements/context-report/` once this format is
 public; until then they are held on that repository's PR #57, and will be regenerated against the
-published producer before they land. The top-N catalog sample (§5.2) and the
-live-client side of the fault oracle (§5.3) have not been run and say so.
+published producer before they land. The live-client side of the fault oracle (§5.3) has not been
+run and says so.
 See `paper/README.md` for how to regenerate the results.
 
 *What we measured, and what we are willing to say before we measure the rest.* open-coder-ai ·
@@ -45,8 +46,13 @@ sixteen hooks exit 0 with no deny on stdout when fed malformed input, which the 
 describes as a deliberate choice. Per-invocation latency of a guard hook, measured as a distribution
 with a realistic pre-tool payload, has a median p50 between 42 and 47 ms per target agent on the
 build machine, of which about 13 ms is the interpreter starting. The median bundle adds an estimated
-222 tokens of context under a named, deterministic approximation. The live-client side of the fault
-oracle was not measured: v0.1 does not drive a client, and the rows say so rather than pass.
+222 tokens of context under a named, deterministic approximation. A sample of eighteen public Claude
+Code plugins, chosen by a rule fixed before measuring, found three plugins whose hook script ships
+without its execute bit and so never runs, two whose hooks shell out through `npx` at roughly 670 ms
+per tool call against 6 to 52 ms for local scripts, a hundredfold spread in context weight, and every
+running hook allowing on malformed input. Measuring it also surfaced four producer gaps, each fixed
+before the committed run. The live-client side of the fault oracle was not measured: v0.1 does not
+drive a client, and the rows say so rather than pass.
 
 ## 1. Introduction
 
@@ -516,9 +522,57 @@ from 288 to 646.
 
 ### 5.2 Top-N catalog plugins
 
-Not run in this revision. The producer's dogfood subject is the author's own bundles, and a sample
-of third-party catalog plugins is the first measurement a reader should ask for before trusting the
-findings above to generalise. §8 lists it as the next measurement.
+Eighteen public Claude Code plugins, measured on 2026-09-06 with `n = 20`, statements and inventory
+under `paper/measurements/catalog-sample/`. The selection rule was fixed before any measurement:
+from Anthropic's official marketplace (291 plugins at the cloned commit), every plugin declaring a
+hook, up to ten, ties broken alphabetically; then the highest-starred hook-bearing plugins from the
+two most-starred community marketplaces not owned by Anthropic, to fifteen; then five plugins with no
+hooks so the not-applicable rows are exercised. The two community marketplaces, with 95 plugins
+between them, contain three hook-bearing plugins in total, so the sample has thirteen hook-bearing
+plugins rather than fifteen. That is a finding about the ecosystem, not a shortfall in the search.
+
+| Plugin | Hooks declared | Reachability | Malformed input allows | Latency p50 / p95 ms | Context tokens |
+| :--- | :--- | :--- | :--- | :--- | ---: |
+| agentforce-adlc | 2 | PASSED, 4 of 4 | yes | 26.8 / 28.7 | 29,625 |
+| ai-plugins | 4 | PASSED, 4 of 4 | yes | 32.0 / 37.4 | 2,289 |
+| aws-core | 2 | PASSED, 4 of 4 | yes | 45.5 / 51.8 | 57,466 |
+| planning-with-files | 6 | PASSED, 4 of 4 | yes | 6.0 / 6.2 | 25,179 |
+| protect-mcp | 2 | PASSED, 4 of 4 | yes | 665.8 / 686.5 | 1,845 |
+| review-agent-governance | 2 | PASSED, 4 of 4 | yes | 672.0 / 711.2 | 1,634 |
+| carta-cap-table | 9 | FAILED, 0 of 4 | never ran | Error: exit 126 | 127,818 |
+| carta-crm | 7 | FAILED, 0 of 4 | never ran | Error: exit 126 | 44,588 |
+| carta-investors | 8 | FAILED, 0 of 4 | never ran | Error: exit 126 | 146,663 |
+| altimate-code, aws-serverless, aws-startup-advisor, azure | 1 each, none pre-tool | NotApplicable | NotApplicable | NotApplicable | 3,940 to 74,359 |
+| five plugins declaring no hooks | 0 | NotApplicable | NotApplicable | NotApplicable | 1,509 to 43,647; one has no text |
+
+Four findings, stated as the rows state them.
+
+*Reachable was not the same as executable, and now it is.* Three plugins share a dispatch script
+committed without its execute bit. The path resolves, so the first producer reported them reachable
+while the latency and fault rows showed the hook never started. Exit 126 now counts as unreachable,
+and the three rows agree with each other.
+
+*Hook cost spans two orders of magnitude.* The two plugins whose hook shells out through `npx` cost
+about 670 ms per tool call. The four that run a local `python3`, `bash` or `sh` script cost 6 to 52
+ms. This is visible only because latency is measured per invocation and reported as a distribution.
+
+*Every hook that runs allows on malformed input.* All six plugins whose pre-tool hook ran exit 0 with
+no deny when fed unparseable input, empty input, or a null tool input. The same was true of all
+sixteen chock hooks in §5.1. Whether that is acceptable is a catalog's threshold; the format only
+records that it is universal in this sample.
+
+*Context weight varies a hundredfold.* From about 1,500 to about 147,000 estimated tokens per plugin
+under `approx-regex-v1`, with the largest bundles among the hook-bearing ones. One plugin injects no
+text at all, and its row says so rather than reporting zero.
+
+The sample also measured the producer. Its first pass misreported five plugins: two declare their
+hooks only through the plugin manifest's `hooks` field, at paths discovery did not read; one runs
+`sh` with the script in `args`, which discovery dropped and then, in a first fix, quoted in a way
+that stopped the plugin-root variable expanding; three had the execute-bit case above; and one
+plugin's Python hook wrote bytecode into its own directory on first run, moving the subject digest
+mid-measurement so the producer refused the statement. Each is fixed, each has a test naming the
+plugin that found it, and only the third pass is committed. A format whose producer must be checked
+against real artifacts before its numbers can be trusted is the point; this is what that looks like.
 
 ### 5.3 The fault oracle versus documentation
 
@@ -560,8 +614,10 @@ exists that drives a real client.
 **The dogfood subject is the author's own artifact.** Every bundle in §5 was built by chock and
 measured by a producer written alongside it, on one machine, on one day. The findings are stated as
 the rows state them and are re-derivable from the committed statements, but nothing in §5 is
-evidence that the format's rows discriminate among third-party artifacts; §5.2 is where that
-evidence would come from, and it is empty.
+evidence that the format's rows discriminate among third-party artifacts. §5.2 is the first such
+evidence: eighteen plugins nobody here wrote, with the rows separating hooks that run from hooks
+that cannot, and the producer's own gaps found and fixed in the process. It is one target agent,
+one machine, one day, and thirteen hook-bearing plugins; it is not the ecosystem.
 
 **The hook runs unsandboxed.** The producer executes the registered command as an ordinary
 subprocess with a timeout, in the artifact directory, with only the environment variables it was
@@ -620,8 +676,8 @@ Every vendor catalog surveyed says, in one form or another, that it does not che
 describes a format built to close that gap without asking any vendor to adopt anyone else's test
 suite: a signed, per-target-agent report whose rows state what was measured and whether the
 measurement can be redone by someone other than the artifact's author. The reference producer has
-run once, over the author's own 88 bundles, and the rows it emitted are committed with the bundle
-digests they bind to. Two measurements come next, in order: a sample of third-party catalog plugins
-(§5.2), which is the first evidence that the rows discriminate among artifacts nobody here wrote, and
-a producer that drives a live client for the three fault rows v0.1 marks `NotAvailable` (§5.3), so
-that the documented postures in that table acquire a measured column.
+run over the author's own 88 bundles and over eighteen public plugins nobody here wrote, and the
+rows it emitted are committed with the digests they bind to. The second run found three shipped
+hooks that never start and fixed four gaps in the producer along the way. One measurement comes
+next: a producer that drives a live client for the three fault rows v0.1 marks `NotAvailable`
+(§5.3), so that the documented postures in that table acquire a measured column.
