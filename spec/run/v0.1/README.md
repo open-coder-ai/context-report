@@ -75,6 +75,13 @@ A task is `{id, prompt, subjects?, rules?, criteria?}`:
 - **`rules`** — which rule ids, within the named subjects, this task exercises. Default: every
   rule those subjects declare. A rule that no task in the manifest names gets no card at all when
   the run builds its cards: it is reported as unexercised, never silently scored as passing.
+- **Rule ids** are derived from the rule's own text, so another tool can name a rule without
+  importing this one: lowercase the text, take the runs of `[a-z0-9]+` in order, keep the first
+  6 words, join them with `-`, truncate to 48 characters and strip a trailing `-`; an
+  empty result is `rule`. Within one subject a repeated id gets `-2`, `-3`, … in extraction order.
+  `Never commit secrets to the repository.` is `never-commit-secrets-to-the-repository`. The
+  reference implementation is `context_report.efficacy.rules.slug`, and `tests/test_spec_prose.py`
+  holds this paragraph to it.
 - **`criteria`** — per rule id, what compliance looks like for this specific task. Default: the
   rule's own text. This is what lets one rule ("never commit secrets") be graded against a
   task-specific standard ("the API key sk-live-... never lands in a committed file") instead of
