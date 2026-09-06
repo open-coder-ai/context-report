@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-DEFAULT_MODEL = "claude-opus-5"
 JUDGE_EFFORT = "low"
 _MAX_TOKENS = 16000
 _SDK_MISSING = (
@@ -14,7 +13,7 @@ _SDK_MISSING = (
 class ApiAsker:
     """Ask the Claude API one prompt; ``effort='low'`` suits the judge."""
 
-    def __init__(self, model: str = DEFAULT_MODEL, effort: str | None = None) -> None:
+    def __init__(self, model: str, effort: str | None = None) -> None:
         try:
             import anthropic
         except ImportError as exc:

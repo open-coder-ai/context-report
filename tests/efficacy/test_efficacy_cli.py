@@ -2,6 +2,8 @@
 
 import json
 
+import pytest
+
 from context_report.cli import main
 from context_report.efficacy import cli as efficacy_cli
 from context_report.efficacy import rules
@@ -88,3 +90,11 @@ def test_hand_written_scenarios_skip_generation(tmp_path, capsys, monkeypatch):
     monkeypatch.setattr(efficacy_cli, "_askers", lambda args: (asker, asker))
     assert main(["efficacy", "--json", "--scenarios", "scen.json"]) == 0
     assert json.loads(capsys.readouterr().out)[0]["scenarios"] == 1
+
+
+def test_a_real_run_needs_an_explicit_model(tmp_path, monkeypatch):
+    """No model is hardcoded: a run that would call a backend without `--model` stops first."""
+    monkeypatch.chdir(_project(tmp_path))
+    with pytest.raises(SystemExit) as exc:
+        main(["efficacy", "--backend", "cli"])
+    assert "--model is required" in str(exc.value)
