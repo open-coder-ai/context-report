@@ -1,0 +1,45 @@
+version: 2
+
+# The runtime dependency surface here is deliberately tiny -- jsonschema, and anthropic
+# behind the optional `efficacy` extra -- so the noise is low and a bump is genuinely
+# reviewable.
+#
+# Weekly, not daily: a PR stream nobody reads is worse than no automation, because it
+# trains everyone to ignore the one that matters.
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    # A one-week cooldown before adopting a fresh release is the xz-class counter: a
+    # poisoned version is usually caught within days, and nothing here needs a
+    # dependency the hour it ships. Security advisories bypass this via alerts.
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    labels: [dependencies]
+    groups:
+      # One PR for the routine patch churn, individual PRs for anything that could
+      # change behaviour.
+      patch-updates:
+        patterns: ["*"]
+        update-types: [patch]
+
+  # The Pages workflow carries `pages: write` and `id-token: write`. A stale action
+  # version in a job holding those permissions is the supply-chain risk that matters
+  # most here, more than any library bump.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    labels: [dependencies, ci]
+    groups:
+      # All action bumps in one weekly PR: they are the same kind of change (a SHA pin
+      # moving to the current release tag), and one reviewable batch beats a PR stream.
+      actions:
+        patterns: ["*"]

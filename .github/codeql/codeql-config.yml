@@ -1,0 +1,5 @@
+name: "context-report CodeQL config"
+
+# No excluded paths: unlike chock, this repo has no generated bundler output under
+# source control (no vendored-runtime composition step), so there is nothing here that
+# needs a paths-ignore carve-out.
