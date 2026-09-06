@@ -89,8 +89,17 @@ def test_cli_asker_pins_the_model_and_reads_json_usage():
     payload = json.dumps(
         {
             "result": "  ok  ",
-            "usage": {"input_tokens": 12, "output_tokens": 3},
-            "modelUsage": {"claude-opus-5": {"inputTokens": 12}},
+            "usage": {
+                "input_tokens": 12,
+                "cache_creation_input_tokens": 100,
+                "cache_read_input_tokens": 1000,
+                "output_tokens": 3,
+            },
+            # the CLI's own helper model is listed first; the subject model wrote the answer
+            "modelUsage": {
+                "claude-haiku-4-5-20251001": {"inputTokens": 900, "outputTokens": 8},
+                "claude-opus-5": {"inputTokens": 1112, "outputTokens": 3000},
+            },
         }
     )
     which, run = _patched(payload)
@@ -100,7 +109,13 @@ def test_cli_asker_pins_the_model_and_reads_json_usage():
         argv = m.call_args.args[0]
         assert argv[argv.index("--model") + 1] == "opus"
         assert "--output-format" in argv
-    assert asker.last_usage == {"inputTokens": 12, "outputTokens": 3}
+    assert asker.last_usage == {
+        "inputTokens": 1112,  # uncached + cache creation + cache read: what was actually sent
+        "outputTokens": 3,
+        "uncachedInputTokens": 12,
+        "cacheCreationInputTokens": 100,
+        "cacheReadInputTokens": 1000,
+    }
     assert asker.last_model == "claude-opus-5"
 
 
