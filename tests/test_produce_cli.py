@@ -144,8 +144,9 @@ def test_env_is_recorded_on_the_rows_that_ran_under_it(hook_dir: Path) -> None:
     )
     rows = _rows(stmt)
     assert rows["reachability"]["result"] == PASSED, "the variable made the script reachable"
-    assert rows["reachability"]["environment"]["env"] == {"MY_ROOT": str(hook_dir)}
-    assert rows["cost.latency_ms"]["environment"]["env"] == {"MY_ROOT": str(hook_dir)}
+    assert rows["reachability"]["environment"]["env"]["MY_ROOT"] == str(hook_dir)
+    assert rows["cost.latency_ms"]["environment"]["env"]["MY_ROOT"] == str(hook_dir)
+    assert rows["reachability"]["environment"]["env"]["PYTHONDONTWRITEBYTECODE"] == "1"
 
 
 def test_instruction_file_marks_executable_rows_not_applicable(tmp_path: Path) -> None:
@@ -449,3 +450,21 @@ def test_produce_statement_ignores_hook_command_for_a_plugin(plugin_dir: Path) -
     rows = _rows(stmt)
     assert rows["reachability"]["result"] == PASSED
     assert "definitely-not-used" not in json.dumps(rows["reachability"])
+
+
+def test_a_python_hook_importing_a_sibling_does_not_write_pycache_into_the_subject(
+    tmp_path: Path,
+) -> None:
+    """agentforce-adlc's hook imports a sibling module; CPython's __pycache__ changed the digest."""
+    (tmp_path / ".hooks").mkdir()
+    (tmp_path / ".hooks" / "helper.py").write_text("VALUE = 1\n")
+    (tmp_path / ".hooks" / "gate.py").write_text(
+        "import sys\nsys.path.insert(0, __file__.rsplit('/', 1)[0])\nimport helper\n"
+        "sys.stdin.read()\nsys.exit(0 if helper.VALUE else 1)\n"
+    )
+    cmd = f'python3 "{tmp_path}/.hooks/gate.py"'
+    stmt = produce_statement(
+        subject=tmp_path, subject_kind="hook", target="claude_code", hook_command=cmd, n=2
+    )
+    assert not (tmp_path / ".hooks" / "__pycache__").exists()
+    assert _rows(stmt)["reachability"]["result"] == PASSED
