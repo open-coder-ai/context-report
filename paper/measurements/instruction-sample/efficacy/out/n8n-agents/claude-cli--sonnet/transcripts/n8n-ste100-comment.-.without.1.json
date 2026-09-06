@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "b1e69c3c7c448262759fbb38945510979407422f436bbbef5afc7b8cc74b1d67",
+  "model": "claude-cli/sonnet",
+  "output": "Here's a retry-loop helper with a comment written in short, direct sentences (active voice, one idea per sentence, per Simplified Technical English style):\n\n```ts\n// Retry the operation up to maxAttempts times.\n// Wait longer after each failed attempt.\n// Use this helper to survive short, temporary failures.\nasync function retryWithBackoff<T>(\n  operation: () => Promise<T>,\n  maxAttempts = 3,\n  baseDelayMs = 200,\n): Promise<T> {\n  let lastError: unknown;\n  for (let attempt = 1; attempt <= maxAttempts; attempt++) {\n    try {\n      return await operation();\n    } catch (error) {\n      lastError = error;\n      if (attempt < maxAttempts) {\n        await sleep(baseDelayMs * 2 ** (attempt - 1));\n      }\n    }\n  }\n  throw lastError;\n}\n```\n\nNo existing retry-loop helper or target source file exists in this worktree (it only holds eval data/logs), so I wrote this as a standalone snippet rather than editing a project file. Let me know which file/language it should actually go into and I'll place it there.",
+  "recorded_on": "2026-09-06T06:25:46Z",
+  "rule_id": "-",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-comment",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 16,
+    "outputTokens": 4275
+  }
+}

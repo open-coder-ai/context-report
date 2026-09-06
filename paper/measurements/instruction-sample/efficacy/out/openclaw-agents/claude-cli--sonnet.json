@@ -1,0 +1,250 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "predicate": {
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "inputHash": "sha256:a71a47b9bd797def95e14cff15ebf5620a68da46cf0343ff1251236fd6527e7a",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema",
+        "result": "NotAvailable"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "inputHash": "sha256:d7631bd51fb28b30b3a9546e6a361350b3fb32221d29953cbeb471edde52b840",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "inputHash": "sha256:e27ccc539c9d193f05facdc1fd01343f1cbc1d334de2d6a4be3ed26f85093f58",
+        "reasoning": "decision does not apply to subjectKind instruction-file in v0.1",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "inputHash": "sha256:2041e6dba2a9772373b711954eb12451d0b803b70e3184b2bcb1e3887ece55db",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "inputHash": "sha256:6d9151ad5f13cd196999bb03dd7f04d02c7daaa9ddb307814cc17ad62c805bbd",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "inputHash": "sha256:fe1f0084282dc59d4f28632193984cd4c21c09889234c6ac7ffae1c41644453a",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "inputHash": "sha256:bff96302f4d1d145a4b39c1cd3844ef0ceb6183ab7331eeb73ef5c63e3341ce7",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "inputHash": "sha256:750aa083d7998f9a504dd21d123f5ddcd129c53b0c1402339679c0ae2299a297",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "conditions": {
+          "files": 1,
+          "tokenizer": "approx-regex-v1"
+        },
+        "inputHash": "sha256:77f6417426446f21315341807ba63f36d5e81a28e192cf783dc975721857d076",
+        "measurement": {
+          "max": 3191,
+          "mean": 3191,
+          "min": 3191,
+          "n": 1,
+          "unit": "tokens"
+        },
+        "result": "PASSED",
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/instr/openclaw/AGENTS.md": 3191
+          }
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "inputHash": "sha256:b1e8732befa971ad462e5f1985567bbd7969294668616ba0a4a864c1fc429214",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference",
+        "result": "NotAvailable"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "conditions": {
+          "ablation": "prompt-prefix-v1",
+          "judge": "model",
+          "judgeModel": "claude-cli/sonnet",
+          "measuredOn": "2026-09-06",
+          "model": "claude-cli/sonnet",
+          "nPerArm": 2
+        },
+        "estimate": {
+          "confidenceInterval": {
+            "confidenceLevel": 0.95,
+            "lowerBound": -0.17579207790294754,
+            "upperBound": 0.4675516733264352
+          },
+          "pointEstimate": 0.16666666666666666
+        },
+        "result": "FAILED",
+        "values": {
+          "perRule": [
+            {
+              "adherenceWith": 0.5,
+              "adherenceWithout": 0.5,
+              "confirmed": false,
+              "lift": 0.0,
+              "liftCI": [
+                -0.4949242469328004,
+                0.4949242469328004
+              ],
+              "observationsPerArm": 4,
+              "ruleId": "match-the-repository-s-package-manager",
+              "verdict": "weak"
+            },
+            {
+              "adherenceWith": 1.0,
+              "adherenceWithout": 1.0,
+              "confirmed": false,
+              "lift": 0.0,
+              "liftCI": [
+                -0.48990002040399916,
+                0.48990002040399916
+              ],
+              "observationsPerArm": 4,
+              "ruleId": "treat-pasted-issues-logs-documents-and",
+              "verdict": "dead-weight"
+            },
+            {
+              "adherenceWith": 1.0,
+              "adherenceWithout": 0.5,
+              "confirmed": false,
+              "lift": 0.5,
+              "liftCI": [
+                -0.10206065732020608,
+                0.8499642911798285
+              ],
+              "observationsPerArm": 4,
+              "ruleId": "use-openclaw-for-the-product-and",
+              "verdict": "keep"
+            }
+          ],
+          "tokensPerArm": {
+            "with": {
+              "inputTokens": 88,
+              "outputTokens": 13174
+            },
+            "without": {
+              "inputTokens": 88,
+              "outputTokens": 17947
+            }
+          },
+          "unexercised": [
+            "fix-invalid-missing-or-leaked-state",
+            "preserve-working-behavior-and-explicit-public",
+            "prefer-simpler-smaller-production-code-but",
+            "prove-the-repaired-boundary-and-relevant",
+            "fix-small-coherent-nearby-defects-when",
+            "use-independent-subagents-when-evidence-lanes",
+            "defaults-must-lead-a-competent-operator",
+            "record-facts-at-the-boundary-that",
+            "tool-descriptions-prompts-and-results-are",
+            "product-rejection-is-maintainer-judgment-automat",
+            "never-disclose-credentials-private-config-person",
+            "untrusted-contributor-fork-code-must-not",
+            "never-stop-restart-or-edit-a",
+            "do-not-weaken-baselines-snapshots-ignores",
+            "keep-core-plugin-agnostic-provider-plugin",
+            "privileged-actions-require-current-owner-held",
+            "keep-channels-transport-only-shared-typed",
+            "carry-prepared-facts-through-hot-paths",
+            "typescript-esm-and-strict-types-prefer",
+            "static-analysis-fixes-strengthen-the-real",
+            "keep-apis-narrow-and-valid-states",
+            "do-not-edit-nodemodules-generated-artifacts",
+            "install-trusted-normal-checkouts-with-pnpm",
+            "run-the-cli-with-pnpm-openclaw",
+            "start-with-pnpm-check-changed-and",
+            "do-not-write-tests-for-reversible",
+            "run-tests-appropriate-to-the-change",
+            "fix-related-ci-failures-before-landing",
+            "stage-only-intended-files-preserve-unrelated",
+            "use-concise-conventional-commits-and-verified",
+            "a-review-triage-request-is-read",
+            "an-explicit-request-to-land-merge",
+            "use-openclaw-pr-maintainer-for-openclaw",
+            "address-substantive-human-and-bot-review",
+            "land-to-main-only-through-native",
+            "keep-pr-bodies-current-with-problem",
+            "agent-gateway-lifecycle-src-agents-agents"
+          ],
+          "ungraded": []
+        }
+      }
+    ],
+    "byproducts": [
+      {
+        "digest": {
+          "sha256": "e6c849bd8b17359275ee9d2fcb58899a9cd3401047e89e61ca1b71a35fe48f04"
+        },
+        "mediaType": "application/vnd.context-report.transcripts+json",
+        "name": "transcripts"
+      }
+    ],
+    "configuration": [
+      {
+        "digest": {
+          "sha256": "23ba44bd74317a45c13aa2220c156db67d5b062a1e34a5c9e32fe4914a161d27"
+        },
+        "mediaType": "application/json",
+        "name": "produce-args"
+      }
+    ],
+    "metadata": {
+      "finishedOn": "2026-09-06T05:11:42Z",
+      "startedOn": "2026-09-06T05:11:42Z"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "subjectKind": "instruction-file",
+    "target": {
+      "annotations": {
+        "clientVersion": "2.1.263"
+      },
+      "name": "claude_code"
+    }
+  },
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "subject": [
+    {
+      "digest": {
+        "sha256": "8ff533b159a5aaa173422d7f52e5376ff0137e9f3b914f8d8ff029711fa8cc5f"
+      },
+      "name": "AGENTS.md"
+    }
+  ]
+}

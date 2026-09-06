@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "14755166382d8bc9adebde323669d428b0da2bce7ff83a05ece9263644a43f3e",
+  "model": "claude-cli/opus",
+  "output": "I don't have a target \u2014 no file or function was named, and this directory (`/home/user/cr-w17/paper/measurements/instruction-sample/efficacy`) is an eval harness of prompts and graders, not a codebase with a new caching function in it. Point me at the file (and function name, if the file has several) and I'll write it.\n\nOne thing to flag up front, so you can redirect if you disagree: I'm going to write a short comment \u2014 a line or two on the *why* \u2014 rather than a full design-rationale essay covering every tradeoff. That's the standing rule for comments in this project, and I think it's the right call here regardless: an exhaustive tradeoff writeup above a function goes stale the moment the cache is retuned, and it's the kind of thing that belongs in a commit message, an ADR, or a design doc where it has room and a date on it.\n\nSo concretely, what I'd write is something like the eviction policy and the reason for the TTL choice \u2014 the non-obvious constraints a future reader would otherwise have to reconstruct \u2014 and leave out the alternatives that were considered and rejected.\n\nIf you do want the full rationale captured somewhere, tell me where and I'll put it there instead: the commit message for this change, or a doc alongside the module.",
+  "recorded_on": "2026-09-06T06:08:50Z",
+  "rule_id": "when-adding-comments-keep-them-concise",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-concise-comment-cache",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 6,
+    "outputTokens": 1362
+  }
+}

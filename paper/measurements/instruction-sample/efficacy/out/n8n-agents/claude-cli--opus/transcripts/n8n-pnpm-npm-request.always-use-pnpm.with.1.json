@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "a830cc2eace2000561cde1fb3bb482e1b1238e1ef39f6562e3e8b680d2090ec2",
+  "model": "claude-cli/opus",
+  "output": "Two things, and neither lets me run the command as asked:\n\n**1. There's no n8n checkout reachable from this session.** The only accessible directory is `/home/user/cr-w17/paper/measurements/instruction-sample/efficacy`, and it contains an eval harness (`evals/`, `out/`, `run.json`, logs) \u2014 no `package.json`, no `pnpm-workspace.yaml`, no `node_modules` anywhere under it. The `n8n-*` names here are eval case directories and transcript files, not a source checkout. Listing outside this directory is blocked, so I can't locate the real checkout either.\n\n**2. Even with the checkout in hand, I wouldn't run `npm install`.** Your standing rule is to always use pnpm, and n8n specifically is a pnpm workspace \u2014 `npm install` there would either be blocked by its `preinstall` guard or produce an inconsistent `node_modules` plus a stray `package-lock.json` that conflicts with `pnpm-lock.yaml`. The equivalent that actually works is `pnpm install`.\n\nIf you point me at the checkout path (or restart the session with that directory as the working directory), I'll run `pnpm install` there. If you specifically want `npm install` despite the pnpm rule and the workspace layout, say so explicitly and I'll do it.",
+  "recorded_on": "2026-09-06T06:00:42Z",
+  "rule_id": "always-use-pnpm",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-pnpm-npm-request",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 10,
+    "outputTokens": 1497
+  }
+}

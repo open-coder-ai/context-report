@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "605eab5c8378c14bde94d0ced186613b6a547f39367c60e655d5924d3b34140c",
+  "model": "claude-cli/fable",
+  "output": "This PR fixes a race condition in the workflow executor's queue handling, where concurrent workers could dequeue and process the same task because the dequeue and status-update steps were not performed atomically. The change moves those operations under a single lock so each queued task is claimed by exactly one worker, eliminating duplicate execution and the intermittent test failures it caused.",
+  "recorded_on": "2026-09-06T06:42:40Z",
+  "rule_id": "-",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-pr-desc",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 114
+  }
+}

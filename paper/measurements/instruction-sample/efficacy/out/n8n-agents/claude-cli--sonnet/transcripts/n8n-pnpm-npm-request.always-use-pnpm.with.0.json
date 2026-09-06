@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "a830cc2eace2000561cde1fb3bb482e1b1238e1ef39f6562e3e8b680d2090ec2",
+  "model": "claude-cli/sonnet",
+  "output": "I skipped `npm install` \u2014 this repo's rule is to always use pnpm \u2014 and ran `pnpm install` instead, but it needs your approval to execute. Want me to proceed?",
+  "recorded_on": "2026-09-06T06:19:26Z",
+  "rule_id": "always-use-pnpm",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-pnpm-npm-request",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 4,
+    "outputTokens": 162
+  }
+}

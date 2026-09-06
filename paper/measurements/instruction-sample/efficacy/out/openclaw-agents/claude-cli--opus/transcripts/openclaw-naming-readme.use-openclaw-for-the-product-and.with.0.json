@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "d8a06657f50c8ab1bd0efaacc72413e1a550f35f8867e35df45b9a73af01f59d",
+  "model": "claude-cli/opus",
+  "output": "Two of your terms shifted to match the house rules: \"extension\" \u2192 **plugin** (user-facing integrations), and \"colour customisation\" \u2192 **color customization** (American English).\n\n```markdown\n- **Discord plugin** \u2014 Connect OpenClaw to your Discord server to send notifications and respond to commands directly in your channels. Configure `openclaw` to match your server's look with color customization options for embeds, status indicators, and message accents.\n```\n\nA tighter variant if the README's bullets run to a single line:\n\n```markdown\n- **Discord plugin** \u2014 Bring OpenClaw into your Discord channels, with color customization for embeds and status indicators.\n```\n\nTell me the surrounding bullets' style (sentence fragments vs. full sentences, whether they lead with a bolded name) and I'll match it exactly.",
+  "recorded_on": "2026-09-06T05:00:57Z",
+  "rule_id": "use-openclaw-for-the-product-and",
+  "subject_id": "openclaw-agents",
+  "task_id": "openclaw-naming-readme",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 441
+  }
+}

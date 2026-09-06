@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "605eab5c8378c14bde94d0ced186613b6a547f39367c60e655d5924d3b34140c",
+  "model": "claude-cli/opus",
+  "output": "No workflow-executor change exists in this worktree (working tree is clean; recent commits are the CLI timeout and `--resume` work), so I wrote this from your description alone \u2014 the symptom and fix mechanism below are assumptions to correct if they're off.\n\n> Fixes a race condition in the workflow executor's queue handling, where concurrent enqueue and dequeue could observe an inconsistent view of pending work and cause a task to be dropped or picked up twice. Queue mutations are now serialized so a task transitions out of the pending state exactly once, regardless of how many workers are draining the queue.\n\nPoint me at the diff or branch and I'll tighten it to the actual mechanism.",
+  "recorded_on": "2026-09-06T06:08:16Z",
+  "rule_id": "-",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-pr-desc",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 4,
+    "outputTokens": 1020
+  }
+}

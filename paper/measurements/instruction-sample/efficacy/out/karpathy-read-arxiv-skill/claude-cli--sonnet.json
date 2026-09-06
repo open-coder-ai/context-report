@@ -1,0 +1,185 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "predicate": {
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "inputHash": "sha256:947de2a132daa125ea4e78aedf94d8159d6c3bf1eb43a7819f82337db644107a",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema",
+        "result": "NotAvailable"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "inputHash": "sha256:383275401f9fa8f8b7610634729a9ef4901b844678379cd76ebbe6d4d6f65440",
+        "reasoning": "subjectKind skill has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "inputHash": "sha256:a81e5e744113109245b4271aaba40e0093f249340380bdff93fa83fd86401fa3",
+        "reasoning": "decision does not apply to subjectKind skill in v0.1",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "inputHash": "sha256:3c520507f0db9ba08da9fcbdfd6c54daf56ce03eed74c73313900030ac069fba",
+        "reasoning": "subjectKind skill has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "inputHash": "sha256:c28ea945121292e2eb7bfe8b32f7f19ab113a5a63ee51d749a16c816d6145ee8",
+        "reasoning": "subjectKind skill has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "inputHash": "sha256:add67b34644aa116004438db2556e008f1c2ea478f458cb43a02eb819e4ff572",
+        "reasoning": "subjectKind skill has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "inputHash": "sha256:337748f2e8cfbcc74ddc34fae09ea919da0e9c8784a86c2de64b5cb6d837cc54",
+        "reasoning": "subjectKind skill has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "inputHash": "sha256:3d69edd2da3c7de822962ccd3806597bb89ccab77522c2f9429c9eaf865c9e0f",
+        "reasoning": "subjectKind skill has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "conditions": {
+          "files": 1,
+          "tokenizer": "approx-regex-v1"
+        },
+        "inputHash": "sha256:44573d23abf7ac6c3435fd05656bc1069736b42f9281aec114ae4f575586ff08",
+        "measurement": {
+          "max": 487,
+          "mean": 487,
+          "min": 487,
+          "n": 1,
+          "unit": "tokens"
+        },
+        "result": "PASSED",
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/instr/nanochat/.claude/skills/read-arxiv-paper/SKILL.md": 487
+          }
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "inputHash": "sha256:7bcca5971d51359897c580a7649f49256afb822d5098db986ed990c5302602a7",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference",
+        "result": "NotAvailable"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "conditions": {
+          "ablation": "prompt-prefix-v1",
+          "judge": "model",
+          "judgeModel": "claude-cli/sonnet",
+          "measuredOn": "2026-09-06",
+          "model": "claude-cli/sonnet",
+          "nPerArm": 2
+        },
+        "estimate": {
+          "confidenceInterval": {
+            "confidenceLevel": 0.95,
+            "lowerBound": -0.48990002040399916,
+            "upperBound": 0.48990002040399916
+          },
+          "pointEstimate": 0.0
+        },
+        "result": "FAILED",
+        "values": {
+          "perRule": [
+            {
+              "adherenceWith": 0.0,
+              "adherenceWithout": 0.0,
+              "confirmed": true,
+              "lift": 0.0,
+              "liftCI": [
+                -0.48990002040399916,
+                0.48990002040399916
+              ],
+              "observationsPerArm": 4,
+              "ruleId": "the-goal-is-to-fetch-the",
+              "verdict": "ineffective"
+            }
+          ],
+          "tokensPerArm": {
+            "with": {
+              "inputTokens": 66,
+              "outputTokens": 14639
+            },
+            "without": {
+              "inputTokens": 26,
+              "outputTokens": 3341
+            }
+          },
+          "ungraded": []
+        }
+      }
+    ],
+    "byproducts": [
+      {
+        "digest": {
+          "sha256": "cae91fef39c4e4efe4865d9c80a740fd5c209d4936ce5eee95d97886f553e2ad"
+        },
+        "mediaType": "application/vnd.context-report.transcripts+json",
+        "name": "transcripts"
+      }
+    ],
+    "configuration": [
+      {
+        "digest": {
+          "sha256": "f73282dd96893eb5be468b39acfcd9147b73628dd02a8a223bf5b6f91c1fe507"
+        },
+        "mediaType": "application/json",
+        "name": "produce-args"
+      }
+    ],
+    "metadata": {
+      "finishedOn": "2026-09-06T05:48:39Z",
+      "startedOn": "2026-09-06T05:48:39Z"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "subjectKind": "skill",
+    "target": {
+      "annotations": {
+        "clientVersion": "2.1.263"
+      },
+      "name": "claude_code"
+    }
+  },
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "subject": [
+    {
+      "digest": {
+        "sha256": "4a15799c7c0f7f5c245d06ec9857b4623ad86525ba4d0d677a806b86f30f87b1"
+      },
+      "name": "read-arxiv-paper"
+    }
+  ]
+}
