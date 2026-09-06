@@ -57,6 +57,42 @@ Efficacy — paired-ablation measurement of whether an artifact changes agent be
 the optional extra `context-report[efficacy]` (`pip install -e ".[efficacy]"`) and is the engine
 behind the `efficacy` row: `context-report efficacy --help`.
 
+## Running a manifest
+
+`context-report run MANIFEST` measures a whole batch of artifacts, models and tasks in one shot,
+from a JSON manifest matching [`spec/run/v0.1/schema.json`](spec/run/v0.1/schema.json):
+
+```
+context-report run run.json --dry-run   # rules found/exercised and the call budget, no model touched
+context-report run run.json             # the real thing
+context-report run run.json --n 2       # override arms.nPerArm for a smoke run
+```
+
+See [`spec/run/v0.1/examples/run.json`](spec/run/v0.1/examples/run.json) and its `tasks.json` for
+a worked manifest: two subjects, two models, three tasks.
+
+v0.1 supports `arms.mode: "isolated"` only; `"leave-one-out"` is rejected before anything runs.
+Only `provider: "anthropic"` models have a backend — any other subject model gets a `NotAvailable`
+efficacy row explaining there is no backend for it in v0.1, with no arms run and no transcripts
+recorded. A `judge` model, if set, must also be `anthropic`; without one, rules with a prose
+compliance criterion are reported ungraded rather than guessed at.
+
+The command writes a fixed layout under the manifest's `out` directory:
+
+```
+out/manifest.json                                   # the manifest as resolved and run
+out/<subject id>/<model slug>.json                  # one statement per subject and model
+out/<subject id>/<model slug>/transcripts/           # that pair's recorded model outputs
+out/<subject id>/statement.json                      # only when `models` is empty
+out/SUMMARY.md                                       # one row per (subject, model)
+```
+
+Every `<subject id>/<model slug>.json` is a full context-report statement — schema-valid on its
+own — with an `efficacy` row carrying the measured lift (or, for an unsupported provider or an
+ungraded rule, an honest explanation of what wasn't measured and why) plus which of the subject's
+rules no task exercised. The transcripts directory is what the statement's `byproducts` entry is
+bound to by digest, so a re-judge or an audit has the exact recorded outputs to work from.
+
 ## License
 
 Apache-2.0.
