@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "551d93e5d7b4f25efed594889eb920748ae510be0907eb5b1de584f96b3c2ddf",
+  "model": "claude-cli/sonnet",
+  "output": "I don't have permission to use WebFetch right now, so I can't pull the paper directly. Could you grant access when prompted, or alternatively paste the abstract/text here so I can summarize it?",
+  "recorded_on": "2026-09-06T05:46:17Z",
+  "rule_id": "-",
+  "subject_id": "karpathy-read-arxiv-skill",
+  "task_id": "karpathy-fetch-src-not-pdf-1",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 8,
+    "outputTokens": 728
+  }
+}

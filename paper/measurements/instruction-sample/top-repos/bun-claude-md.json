@@ -1,0 +1,130 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "CLAUDE.md",
+      "digest": {
+        "sha256": "51bfba7963b07c6669bd70d3e2e459baffd293df4ff95418441c35a7754560f4"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "instruction-file",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:bf6f6c87aba7f696458b161bcd3eb4651666df62fcfbdbfc10cd27f228702b07",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:5b9f77c2d7b6a0ac2efa5434ac14c0a453b2430516db2666a4ea8f0fff936329",
+        "reasoning": "subjectKind instruction-file has nothing to execute"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:b0ef496dec969ed332e7110e2dfe4b2b4071bb187803e864527d38f6030bf41e",
+        "reasoning": "decision does not apply to subjectKind instruction-file in v0.1"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:c10db3ea29b3c84a4a636d603d35c98cda3818a94f1af768dc368b160ec45fa8",
+        "reasoning": "subjectKind instruction-file has nothing to execute"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:75ffc5ee458d628abb3b99c84fd5f0a3cb414ff567d2a02020789f7de9fc6d1a",
+        "reasoning": "subjectKind instruction-file has nothing to execute"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:bf5205932a71964154ea92f451c101c77bf16988f619339e35f71c2c6dca0cac",
+        "reasoning": "subjectKind instruction-file has nothing to execute"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:b0e0bdced19c7e3c58ade1033f4295fb406140880f4c3d74ee31742d316a8757",
+        "reasoning": "subjectKind instruction-file has nothing to execute"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:2a73d21c5b69415626a48ccf43749e45bda4906abbdc234e4a8c8ce7fd7f991f",
+        "reasoning": "subjectKind instruction-file has nothing to execute"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:7efc725d511ecfc02b2399b9f1d1559b82dad1bdc481e5ad7d7ad6c6434501e0",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 1
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/instr/bun/CLAUDE.md": 4737
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 4737,
+          "max": 4737,
+          "mean": 4737
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:26537e209c274de8982333c1367ae81c01d17833cc56a9de6a5c3b43d5a5bda1",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T04:46:55Z",
+      "finishedOn": "2026-09-06T04:46:55Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "61e7bc427a5bd709cd222b1a1b1edfc59c871c4a0f2bb58f911fa8a33c08206f"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

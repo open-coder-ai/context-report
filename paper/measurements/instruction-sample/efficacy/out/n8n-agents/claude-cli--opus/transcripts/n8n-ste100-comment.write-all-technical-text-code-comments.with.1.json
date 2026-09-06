@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "56f1abb10f89fbeae446807414f167632f26ec4e2fe960e6dfbfa202f5bad3ce",
+  "model": "claude-cli/opus",
+  "output": "The comment, in Simplified Technical English:\n\n```python\n# Call a function again after a temporary failure.\n# The helper waits a longer time before each new try. A longer wait prevents\n# too many requests to a busy server.\n# This helper exists because many call sites had the same retry code.\ndef retry(fn, attempts=3, delay=0.5, backoff=2.0, errors=(OSError,)):\n    ...\n```\n\nEach sentence is short, active, and states one thing. Line 1 says what it does, lines 2\u20133 say how the wait behaves, line 4 says why it exists.\n\nFull snippet: `/tmp/claude-0/-home-user-cr-w17-paper-measurements-instruction-sample-efficacy/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/retry.py`\n\nTell me the real target file and language, and I will place the helper and comment there instead.",
+  "recorded_on": "2026-09-06T06:03:40Z",
+  "rule_id": "write-all-technical-text-code-comments",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-comment",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 20,
+    "outputTokens": 4013
+  }
+}

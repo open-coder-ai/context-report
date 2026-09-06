@@ -1,0 +1,251 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "predicate": {
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "inputHash": "sha256:99e97e446005effcfab6db6e30f004d970c9700b77f99104c0e571ecb0f4d2b3",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema",
+        "result": "NotAvailable"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "inputHash": "sha256:7b5e707349ba681a13b56d2d2ce95506580bc80431e1d8c5fdbf894ce36a25d9",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "inputHash": "sha256:3aa143f8160ad44bbe04beb9af3c4c23a760990431376225d19a7ddc3667d1e1",
+        "reasoning": "decision does not apply to subjectKind instruction-file in v0.1",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "inputHash": "sha256:cce52c2aad7dd41ef8af63138cb047500a003f2a7d2f6e437665e735393a3e5d",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "inputHash": "sha256:9ba82b630ccf13d6cfd24e0d8199199abb45981796123deca04000374040db71",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "inputHash": "sha256:29d77cf63a870cae29aa7d0b5dbde02b7feae162aac22d4ce27138ce48b777eb",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "inputHash": "sha256:18417ddd28c32d63eb6361a7b3e5d862cd5441279ffe7d276a4e59b8441cd3f9",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "inputHash": "sha256:38e6edb6ab91df4bfef18b2ec047041574729bc51bf04290d0a203e18faf6fc1",
+        "reasoning": "subjectKind instruction-file has nothing to execute",
+        "result": "NotApplicable"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "conditions": {
+          "files": 1,
+          "tokenizer": "approx-regex-v1"
+        },
+        "inputHash": "sha256:4515e6f3ab0732bec2fa49484867b79b08775dcbfb1020281dee1d1802656294",
+        "measurement": {
+          "max": 4832,
+          "mean": 4832,
+          "min": 4832,
+          "n": 1,
+          "unit": "tokens"
+        },
+        "result": "PASSED",
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/instr/n8n/AGENTS.md": 4832
+          }
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "inputHash": "sha256:a8e551ca03c1e3bd4732f65fa6188cd04b96f2ae88626d35566e7a33c52fbe25",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference",
+        "result": "NotAvailable"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "conditions": {
+          "ablation": "prompt-prefix-v1",
+          "judge": "model",
+          "judgeModel": "claude-cli/sonnet",
+          "measuredOn": "2026-09-06",
+          "model": "claude-cli/sonnet",
+          "nPerArm": 2
+        },
+        "estimate": {
+          "confidenceInterval": {
+            "confidenceLevel": 0.95,
+            "lowerBound": -0.34571061572202466,
+            "upperBound": 0.34571061572202466
+          },
+          "pointEstimate": 0.0
+        },
+        "result": "FAILED",
+        "values": {
+          "perRule": [
+            {
+              "adherenceWith": 0.5,
+              "adherenceWithout": 0.5,
+              "confirmed": false,
+              "lift": 0.0,
+              "liftCI": [
+                -0.4949242469328004,
+                0.4949242469328004
+              ],
+              "observationsPerArm": 4,
+              "ruleId": "always-use-pnpm",
+              "verdict": "weak"
+            },
+            {
+              "adherenceWith": 0.5,
+              "adherenceWithout": 0.5,
+              "confirmed": false,
+              "lift": 0.0,
+              "liftCI": [
+                -0.4949242469328004,
+                0.4949242469328004
+              ],
+              "observationsPerArm": 4,
+              "ruleId": "write-all-technical-text-code-comments",
+              "verdict": "weak"
+            },
+            {
+              "adherenceWith": 0.75,
+              "adherenceWithout": 0.75,
+              "confirmed": false,
+              "lift": 0.0,
+              "liftCI": [
+                -0.4936729840182258,
+                0.4936729840182258
+              ],
+              "observationsPerArm": 4,
+              "ruleId": "when-adding-comments-keep-them-concise",
+              "verdict": "weak"
+            }
+          ],
+          "tokensPerArm": {
+            "with": {
+              "inputTokens": 112,
+              "outputTokens": 20458
+            },
+            "without": {
+              "inputTokens": 104,
+              "outputTokens": 21846
+            }
+          },
+          "unexercised": [
+            "use-mermaid-diagrams-in-md-files",
+            "use-pnpm-build-to-build-all",
+            "an-empty-instance-is-a-bad",
+            "both-seed-profiles-delete-their-own",
+            "design-system-reusable-components-and-design",
+            "the-n8n-workflow-package-exports-graph",
+            "never-use-any-type-use-proper",
+            "avoid-type-casting-with-as-use",
+            "lazy-load-heavy-modules-if-a",
+            "don-t-use-the-deprecated-applicationerror",
+            "operationalerror-a-transient-expected-issue-netw",
+            "anti-patterns-reviewers-reject-they-hide",
+            "pushing-manager-createquerybuilder-into-business",
+            "deployment-keys-are-never-deleted-data",
+            "all-ui-text-must-use-i18n",
+            "use-css-variables-directly-never-hardcode",
+            "data-testid-must-be-a-single",
+            "always-use-the-design-system-skill",
+            "always-work-from-within-the-package",
+            "prefer-reusing-hoisted-shared-mock-t",
+            "typecheck-is-critical-before-committing-always",
+            "add-api-endpoints-via-controllers",
+            "write-tests-with-proper-mocks",
+            "run-pnpm-typecheck-to-verify-types",
+            "security-improvements-whether-driven-by-enterpri",
+            "no-friction-for-the-common-case",
+            "migration-and-upgrade-paths-existing-users",
+            "security-layers-on-top-not-in",
+            "this-is-a-public-repository-when",
+            "branch-names-do-not-use-the",
+            "commit-messages-describe-what-the-code",
+            "test-descriptions-use-neutral-functional-languag",
+            "code-comments-do-not-describe-the",
+            "linear-references-never-include-the-url",
+            "this-is-a-public-repository-never",
+            "use-gh-pr-create-draft-to",
+            "if-there-is-a-corresponding-linear",
+            "always-link-to-the-github-issue"
+          ],
+          "ungraded": []
+        }
+      }
+    ],
+    "byproducts": [
+      {
+        "digest": {
+          "sha256": "c833c66216c9de12c974a7f0aadd52e8a9b8464dc82f4f0433dc665d3ea11764"
+        },
+        "mediaType": "application/vnd.context-report.transcripts+json",
+        "name": "transcripts"
+      }
+    ],
+    "configuration": [
+      {
+        "digest": {
+          "sha256": "23ba44bd74317a45c13aa2220c156db67d5b062a1e34a5c9e32fe4914a161d27"
+        },
+        "mediaType": "application/json",
+        "name": "produce-args"
+      }
+    ],
+    "metadata": {
+      "finishedOn": "2026-09-06T06:30:02Z",
+      "startedOn": "2026-09-06T06:30:02Z"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "subjectKind": "instruction-file",
+    "target": {
+      "annotations": {
+        "clientVersion": "2.1.263"
+      },
+      "name": "claude_code"
+    }
+  },
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "subject": [
+    {
+      "digest": {
+        "sha256": "ba2a5078e1f89def38bf0456fc468685431256872f14c7bc18be2eab09c9cb7c"
+      },
+      "name": "AGENTS.md"
+    }
+  ]
+}

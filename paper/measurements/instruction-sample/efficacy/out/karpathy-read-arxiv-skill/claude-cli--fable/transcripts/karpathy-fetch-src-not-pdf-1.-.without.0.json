@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "551d93e5d7b4f25efed594889eb920748ae510be0907eb5b1de584f96b3c2ddf",
+  "model": "claude-cli/fable",
+  "output": "I could not read the paper. Every route to fetch it was blocked by this session's permission settings, so I have nothing to summarize.\n\nWhat I tried:\n\n- **WebFetch** on both the abstract page and the PDF was denied.\n- **curl through the proxy** to the abstract page was also denied, both as a compound command and as a single plain command.\n\nI will not guess at the contents from the arXiv ID alone, since that would risk inventing a paper.\n\nTo get a real summary, any one of these will unblock me:\n\n1. Approve the WebFetch or curl request when it appears, and I will fetch and summarize the paper immediately.\n2. Paste the abstract or full text into the chat.\n3. Drop the PDF into the worktree or scratchpad and tell me the path. I can extract and summarize it locally.",
+  "recorded_on": "2026-09-06T05:52:41Z",
+  "rule_id": "-",
+  "subject_id": "karpathy-read-arxiv-skill",
+  "task_id": "karpathy-fetch-src-not-pdf-1",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 130,
+    "outputTokens": 2100
+  }
+}

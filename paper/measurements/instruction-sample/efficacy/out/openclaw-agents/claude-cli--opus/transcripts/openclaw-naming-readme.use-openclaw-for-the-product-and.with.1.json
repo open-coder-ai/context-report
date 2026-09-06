@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "d8a06657f50c8ab1bd0efaacc72413e1a550f35f8867e35df45b9a73af01f59d",
+  "model": "claude-cli/opus",
+  "output": "Here's the bullet:\n\n```markdown\n- **Discord plugin** \u2014 Connect OpenClaw to your Discord server to relay notifications and run `openclaw` commands from chat. Colors are fully customizable: set embed accent colors, per-status colors (success, warning, error), and role-based name colors via `openclaw.config.json`.\n```\n\nTwo terminology notes, per the project conventions: I called it a **plugin** rather than an \"extension\" (user-facing integrations are plugins), and used **color** rather than \"colour\" for American English. Product name is `OpenClaw`, with `openclaw` reserved for the CLI and config file references.",
+  "recorded_on": "2026-09-06T05:01:06Z",
+  "rule_id": "use-openclaw-for-the-product-and",
+  "subject_id": "openclaw-agents",
+  "task_id": "openclaw-naming-readme",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 400
+  }
+}

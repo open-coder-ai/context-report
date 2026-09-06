@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "db4e4a9e7cfdc5507e6a0119d59cf8d28cd4ee80d052dc9dd405121d0e2246ab",
+  "model": "claude-cli/opus",
+  "output": "Heads up on two things I found: this directory is an eval-fixture tree (`evals/openclaw-naming-readme/`) rather than the OpenClaw source, so there's no Discord extension code here to check option names against \u2014 the specifics below are placeholders to verify. The repo's own graders do establish the naming conventions, which I've followed: **OpenClaw** as one word, and American English spelling.\n\nDraft bullet:\n\n```markdown\n- **Discord extension** \u2014 Connect OpenClaw to your Discord server to run commands\n  and stream job output directly into channels. Supports full color customization:\n  set the accent color for embeds, status colors for success/warning/failure states,\n  and per-channel overrides via `discord.colors` in your config.\n```\n\nA shorter variant if the README's bullets are one-liners:\n\n```markdown\n- **Discord extension** \u2014 Run OpenClaw from your Discord server, with customizable\n  embed and status colors via `discord.colors`.\n```\n\nWorth confirming before merging: the config key (`discord.colors`), whether per-channel overrides actually exist, and whether the extension is first-party or community-maintained \u2014 I inferred the shape of these rather than reading them from the extension.",
+  "recorded_on": "2026-09-06T05:01:46Z",
+  "rule_id": "-",
+  "subject_id": "openclaw-agents",
+  "task_id": "openclaw-naming-readme",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 16,
+    "outputTokens": 2709
+  }
+}

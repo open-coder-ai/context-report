@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "605eab5c8378c14bde94d0ced186613b6a547f39367c60e655d5924d3b34140c",
+  "model": "claude-cli/opus",
+  "output": "One thing to flag first: I don't see a change matching that description here. The working tree is clean, and the three commits on `w17/instruction-sample` are about a CLI answer timeout, a timeout retry, and `run --resume` \u2014 nothing touching a workflow executor or queue handling. Here's the description anyway, written to the ask; swap in the real specifics before you post it.\n\n---\n\nFixes a race condition in the workflow executor's queue handling, where concurrent workers could observe and claim the same queued item because the check for available work and the dequeue that followed it were not a single atomic step. The claim is now performed under the queue's lock so that each item is handed to exactly one worker, eliminating the duplicate executions and dropped tasks this could cause under load.\n\n---\n\nIf you point me at the actual branch or diff, I'll rewrite it against what the change really does.",
+  "recorded_on": "2026-09-06T06:07:51Z",
+  "rule_id": "-",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-pr-desc",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 10,
+    "outputTokens": 1161
+  }
+}
