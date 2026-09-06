@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "92c92ed5de651dd7d98a2123b1c2d77aac5ec458543fdfc8bed49584950c7b39",
+  "model": "claude-cli/fable",
+  "output": "OpenClaw now supports a Slack plugin, so you can connect your workspace and chat with your agents directly from Slack.",
+  "recorded_on": "2026-09-06T05:33:12Z",
+  "rule_id": "use-openclaw-for-the-product-and",
+  "subject_id": "openclaw-agents",
+  "task_id": "openclaw-naming-changelog",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 42
+  }
+}

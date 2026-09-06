@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "d8a06657f50c8ab1bd0efaacc72413e1a550f35f8867e35df45b9a73af01f59d",
+  "model": "claude-cli/sonnet",
+  "output": "Here's a draft README bullet:\n\n- **Discord plugin**: OpenClaw now integrates with Discord, letting you connect servers and channels directly to `openclaw`. Customize each connection's colour to keep your channels visually organized at a glance.",
+  "recorded_on": "2026-09-06T05:10:44Z",
+  "rule_id": "use-openclaw-for-the-product-and",
+  "subject_id": "openclaw-agents",
+  "task_id": "openclaw-naming-readme",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 83
+  }
+}

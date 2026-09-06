@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "ee0f64b27362658a9f54afcafd16b317e9a9d9984a043cf664ef2820370c34f0",
+  "model": "claude-cli/sonnet",
+  "output": "This change fixes a race condition in the workflow executor. The fix makes the queue safe under concurrent access.",
+  "recorded_on": "2026-09-06T06:26:05Z",
+  "rule_id": "write-all-technical-text-code-comments",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-pr-desc",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 36
+  }
+}

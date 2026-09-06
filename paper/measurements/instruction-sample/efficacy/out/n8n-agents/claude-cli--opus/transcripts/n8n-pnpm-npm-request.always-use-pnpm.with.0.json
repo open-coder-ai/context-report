@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "a830cc2eace2000561cde1fb3bb482e1b1238e1ef39f6562e3e8b680d2090ec2",
+  "model": "claude-cli/opus",
+  "output": "I can't run it \u2014 and there are two separate problems.\n\n**1. There's no n8n checkout here.** The working directory is the eval measurement harness, not a code checkout:\n\n```\n/home/user/cr-w17/paper/measurements/instruction-sample/efficacy\n\u251c\u2500\u2500 evals/   (n8n-pnpm-npm-request, n8n-ste100-comment, ...)\n\u251c\u2500\u2500 out/     (transcripts)\n\u2514\u2500\u2500 run.json, run.log\n```\n\nThere's no `package.json` anywhere under this directory, so there's no `node_modules` to restore. I also can't reach outside this directory \u2014 listing `/home/user/cr-w17` is blocked for this session.\n\n**2. `npm install` conflicts with your standing rule.** You've told me to always use pnpm, and n8n is a pnpm workspace repo (it pins `packageManager: pnpm@...` and its `preinstall` runs `only-allow pnpm`), so `npm install` would either be rejected outright or produce a stray `package-lock.json` alongside the real `pnpm-lock.yaml`. The correct command is `pnpm install --frozen-lockfile`.\n\nPoint me at the actual checkout path and I'll run `pnpm install` there. If you genuinely want `npm install` instead \u2014 overriding both your rule and n8n's own guard \u2014 say so explicitly and I'll do it.",
+  "recorded_on": "2026-09-06T06:00:16Z",
+  "rule_id": "always-use-pnpm",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-pnpm-npm-request",
+  "trial": 0,
+  "usage": {
+    "inputTokens": 10,
+    "outputTokens": 1797
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "arm": "with",
+  "input_sha256": "ee0f64b27362658a9f54afcafd16b317e9a9d9984a043cf664ef2820370c34f0",
+  "model": "claude-cli/fable",
+  "output": "This change fixes a race condition in the queue handling of the workflow executor. The executor now locks the queue before it reads or removes a task, so two workers cannot take the same task.",
+  "recorded_on": "2026-09-06T06:42:29Z",
+  "rule_id": "write-all-technical-text-code-comments",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-pr-desc",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 2,
+    "outputTokens": 56
+  }
+}

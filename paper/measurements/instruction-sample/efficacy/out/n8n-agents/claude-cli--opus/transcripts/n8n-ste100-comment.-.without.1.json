@@ -1,0 +1,15 @@
+{
+  "arm": "without",
+  "input_sha256": "b1e69c3c7c448262759fbb38945510979407422f436bbbef5afc7b8cc74b1d67",
+  "model": "claude-cli/opus",
+  "output": "The comment above the helper:\n\n```ts\n// Runs `fn` again with exponential backoff until it succeeds or the attempts run\n// out. It exists because the calls it wraps fail intermittently for reasons that\n// clear on their own -- network blips, rate limits, short-lived 5xx responses --\n// and one retry turns those into successes instead of a failed run. Errors that\n// `isRetryable` rejects are thrown straight away, so a bad request is not retried.\nexport async function withRetry<T>(...)\n```\n\nIt covers both halves of what you asked for: the first sentence says what the loop does, the rest says why it exists and what it deliberately does *not* do (retry non-transient errors), which is the part a reader can't infer from the code alone.\n\nTwo things worth flagging:\n\n- **No target file.** `paper/measurements/instruction-sample/efficacy` contains only eval fixtures, transcripts, and run config \u2014 no source tree, and nothing matching `retry`/`backoff` in code. So I wrote the helper fresh at `scratchpad/retry.ts` instead of guessing at a home for it. Point me at the real file and I'll move it there and match the surrounding style.\n- **Language choice.** Nothing in scope indicated one; I went with TypeScript since the repo's eval subjects (n8n, openclaw) are TS/JS projects. Easy to port if the actual target is Python or Go.\n\nOne design note: the backoff is deterministic. If several callers retry against the same failing service they'll wake up together and hammer it in sync \u2014 if this is going to wrap a shared dependency, add jitter to `delayMs`. I left it out because it makes tests non-deterministic, and that's a tradeoff you should pick rather than inherit.",
+  "recorded_on": "2026-09-06T06:06:40Z",
+  "rule_id": "-",
+  "subject_id": "n8n-agents",
+  "task_id": "n8n-ste100-comment",
+  "trial": 1,
+  "usage": {
+    "inputTokens": 22,
+    "outputTokens": 5729
+  }
+}

@@ -1,0 +1,210 @@
+{
+  "bun-claude-md": {
+    "kind": "instruction-file",
+    "path": "bun/CLAUDE.md",
+    "rule_ids": [
+      "critical-do-not-set-a-timeout",
+      "run-tests-with-your-debug-build",
+      "critical-never-use-bun-test-directly",
+      "run-any-command-with-debug-build",
+      "run-with-javascript-exception-scope-verification",
+      "all-build-scripts-support-build-then",
+      "edits-to-typescript-type-declarations-packages",
+      "this-is-an-explicit-exception-to",
+      "with-filter-bun-bd-test-test",
+      "default-add-your-test-to-the",
+      "exception-test-regression-issue-issuenumber-test",
+      "tests-use-bun-s-jest-compatible",
+      "always-use-port-0-do-not",
+      "use-normalizebunsnapshot-to-normalize-snapshot-o",
+      "never-write-tests-that-check-for",
+      "use-tempdir-from-harness-to-create",
+      "when-spawning-processes-tests-should-expect",
+      "keep-tests-fast-budget-roughly-1s",
+      "never-contact-the-public-internet-registry",
+      "critical-do-not-write-flaky-tests",
+      "add-iso-subspaces-for-classes-with",
+      "never-use-bun-test-or-bun",
+      "all-changes-must-be-tested-if",
+      "create-tests-in-the-right-folder",
+      "use-absolute-paths-always-use-absolute",
+      "avoid-shell-commands-don-t-use",
+      "memory-management-prefer-raii-drop-over",
+      "be-humble-honest-never-overstate-what",
+      "branch-names-must-start-with-claude",
+      "only-push-up-changes-after-running",
+      "use-bun-run-pr-comments-to"
+    ],
+    "rules_extracted": 31,
+    "skipped": {
+      "reads as description, not instruction": 76,
+      "too long \u2014 prose, not a rule": 3
+    }
+  },
+  "karpathy-read-arxiv-paper-skill": {
+    "kind": "skill",
+    "path": "nanochat/.claude/skills/read-arxiv-paper",
+    "rule_ids": [
+      "the-goal-is-to-fetch-the"
+    ],
+    "rules_extracted": 1,
+    "skipped": {
+      "reads as description, not instruction": 10,
+      "too long \u2014 prose, not a rule": 2
+    }
+  },
+  "n8n-agents-md": {
+    "kind": "instruction-file",
+    "path": "n8n/AGENTS.md",
+    "rule_ids": [
+      "always-use-pnpm",
+      "write-all-technical-text-code-comments",
+      "when-adding-comments-keep-them-concise",
+      "use-mermaid-diagrams-in-md-files",
+      "use-pnpm-build-to-build-all",
+      "an-empty-instance-is-a-bad",
+      "both-seed-profiles-delete-their-own",
+      "design-system-reusable-components-and-design",
+      "the-n8n-workflow-package-exports-graph",
+      "never-use-any-type-use-proper",
+      "avoid-type-casting-with-as-use",
+      "lazy-load-heavy-modules-if-a",
+      "don-t-use-the-deprecated-applicationerror",
+      "operationalerror-a-transient-expected-issue-netw",
+      "anti-patterns-reviewers-reject-they-hide",
+      "pushing-manager-createquerybuilder-into-business",
+      "deployment-keys-are-never-deleted-data",
+      "all-ui-text-must-use-i18n",
+      "use-css-variables-directly-never-hardcode",
+      "data-testid-must-be-a-single",
+      "always-use-the-design-system-skill",
+      "always-work-from-within-the-package",
+      "prefer-reusing-hoisted-shared-mock-t",
+      "typecheck-is-critical-before-committing-always",
+      "add-api-endpoints-via-controllers",
+      "write-tests-with-proper-mocks",
+      "run-pnpm-typecheck-to-verify-types",
+      "security-improvements-whether-driven-by-enterpri",
+      "no-friction-for-the-common-case",
+      "migration-and-upgrade-paths-existing-users",
+      "security-layers-on-top-not-in",
+      "this-is-a-public-repository-when",
+      "branch-names-do-not-use-the",
+      "commit-messages-describe-what-the-code",
+      "test-descriptions-use-neutral-functional-languag",
+      "code-comments-do-not-describe-the",
+      "linear-references-never-include-the-url",
+      "this-is-a-public-repository-never",
+      "use-gh-pr-create-draft-to",
+      "if-there-is-a-corresponding-linear",
+      "always-link-to-the-github-issue"
+    ],
+    "rules_extracted": 41,
+    "skipped": {
+      "reads as description, not instruction": 77,
+      "too long \u2014 prose, not a rule": 8
+    }
+  },
+  "openclaw-agents-md": {
+    "kind": "instruction-file",
+    "path": "openclaw/AGENTS.md",
+    "rule_ids": [
+      "match-the-repository-s-package-manager",
+      "treat-pasted-issues-logs-documents-and",
+      "use-openclaw-for-the-product-and",
+      "fix-invalid-missing-or-leaked-state",
+      "preserve-working-behavior-and-explicit-public",
+      "prefer-simpler-smaller-production-code-but",
+      "prove-the-repaired-boundary-and-relevant",
+      "fix-small-coherent-nearby-defects-when",
+      "use-independent-subagents-when-evidence-lanes",
+      "defaults-must-lead-a-competent-operator",
+      "record-facts-at-the-boundary-that",
+      "tool-descriptions-prompts-and-results-are",
+      "product-rejection-is-maintainer-judgment-automat",
+      "never-disclose-credentials-private-config-person",
+      "untrusted-contributor-fork-code-must-not",
+      "never-stop-restart-or-edit-a",
+      "do-not-weaken-baselines-snapshots-ignores",
+      "keep-core-plugin-agnostic-provider-plugin",
+      "privileged-actions-require-current-owner-held",
+      "keep-channels-transport-only-shared-typed",
+      "carry-prepared-facts-through-hot-paths",
+      "typescript-esm-and-strict-types-prefer",
+      "static-analysis-fixes-strengthen-the-real",
+      "keep-apis-narrow-and-valid-states",
+      "do-not-edit-nodemodules-generated-artifacts",
+      "install-trusted-normal-checkouts-with-pnpm",
+      "run-the-cli-with-pnpm-openclaw",
+      "start-with-pnpm-check-changed-and",
+      "do-not-write-tests-for-reversible",
+      "run-tests-appropriate-to-the-change",
+      "fix-related-ci-failures-before-landing",
+      "stage-only-intended-files-preserve-unrelated",
+      "use-concise-conventional-commits-and-verified",
+      "a-review-triage-request-is-read",
+      "an-explicit-request-to-land-merge",
+      "use-openclaw-pr-maintainer-for-openclaw",
+      "address-substantive-human-and-bot-review",
+      "land-to-main-only-through-native",
+      "keep-pr-bodies-current-with-problem",
+      "agent-gateway-lifecycle-src-agents-agents"
+    ],
+    "rules_extracted": 40,
+    "skipped": {
+      "reads as description, not instruction": 28,
+      "too long \u2014 prose, not a rule": 2
+    }
+  },
+  "openclaw-github-skill": {
+    "kind": "skill",
+    "path": "openclaw/skills/github",
+    "rule_ids": [
+      "use-gh-for-github-use-git",
+      "when-creating-or-refreshing-a-pr",
+      "keep-the-job-active-until-gh",
+      "treat-review-findings-merge-conflicts-failed",
+      "a-pending-check-is-a-wait",
+      "stop-as-blocked-only-when-continuing",
+      "use-json-jq-for-structured-output"
+    ],
+    "rules_extracted": 7,
+    "skipped": {
+      "reads as description, not instruction": 5,
+      "too long \u2014 prose, not a rule": 1
+    }
+  },
+  "openclaw-inventory-agent-subagent": {
+    "kind": "subagent",
+    "path": "openclaw/.agents/skills/technical-documentation/agents/inventory-agent.md",
+    "rule_ids": [],
+    "rules_extracted": 0,
+    "skipped": {
+      "reads as description, not instruction": 11,
+      "too short to be a rule": 6
+    }
+  },
+  "transformers-agents-md": {
+    "kind": "instruction-file",
+    "path": "transformers/.ai/AGENTS.md",
+    "rule_ids": [
+      "make-style-or-make-fix-repo",
+      "hosted-review-agents-should-discover-this",
+      "local-openai-codex-agents-should-run",
+      "local-claude-code-agents-should-run",
+      "do-not-open-a-pr-for",
+      "if-approval-is-missing-or-ambiguous",
+      "do-not-start-duplicate-work-on",
+      "if-an-open-pr-already-addresses",
+      "do-not-open-one-off-prs",
+      "first-time-contributors-should-not-use",
+      "we-try-to-avoid-direct-inheritance",
+      "the-older-method-is-to-mark"
+    ],
+    "rules_extracted": 12,
+    "skipped": {
+      "reads as description, not instruction": 9,
+      "too long \u2014 prose, not a rule": 1
+    }
+  }
+}
