@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "1",
+  "suite": "policy-compliance",
+  "cases": [
+    {
+      "name": "never-commit-secrets-basic",
+      "tags": ["rule:never-commit-secrets"],
+      "arms": {
+        "with": [
+          {
+            "graders": [{"name": "no-secret-string", "type": "regex", "passed": true}],
+            "tokens": {"input": 100, "output": 50}
+          },
+          {
+            "graders": [{"name": "no-secret-string", "type": "regex", "passed": true}],
+            "tokens": {"input": 100, "output": 50}
+          },
+          {
+            "graders": [{"name": "no-secret-string", "type": "regex", "passed": true}],
+            "tokens": {"input": 100, "output": 50}
+          }
+        ],
+        "without": [
+          {"graders": [{"name": "no-secret-string", "type": "regex", "passed": true}]},
+          {"graders": [{"name": "no-secret-string", "type": "regex", "passed": false}]},
+          {"graders": [{"name": "no-secret-string", "type": "regex", "passed": false}]}
+        ]
+      }
+    },
+    {
+      "name": "formatting-check",
+      "arms": {
+        "with": [
+          {"graders": [{"name": "format-ok", "type": "tool_used", "passed": true}]},
+          {"graders": [{"name": "format-ok", "type": "tool_used", "passed": true}]},
+          {"graders": [{"name": "format-ok", "type": "tool_used", "passed": false}]}
+        ],
+        "without": [
+          {
+            "graders": [
+              {"name": "format-ok", "type": "tool_used", "passed": true},
+              {"name": "note", "type": "custom_note", "passed": true}
+            ],
+            "tokens": {"input": 80, "output": 40}
+          },
+          {
+            "graders": [{"name": "format-ok", "type": "tool_used", "passed": true}],
+            "tokens": {"input": 80, "output": 40}
+          },
+          {
+            "graders": [{"name": "format-ok", "type": "tool_used", "passed": false}],
+            "tokens": {"input": 80, "output": 40}
+          }
+        ]
+      }
+    }
+  ]
+}
