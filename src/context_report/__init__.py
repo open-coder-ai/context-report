@@ -13,7 +13,7 @@ __version__ = "0.1.0"
 
 from context_report.produce.run import produce_statement
 from context_report.run.compare import render_history, render_table
-from context_report.run.layout import history_markdown, resolve_run_dir
+from context_report.run.layout import history_markdown, resolve_run_dir, rule_history_markdown
 from context_report.run.manifest import load as load_manifest
 from context_report.run.runner import run
 from context_report.statement import validate
@@ -27,6 +27,7 @@ __all__ = [
     "render_history",
     "render_table",
     "resolve_run_dir",
+    "rule_history_markdown",
     "run",
     "validate",
     "verify",
