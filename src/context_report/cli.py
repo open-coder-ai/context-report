@@ -11,6 +11,13 @@ from typing import Any
 
 from context_report.efficacy.cli import add_efficacy_parser, run_efficacy
 from context_report.produce.run import add_produce_parser, run_produce
+from context_report.run.cli import add_run_parser, run_run
+from context_report.run.judge_cli import (
+    add_compare_parser,
+    add_judge_parser,
+    run_compare,
+    run_judge,
+)
 from context_report.verify import Verification, verify_statement
 
 
@@ -19,6 +26,9 @@ def _build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
     add_produce_parser(subparsers)
     add_efficacy_parser(subparsers)
+    add_run_parser(subparsers)
+    add_judge_parser(subparsers)
+    add_compare_parser(subparsers)
 
     verify_parser = subparsers.add_parser(
         "verify",
@@ -67,10 +77,15 @@ def main(argv: list[str] | None = None) -> int:
     except SystemExit as exc:
         return int(exc.code) if isinstance(exc.code, int) else 2
 
-    if args.command == "produce":
-        return run_produce(args)
-    if args.command == "efficacy":
-        return run_efficacy(args)
+    dispatch = {
+        "produce": run_produce,
+        "efficacy": run_efficacy,
+        "run": run_run,
+        "judge": run_judge,
+        "compare": run_compare,
+    }
+    if args.command in dispatch:
+        return dispatch[args.command](args)
     if args.command != "verify":
         return 2
     return _run_verify(args)
