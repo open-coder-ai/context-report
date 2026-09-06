@@ -96,7 +96,10 @@ def _record_and_produce(
         judge_model=None,
         measured_on="2026-09-05",
         n_per_arm=manifest.arms.n_per_arm,
-        tokens_per_arm={"inputTokens": 10, "outputTokens": 20},
+        tokens_per_arm={
+            "with": {"inputTokens": 10, "outputTokens": 20},
+            "without": {"inputTokens": 5, "outputTokens": 15},
+        },
         transcripts=4 * len(rule_ids),
     )
     row = dataclasses.replace(
@@ -167,7 +170,7 @@ def test_judge_writes_judged_statement_and_leaves_the_original_untouched(tmp_pat
     assert eff["basis"] == CLAIMED
     assert eff["conditions"]["judgeModel"] == "anthropic/j"
     assert eff["conditions"]["judge"] == "model"
-    assert eff["values"]["tokensPerArm"] == {"inputTokens": 10, "outputTokens": 20}
+    assert eff["values"]["tokensPerArm"]["with"] == {"inputTokens": 10, "outputTokens": 20}
     assert eff["values"]["unexercised"] == ["rules-unexercised-rule"]
     assert validate(judged_stmt) == []
     assert fake_asker.calls > 0
@@ -223,6 +226,7 @@ def test_compare_table_has_subject_model_and_lift_by_model(tmp_path: Path) -> No
     assert lift_text in table
     assert "(unjudged)" in table  # subj-b fell back to its un-judged statement
     assert table.splitlines()[0].startswith("model")
+    assert "100" in table  # tokens/arm: both subjects, both arms, input and output, not 0
 
     transposed = compare.render_table(out_dir, by="subject", judged=True)
     assert transposed.splitlines()[0].startswith("subject")
