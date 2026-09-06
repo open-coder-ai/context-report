@@ -125,6 +125,14 @@ eval case with `llm` graders but no `rule:` tags gets the rule's own text as its
   hooks here would let it assert hooks the plugin does not actually register — precisely the gap a
   `reachability` row exists to catch.
 
+## Resuming an interrupted run
+
+`context-report run MANIFEST --resume` keeps whatever an earlier run left under `out`: a
+`(subject, model)` pair whose statement exists is not run again, and a pair with transcripts but
+no statement reuses each transcript whose `input_sha256` and model still match, calling the model
+only for the trials that are missing. Without `--resume`, a run into an existing `out` records
+everything afresh and overwrites.
+
 ## Output layout
 
 Running a manifest with `"out": "reports/"` produces:

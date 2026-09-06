@@ -92,13 +92,22 @@ def _index(cards: list[RuleCard]) -> tuple[dict[str, str], dict[str, str]]:
 class RecordingRunner:
     """Run the inner Runner and write every output to the bundle; the without arm is shared."""
 
-    def __init__(
-        self, inner: Runner, bundle: Bundle, *, subject_id: str, model: str, cards: list[RuleCard]
+    def __init__(  # noqa: PLR0913 -- one recorder needs all of this context
+        self,
+        inner: Runner,
+        bundle: Bundle,
+        *,
+        subject_id: str,
+        model: str,
+        cards: list[RuleCard],
+        resume: bool = False,
     ) -> None:
         self.inner = inner
         self.bundle = bundle
         self.subject_id = subject_id
         self.model = model
+        self.resume = resume
+        self.reused = 0
         self._tasks, self._rules = _index(cards)
         self._trials: dict[tuple[str, str, str], int] = {}
         self.tokens: dict[str, int] = {"inputTokens": 0, "outputTokens": 0}
@@ -108,18 +117,21 @@ class RecordingRunner:
         }
 
     def run(self, task: str, rule: str | None) -> str:
-        output = self.inner.run(task, rule)
-        usage = getattr(self.inner, "last_usage", None)
         arm = ARM_WITHOUT if rule is None else ARM_WITH
-        if usage:
-            for k in self.tokens:
-                self.tokens[k] += int(usage.get(k, 0))
-                self.tokens_per_arm[arm][k] += int(usage.get(k, 0))
         task_id = self._tasks.get(task, _safe(task)[:40])
         rule_id = CONTROL_RULE if rule is None else self._rules.get(rule, _safe(rule)[:40])
         key = (task_id, rule_id, arm)
         trial = self._trials.get(key, 0)
         self._trials[key] = trial + 1
+        digest = input_sha256(task, rule)
+        stored = self._stored(task_id, rule_id, arm, trial, digest) if self.resume else None
+        if stored is not None:
+            self.reused += 1
+            self._count(arm, stored.usage)
+            return stored.output
+        output = self.inner.run(task, rule)
+        usage = getattr(self.inner, "last_usage", None)
+        self._count(arm, usage)
         self.bundle.write(
             Transcript(
                 subject_id=self.subject_id,
@@ -128,13 +140,32 @@ class RecordingRunner:
                 rule_id=rule_id,
                 arm=arm,
                 trial=trial,
-                input_sha256=input_sha256(task, rule),
+                input_sha256=digest,
                 output=output,
                 usage=dict(usage) if usage else None,
                 recorded_on=now_utc(),
             )
         )
         return output
+
+    def _count(self, arm: str, usage: dict[str, int] | None) -> None:
+        if not usage:
+            return
+        for k in self.tokens:
+            self.tokens[k] += int(usage.get(k, 0))
+            self.tokens_per_arm[arm][k] += int(usage.get(k, 0))
+
+    def _stored(
+        self, task_id: str, rule_id: str, arm: str, trial: int, digest: str
+    ) -> Transcript | None:
+        """A transcript already on disk for this exact input, or None: what a resumed run reuses."""
+        path = self.bundle.root / f"{_safe(task_id)}.{_safe(rule_id)}.{arm}.{trial}.json"
+        if not path.exists():
+            return None
+        t = Transcript(**json.loads(path.read_text(encoding="utf-8")))
+        if t.input_sha256 != digest or t.model != self.model:
+            return None
+        return t
 
 
 class ReplayRunner:

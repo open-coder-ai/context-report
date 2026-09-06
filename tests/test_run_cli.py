@@ -191,3 +191,39 @@ def test_claude_cli_provider_runs_the_arms(tmp_path: Path) -> None:
     assert efficacy["conditions"]["model"] == "claude-cli/claude-sonnet-5"
     assert efficacy["result"] != "NotAvailable" or "no backend" not in efficacy["reasoning"]
     assert askers, "the factory was used for the claude-cli provider"
+
+
+def test_resume_keeps_finished_pairs_and_only_fills_the_gaps(tmp_path: Path) -> None:
+    """A killed run is picked up where it stopped: no model call for what is already on disk."""
+    manifest = _build_manifest(tmp_path)
+    askers: list[FakeAsker] = []
+    run(manifest, asker_factory=_fake_asker_factory(askers))
+    first_calls = sum(a.calls for a in askers)
+    stmt_path = manifest.out / "house-rules" / "anthropic--claude-sonnet-5.json"
+    before = stmt_path.read_text()
+    summary_before = (manifest.out / "SUMMARY.md").read_text()
+
+    askers.clear()
+    run(manifest, asker_factory=_fake_asker_factory(askers), resume=True)
+    assert sum(a.calls for a in askers) == 0
+    assert stmt_path.read_text() == before
+    assert (manifest.out / "SUMMARY.md").read_text() == summary_before
+
+    # A pair with transcripts but no statement re-runs, reusing what matches on disk.
+    stmt_path.unlink()
+    transcripts_dir = manifest.out / "house-rules" / "anthropic--claude-sonnet-5" / "transcripts"
+    recorded = sorted(transcripts_dir.glob("*.json"))
+    recorded[-1].unlink()
+    askers.clear()
+    run(manifest, asker_factory=_fake_asker_factory(askers), resume=True)
+    assert sum(a.calls for a in askers) == 1
+    assert stmt_path.is_file()
+    assert len(list(transcripts_dir.glob("*.json"))) == len(recorded)
+    assert first_calls == len(recorded)
+
+
+def test_run_cli_accepts_resume() -> None:
+    parser = argparse.ArgumentParser()
+    add_run_parser(parser.add_subparsers(dest="command"))
+    args = parser.parse_args(["run", "run.json", "--resume"])
+    assert args.resume is True
