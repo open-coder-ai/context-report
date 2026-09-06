@@ -44,5 +44,7 @@ ignore = ["TRY003", "S101"]
 "tests/efficacy/*" = ["ARG002", "ARG005", "E702", "FBT002"]
 "src/context_report/efficacy/cli.py" = ["T20", "PLC0415"]
 "src/context_report/efficacy/api_backend.py" = ["PLC0415"]
+"src/context_report/run/judge.py" = ["PLC0415"]
+"src/context_report/run/judge_cli.py" = ["T20"]
 # Checker.obeys takes the rule text by contract; checkers that match on code alone ignore it.
 "src/context_report/efficacy/fastjudge.py" = ["ARG002"]
