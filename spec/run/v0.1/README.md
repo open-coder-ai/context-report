@@ -28,7 +28,10 @@ It is metadata only — how an artifact actually works (what a plugin's hooks ar
   clientVersion}` — the same shape as the predicate's own `target` field. To compare two agents,
   run the manifest twice with a different `target.name`; this schema deliberately has no field for
   a second agent in the same run.
-- **`models`** — the subject models to run the paired ablation on, `[{provider, id}, ...]`. An
+- **`models`** — the subject models to run the paired ablation on, `[{provider, id}, ...]`. Two
+  providers have a backend in v0.1: `anthropic` (the API; `id` is a model id) and `claude-cli`
+  (the local `claude` CLI under its own login; `id` is an alias such as `opus`, `sonnet`, `fable`,
+  or a full id), so one manifest can list the same rules against several models. An
   empty array means the run produces only deterministic rows (`reachability`, `fault.*`,
   `cost.context_tokens`, ...) and no `efficacy` row — there is no subject model to ablate. When
   `models` is non-empty, `tasks` is required (the schema enforces this): a model with nothing to
@@ -43,7 +46,7 @@ It is metadata only — how an artifact actually works (what a plugin's hooks ar
   subjects installed together, each ablated in turn while the others stay in place. v0.1's schema
   accepts `"leave-one-out"` but does not implement it; a manifest naming it today has nothing that
   runs it.
-- **`judge`** — `null`, or a `{provider, id}` model reference: the one model that grades every
+- **`judge`** — `null`, or a `{provider, id}` model reference (same two providers): the one model that grades every
   recorded transcript, for every subject model, in this run. Holding the judge fixed while subject
   models vary is what makes an efficacy comparison across models fair — see "Two models, not one"
   in the attestation attribute registry. `null` means no model grades anything; a rule with a
