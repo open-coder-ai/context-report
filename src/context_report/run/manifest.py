@@ -26,6 +26,7 @@ class Subject:
     id: str
     path: Path
     kind: str
+    workdir: Path | None = None  # where the subject model works; None means the run's own cwd
 
 
 @dataclass(frozen=True)
@@ -149,6 +150,17 @@ def _inside(path: Path, root: Path) -> bool:
     return True
 
 
+def _subject(base: Path, raw: dict[str, Any]) -> Subject:
+    """One `subjects[]` entry, paths resolved against the manifest and checked to exist."""
+    p = _resolve(base, raw["path"])
+    if not p.exists():
+        raise ManifestError(f"subject path not found: {p}")
+    workdir = _resolve(base, raw["workdir"]) if raw.get("workdir") else None
+    if workdir is not None and not workdir.is_dir():
+        raise ManifestError(f"subject workdir is not a directory: {workdir}")
+    return Subject(id=raw.get("id") or p.name, path=p, kind=raw["kind"], workdir=workdir)
+
+
 def load(path: str | Path) -> Manifest:
     """Read, validate and resolve a manifest; every error is raised before anything runs."""
     source = Path(path).resolve()
@@ -158,12 +170,7 @@ def load(path: str | Path) -> Manifest:
         raise ManifestError(f"{source}: " + "; ".join(errors))
     base = source.parent
 
-    subjects: list[Subject] = []
-    for raw in doc["subjects"]:
-        p = _resolve(base, raw["path"])
-        if not p.exists():
-            raise ManifestError(f"subject path not found: {p}")
-        subjects.append(Subject(id=raw.get("id") or p.name, path=p, kind=raw["kind"]))
+    subjects = [_subject(base, raw) for raw in doc["subjects"]]
     ids = [s.id for s in subjects]
     if len(set(ids)) != len(ids):
         raise ManifestError(f"subject ids must be unique: {ids}")

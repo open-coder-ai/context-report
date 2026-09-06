@@ -61,7 +61,7 @@ def test_regex_grader_grades_deterministically_without_a_judge(tmp_path: Path) -
 
     askers: list[ArmAsker] = []
 
-    def factory(model, *, effort=None):  # noqa: ARG001 -- Asker factory contract
+    def factory(model, *, effort=None, cwd=None):  # noqa: ARG001 -- Asker factory contract
         asker = ArmAsker()
         askers.append(asker)
         return asker

@@ -19,11 +19,17 @@ It is metadata only — how an artifact actually works (what a plugin's hooks ar
 - **`contextReportRun`** — always `"v0.1"`. Pins the manifest to this schema version, the way
   `predicateType` pins a statement (see the attestation README's Versioning section).
 - **`subjects`** — the artifacts under test. One statement is produced per `(subject, model)` pair.
-  Each entry is `{id, path, kind}`: `id` is the handle a task's `subjects`/`rules` fields use to
+  Each entry is `{id, path, kind, workdir?}`: `id` is the handle a task's `subjects`/`rules` fields use to
   name this artifact and defaults to the path's basename; `path` is where the artifact lives on
   disk; `kind` is one of the six `subjectKind` values the attestation predicate recognizes
   (`plugin`, `instruction-file`, `skill`, `hook`, `mcp-server`, `subagent`). Subject ids MUST be
   unique within a manifest.
+  `workdir` (optional, relative to the manifest) is the directory the subject model works in for
+  this subject's tasks — normally the checkout the instruction file belongs to, so a task like
+  "add this dependency" sees the repository's `package.json`. Without it the model works in the
+  directory the run was started from, and answers about "this repo" describe that directory.
+  Only the `claude-cli` provider can honour it; a manifest that sets one and names an `anthropic`
+  model is rejected before any call.
 - **`target`** — the agent every statement produced from this manifest is about, `{name,
   clientVersion}` — the same shape as the predicate's own `target` field. To compare two agents,
   run the manifest twice with a different `target.name`; this schema deliberately has no field for
