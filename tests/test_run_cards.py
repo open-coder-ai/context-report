@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from context_report.run import manifest as m
-from context_report.run.cards import cards_for, unexercised_rules
+from context_report.run.cards import cards_for, check_all, unexercised_rules
 from context_report.run.manifest import ManifestError
 
 
@@ -71,3 +71,56 @@ def test_rule_ids_are_the_rules_own_words(tmp_path: Path):
         "never-commit-secrets-to-the-repository",
         "always-run-the-tests-before-pushing",
     ]
+
+
+def test_a_task_may_name_a_block_the_extractor_passed_over(tmp_path: Path):
+    """A description-shaped line is no rule to the heuristic; a case that tags it makes it one."""
+    (tmp_path / "AGENTS.md").write_text(
+        "- Never commit secrets to the repository.\n"
+        "- Files under docs are human documentation, agents leave them alone.\n"
+    )
+    described = "files-under-docs-are-human-documentation"
+    (tmp_path / "tasks.json").write_text(
+        json.dumps({"tasks": [{"id": "t1", "prompt": "Tidy the docs.", "rules": [described]}]})
+    )
+    doc = {
+        "contextReportRun": "v0.1",
+        "subjects": [{"id": "rules", "path": "AGENTS.md", "kind": "instruction-file"}],
+        "target": {"name": "claude_code"},
+        "models": [{"provider": "anthropic", "id": "m"}],
+        "tasks": "tasks.json",
+        "arms": {"nPerArm": 1},
+        "out": "reports",
+    }
+    (tmp_path / "run.json").write_text(json.dumps(doc))
+    mf = m.load(tmp_path / "run.json")
+    cards = cards_for(mf, mf.subject("rules"))
+    assert [c.id for c in cards] == [described]
+    assert cards[0].text.startswith("Files under docs")
+    assert unexercised_rules(mf, mf.subject("rules")) == ["never-commit-secrets-to-the-repository"]
+
+
+def test_preflight_reports_every_subject_with_a_bad_tag_at_once(tmp_path: Path):
+    (tmp_path / "A.md").write_text("- Never commit secrets to the repository.\n")
+    (tmp_path / "B.md").write_text("- Always run the tests before pushing.\n")
+    tasks = [
+        {"id": "ta", "prompt": "x", "subjects": ["a"], "rules": ["no-such-rule-a"]},
+        {"id": "tb", "prompt": "y", "subjects": ["b"], "rules": ["no-such-rule-b"]},
+    ]
+    (tmp_path / "tasks.json").write_text(json.dumps({"tasks": tasks}))
+    doc = {
+        "contextReportRun": "v0.1",
+        "subjects": [
+            {"id": "a", "path": "A.md", "kind": "instruction-file"},
+            {"id": "b", "path": "B.md", "kind": "instruction-file"},
+        ],
+        "target": {"name": "claude_code"},
+        "models": [],
+        "tasks": "tasks.json",
+        "arms": {"nPerArm": 1},
+        "out": "reports",
+    }
+    (tmp_path / "run.json").write_text(json.dumps(doc))
+    with pytest.raises(ManifestError) as exc:
+        check_all(m.load(tmp_path / "run.json"))
+    assert "no-such-rule-a" in str(exc.value) and "no-such-rule-b" in str(exc.value)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from importlib.resources import files
 from pathlib import Path
 
@@ -38,10 +38,15 @@ class Rule:
 
 @dataclass(frozen=True)
 class Extraction:
-    """What was taken as rules, and — just as important — what was passed over and why."""
+    """What was taken as rules, and — just as important — what was passed over and why.
+
+    `candidates` are the passed-over blocks, with the id they would carry: a task that names one
+    by `rule:<id>` promotes it to a rule for that run, so a heuristic miss is the author's call.
+    """
 
     rules: list[Rule]
     skipped: dict[str, int]
+    candidates: list[Rule] = field(default_factory=list)
 
     def __len__(self) -> int:
         return len(self.rules)
@@ -138,17 +143,19 @@ def extract(path: str | Path) -> Extraction:
     file = Path(path)
     rules: list[Rule] = []
     skipped: dict[str, int] = {}
+    candidates: list[Rule] = []
     seen: dict[str, int] = {}
     for number, text in _blocks(file.read_text(encoding="utf-8")):
         reason = _skip_reason(text)
         if reason is not None:
             skipped[reason] = skipped.get(reason, 0) + 1
+            candidates.append(Rule(id=slug(text), text=text, source=str(file), line=number))
             continue
         base = slug(text)
         seen[base] = seen.get(base, 0) + 1
         rule_id = base if seen[base] == 1 else f"{base}-{seen[base]}"
         rules.append(Rule(id=rule_id, text=text, source=str(file), line=number))
-    return Extraction(rules=rules, skipped=skipped)
+    return Extraction(rules=rules, skipped=skipped, candidates=candidates)
 
 
 def discover(root: str | Path = ".", filenames: tuple[str, ...] = DEFAULT_FILENAMES) -> list[Path]:
@@ -161,9 +168,11 @@ def extract_all(paths: list[Path]) -> Extraction:
     """Rules from several files, keeping source order, with the skips tallied across all of them."""
     rules: list[Rule] = []
     skipped: dict[str, int] = {}
+    candidates: list[Rule] = []
     for path in paths:
         found = extract(path)
         rules.extend(found.rules)
+        candidates.extend(found.candidates)
         for reason, count in found.skipped.items():
             skipped[reason] = skipped.get(reason, 0) + count
-    return Extraction(rules=rules, skipped=skipped)
+    return Extraction(rules=rules, skipped=skipped, candidates=candidates)
