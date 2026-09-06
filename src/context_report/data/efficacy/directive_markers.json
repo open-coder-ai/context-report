@@ -1,0 +1,13 @@
+{
+  "_note": "Words that make a line read as an instruction to the agent rather than description. Extend freely; a marker only widens what is offered as a candidate rule.",
+  "imperative_openers": [
+    "add", "always", "avoid", "check", "commit", "do", "don't", "dont", "enforce",
+    "ensure", "format", "keep", "name", "never", "no", "only", "prefer", "put",
+    "run", "skip", "start", "stop", "target", "treat", "use", "validate", "write"
+  ],
+  "phrases": [
+    "must", "must not", "should", "should not", "shall", "required", "forbidden",
+    "do not", "don't", "never", "always", "prefer", "avoid", "instead of",
+    "make sure", "be sure", "is not allowed", "not allowed"
+  ]
+}
