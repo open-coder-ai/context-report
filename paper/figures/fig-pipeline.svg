@@ -1,0 +1,56 @@
+<svg viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Author's CI runs the producer, which emits a statement bound to the artifact
+     digest. The catalog recomputes the re-derivable rows and emits a recomputation plus a
+     verdict; claimed rows are shown as author-reported, never as proof.">
+  <rect width="900" height="340" fill="#fcfcfb"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0b0b0b"/>
+    </marker>
+  </defs>
+  <style>
+    .box { fill: #fcfcfb; stroke: #0b0b0b; stroke-width: 1.5; }
+    .lbl { font: 13px sans-serif; fill: #0b0b0b; text-anchor: middle; }
+    .arrlbl { font: 12px sans-serif; fill: #52514e; text-anchor: middle; }
+    .edge { fill: none; stroke: #0b0b0b; stroke-width: 1.5; marker-end: url(#arrow); }
+  </style>
+
+  <!-- Box A: author's CI -->
+  <rect class="box" x="20" y="140" width="150" height="60" rx="6"/>
+  <text class="lbl" x="95" y="174">Author's CI runs</text>
+  <text class="lbl" x="95" y="190">the producer</text>
+
+  <!-- Box B: statement -->
+  <rect class="box" x="230" y="140" width="180" height="60" rx="6"/>
+  <text class="lbl" x="320" y="166">Statement bound to</text>
+  <text class="lbl" x="320" y="182">the artifact digest</text>
+
+  <path class="edge" d="M170,170 L226,170"/>
+  <text class="arrlbl" x="198" y="160">produce</text>
+
+  <!-- Fork: re-derivable rows (top) vs claimed rows (bottom) -->
+  <path class="edge" d="M410,155 C 470,110 500,75 540,75"/>
+  <text class="arrlbl" x="470" y="95">re-derivable rows</text>
+
+  <path class="edge" d="M410,185 C 470,235 500,270 540,270"/>
+  <text class="arrlbl" x="475" y="255">claimed rows</text>
+
+  <!-- Box C: catalog recomputes -->
+  <rect class="box" x="540" y="45" width="190" height="60" rx="6"/>
+  <text class="lbl" x="635" y="71">Catalog recomputes</text>
+  <text class="lbl" x="635" y="87">the re-derivable rows</text>
+
+  <path class="edge" d="M730,75 L790,75 L790,160 L 760,160"/>
+
+  <!-- Box D: recomputation + verdict -->
+  <rect class="box" x="600" y="130" width="220" height="60" rx="6"/>
+  <text class="lbl" x="710" y="156">Catalog emits a</text>
+  <text class="lbl" x="710" y="172">recomputation + a verdict</text>
+
+  <!-- Box E: claimed rows, never proof -->
+  <rect class="box" x="540" y="240" width="280" height="70" rx="6"/>
+  <text class="lbl" x="680" y="266">claimed rows shown as</text>
+  <text class="lbl" x="680" y="282">author-reported, never proof</text>
+  <text class="lbl" x="680" y="298">(no recomputation attempted)</text>
+</svg>

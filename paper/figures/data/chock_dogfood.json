@@ -1,0 +1,53 @@
+{
+  "_comment": "Fallback numbers for the chock dogfood, computed once from the off-repo context-report statements (open-coder-ai/chock-catalog PR #57) with --chock-statements, then committed here so make_figures.py reproduces the same bytes without that external path. Latency is full-precision (the paper's own Section 5.1 table rounds it to one decimal for display); reachability and allow-on-malformed counts are exact. Used when make_figures.py is run without --chock-statements.",
+  "targets": [
+    {
+      "key": "claude_code",
+      "label": "Claude Code",
+      "bundles": 22,
+      "with_hook": 4,
+      "reachable_resolved": 4,
+      "reachable_unresolved": 0,
+      "allow_malformed_resolved": 4,
+      "latency_p50_ms": 46.58162400001231,
+      "latency_p95_ms": 51.74766800001862,
+      "interpreter": "local"
+    },
+    {
+      "key": "codex",
+      "label": "Codex CLI",
+      "bundles": 22,
+      "with_hook": 4,
+      "reachable_resolved": 4,
+      "reachable_unresolved": 0,
+      "allow_malformed_resolved": 4,
+      "latency_p50_ms": 44.491174999976124,
+      "latency_p95_ms": 46.59335300000578,
+      "interpreter": "local"
+    },
+    {
+      "key": "copilot",
+      "label": "GitHub Copilot",
+      "bundles": 22,
+      "with_hook": 4,
+      "reachable_resolved": 4,
+      "reachable_unresolved": 4,
+      "allow_malformed_resolved": 4,
+      "latency_p50_ms": 42.00713950000079,
+      "latency_p95_ms": 43.41574000001458,
+      "interpreter": "local"
+    },
+    {
+      "key": "cursor",
+      "label": "Cursor",
+      "bundles": 22,
+      "with_hook": 4,
+      "reachable_resolved": 4,
+      "reachable_unresolved": 0,
+      "allow_malformed_resolved": 4,
+      "latency_p50_ms": 43.72330500000032,
+      "latency_p95_ms": 45.914969999998334,
+      "interpreter": "local"
+    }
+  ]
+}

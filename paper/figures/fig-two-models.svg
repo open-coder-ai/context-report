@@ -1,0 +1,61 @@
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="One subject model (conditions.model) runs two arms, with the artifact and
+     without. Both arms feed a judge model (conditions.judgeModel) that grades them against the
+     rule's criterion; a deterministic grader bypasses the judge model directly to the verdict
+     when the criterion is machine-checkable.">
+  <rect width="720" height="400" fill="#fcfcfb"/>
+  <defs>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7"
+            orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0b0b0b"/>
+    </marker>
+  </defs>
+  <style>
+    .box { fill: #fcfcfb; stroke: #0b0b0b; stroke-width: 1.5; }
+    .lbl { font: 13px sans-serif; fill: #0b0b0b; text-anchor: middle; }
+    .sub { font: 11px sans-serif; fill: #52514e; text-anchor: middle; }
+    .arrlbl { font: 11px sans-serif; fill: #52514e; text-anchor: middle; }
+    .edge { fill: none; stroke: #0b0b0b; stroke-width: 1.5; marker-end: url(#arrow2); }
+    .bypass { fill: none; stroke: #eb6834; stroke-width: 1.5; stroke-dasharray: 5 4;
+               marker-end: url(#arrow2); }
+  </style>
+
+  <!-- Subject model -->
+  <rect class="box" x="260" y="15" width="200" height="55" rx="6"/>
+  <text class="lbl" x="360" y="38">Subject model</text>
+  <text class="sub" x="360" y="54">conditions.model</text>
+
+  <path class="edge" d="M320,70 L200,140"/>
+  <path class="edge" d="M400,70 L520,140"/>
+
+  <!-- Arm boxes -->
+  <rect class="box" x="100" y="140" width="200" height="55" rx="6"/>
+  <text class="lbl" x="200" y="163">With the artifact</text>
+  <text class="sub" x="200" y="179">rule text prepended</text>
+
+  <rect class="box" x="420" y="140" width="200" height="55" rx="6"/>
+  <text class="lbl" x="520" y="163">Without the artifact</text>
+  <text class="sub" x="520" y="179">control arm</text>
+
+  <!-- Both arms into judge -->
+  <path class="edge" d="M220,195 L300,255"/>
+  <path class="edge" d="M500,195 L420,255"/>
+
+  <!-- Judge model -->
+  <rect class="box" x="260" y="255" width="200" height="55" rx="6"/>
+  <text class="lbl" x="360" y="278">Judge model</text>
+  <text class="sub" x="360" y="294">conditions.judgeModel</text>
+
+  <path class="edge" d="M360,310 L360,345"/>
+  <text class="arrlbl" x="440" y="330">grades against the rule's criterion</text>
+
+  <!-- Deterministic bypass around the judge -->
+  <path class="bypass" d="M120,195 C 40,260 40,330 150,350"/>
+  <path class="bypass" d="M600,195 C 680,260 680,330 570,350"/>
+  <text class="arrlbl" x="60" y="280" fill="#eb6834">deterministic grader</text>
+  <text class="arrlbl" x="60" y="294" fill="#eb6834">bypasses the judge</text>
+
+  <!-- Verdict -->
+  <rect class="box" x="260" y="345" width="200" height="45" rx="6"/>
+  <text class="lbl" x="360" y="373">Verdict per rule</text>
+</svg>

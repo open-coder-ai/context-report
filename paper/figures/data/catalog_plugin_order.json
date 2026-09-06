@@ -1,0 +1,20 @@
+[
+  {"marketplace": "official", "plugin": "agentforce-adlc"},
+  {"marketplace": "official", "plugin": "ai-plugins"},
+  {"marketplace": "official", "plugin": "altimate-code"},
+  {"marketplace": "official", "plugin": "aws-core"},
+  {"marketplace": "official", "plugin": "aws-serverless"},
+  {"marketplace": "official", "plugin": "aws-startup-advisor"},
+  {"marketplace": "official", "plugin": "azure"},
+  {"marketplace": "official", "plugin": "carta-cap-table"},
+  {"marketplace": "official", "plugin": "carta-crm"},
+  {"marketplace": "official", "plugin": "carta-investors"},
+  {"marketplace": "wshobson-agents", "plugin": "protect-mcp"},
+  {"marketplace": "wshobson-agents", "plugin": "review-agent-governance"},
+  {"marketplace": "othmanadi-planning-with-files", "plugin": "planning-with-files"},
+  {"marketplace": "official", "plugin": "42crunch-api-security-testing"},
+  {"marketplace": "official", "plugin": "activecampaign"},
+  {"marketplace": "official", "plugin": "adobe-for-creativity"},
+  {"marketplace": "official", "plugin": "agent-sdk-dev"},
+  {"marketplace": "official", "plugin": "aikido"}
+]
