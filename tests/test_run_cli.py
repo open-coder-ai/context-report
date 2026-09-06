@@ -304,3 +304,17 @@ def test_workdir_must_exist_and_the_api_provider_cannot_honour_it(tmp_path: Path
     (tmp_path / "run.json").write_text(json.dumps(doc))
     with pytest.raises(RunError, match="cannot honour"):
         preflight(m.load(tmp_path / "run.json"))
+
+
+def test_rule_history_shows_each_rule_across_runs_and_the_last_change(tmp_path: Path) -> None:
+    manifest = _build_manifest(tmp_path)
+    run(manifest, asker_factory=_fake_asker_factory([]), run_id="r1")
+    assert "last change" not in compare.render_history(manifest.out, rules=True)  # one run
+    run(manifest, asker_factory=_fake_asker_factory([]), run_id="r2")
+    table = compare.render_history(manifest.out, rules=True)
+    print_id, _ = _rule_ids(tmp_path)
+    assert "| r1 | r2 | last change |" in table
+    assert f"| house-rules | anthropic/claude-sonnet-5 | {print_id} |" in table
+    assert "100% / 0% (+100%, keep)" in table  # the fake obeys with the rule, prints without
+    assert table.rstrip().endswith("| +0% |")  # same lift in both runs: nothing moved
+    assert "no runs recorded" in compare.render_history(tmp_path / "empty", rules=True)

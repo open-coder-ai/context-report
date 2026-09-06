@@ -107,3 +107,80 @@ def history_markdown(index: list[dict[str, Any]]) -> str:
     for entry in index:
         lines.append(f"- `{entry['runId']}`: {entry['startedOn']} to {entry['finishedOn']}")
     return "\n".join(lines) + "\n"
+
+
+def _statements(run_dir: Path) -> dict[tuple[str, str], dict[str, Any]]:
+    """`(subject, model) -> efficacy row` of one run, preferring `.judged.json` where present."""
+    rows: dict[tuple[str, str], dict[str, Any]] = {}
+    for subject_dir in sorted(p for p in run_dir.iterdir() if p.is_dir()):
+        for stmt_path in sorted(subject_dir.glob("*.json")):
+            slug = stmt_path.stem
+            if slug == "statement" or slug.endswith(".judged"):
+                continue
+            judged = subject_dir / f"{slug}.judged.json"
+            doc = json.loads(
+                (judged if judged.is_file() else stmt_path).read_text(encoding="utf-8")
+            )
+            row = next(
+                (a for a in doc["predicate"]["attributes"] if a["attribute"] == "efficacy"), None
+            )
+            if row is None:
+                continue
+            model = row.get("conditions", {}).get("model", slug)
+            rows[(subject_dir.name, model)] = row
+    return rows
+
+
+def _rule_cell(per_rule: dict[str, Any]) -> str:
+    return (
+        f"{per_rule['adherenceWith']:.0%} / {per_rule['adherenceWithout']:.0%} "
+        f"({per_rule['lift']:+.0%}, {per_rule['verdict']})"
+    )
+
+
+def rule_history_markdown(out: Path) -> str:
+    """One row per (subject, model, rule), one column per run: adherence with / without the rule,
+    its lift and verdict, read from each run's statements. The change between the last two runs
+    gets its own column, so an edited rule shows what it moved."""
+    out = Path(out)
+    ids = run_ids(out)
+    if not ids:
+        return "no runs recorded\n"
+    per_run = {rid: _statements(runs_dir(out) / rid) for rid in ids}
+    keys: list[tuple[str, str, str]] = []
+    cells: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+    for rid in ids:
+        for (subject, model), row in per_run[rid].items():
+            for pr in (row.get("values") or {}).get("perRule") or []:
+                key = (subject, model, pr["ruleId"])
+                if key not in keys:
+                    keys.append(key)
+                cells[(*key, rid)] = pr
+    delta_col = len(ids) > 1
+    header = ["subject", "model", "rule", *ids] + (["last change"] if delta_col else [])
+    intro = "A cell is adherence with / without the rule, then its lift and verdict, in that run."
+    if delta_col:
+        intro += " `last change` is the lift in the newest run minus the lift in the one before it."
+    lines = [
+        f"# Rules across runs of this manifest ({len(ids)})",
+        "",
+        intro,
+        "",
+        "| " + " | ".join(header) + " |",
+        "|" + "---|" * len(header),
+    ]
+    for subject, model, rule in keys:
+        row_cells = [
+            _rule_cell(cells[(subject, model, rule, rid)])
+            if (subject, model, rule, rid) in cells
+            else "n/a"
+            for rid in ids
+        ]
+        if delta_col:
+            last, prev = (
+                cells.get((subject, model, rule, ids[-1])),
+                cells.get((subject, model, rule, ids[-2])),
+            )
+            row_cells.append(f"{last['lift'] - prev['lift']:+.0%}" if last and prev else "n/a")
+        lines.append(f"| {subject} | {model} | {rule} | " + " | ".join(row_cells) + " |")
+    return "\n".join(lines) + "\n"

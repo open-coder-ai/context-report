@@ -26,6 +26,12 @@ def add_compare_parser(subparsers: Any) -> None:
     )
     p.add_argument("--run", default=None, help="run id under out/runs/ (default: the latest)")
     p.add_argument("--history", action="store_true", help="every run of this manifest side by side")
+    p.add_argument(
+        "--rules",
+        action="store_true",
+        help="with --history: per rule, adherence with / without and lift in every run, and what "
+        "the newest run changed",
+    )
 
 
 def _outcome_line(outcome: judge.JudgeOutcome) -> str:
@@ -65,7 +71,7 @@ def run_judge(args: argparse.Namespace) -> int:
 def run_compare(args: argparse.Namespace) -> int:
     try:
         if args.history:
-            print(compare.render_history(Path(args.out)))
+            print(compare.render_history(Path(args.out), rules=args.rules))
         else:
             print(
                 compare.render_table(
