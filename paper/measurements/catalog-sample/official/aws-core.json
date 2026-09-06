@@ -1,0 +1,153 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "aws-core",
+      "digest": {
+        "sha256": "5b572b5b62b202d93d109d2a398cbb1c12a271cafed14053dda56df60fe41056"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:ea2fada7a0c07864b476e139f217f8192a2a177e75f136cf0b97447f4f2582eb",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:ab503c2e6852a26210d9aec7c1a94be00ef661a3e30be3241b4765c521293000",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:f4148959eaf9a09737af6725f6eec2ccb30896a7e35deb566517315d26e5a246",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:00e2b16a7739b99964bd07f080df86fdbd60d794e571bf1fd883cd1a910c6045",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:6145e30c234d06dc951d1405f99f141b917186a36f9659bf61dda38f90aee472",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:d0d65366f3112860c02730c830c9b115258e2ff30a76e7bbd2d3968a1f5eec91",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:e88439ede0b2581a126acccbc45bd9d097dcd66ec8c984c9fa30732c3a11bb76",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:dd3a29342c532b7a9d22b38fe6145924a0bfd6799cc7c1ca58fa0949cb93570d",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:f25d945e92487e7830bf21c9719d08b88e8b2461fbd4525ae93ee31277638f0e",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 24
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/amazon-bedrock/SKILL.md": 7400,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-ai-ml/SKILL.md": 1489,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-auth/SKILL.md": 3492,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-billing-and-cost-management/SKILL.md": 2289,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-blocks/SKILL.md": 1078,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-cdk/SKILL.md": 1682,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-cloudformation/SKILL.md": 3317,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-compute/SKILL.md": 2205,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-containers/SKILL.md": 1037,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-database/SKILL.md": 1879,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-deployment/SKILL.md": 1621,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-iam/SKILL.md": 1458,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-messaging-and-streaming/SKILL.md": 2641,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-networking/SKILL.md": 2513,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-observability/SKILL.md": 1505,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-sdk-js-v3-usage/SKILL.md": 2353,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-sdk-python-usage/SKILL.md": 1897,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-sdk-swift-usage/SKILL.md": 1105,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-secrets-manager/SKILL.md": 1915,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-security/SKILL.md": 3050,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-serverless/SKILL.md": 1824,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/aws-storage/SKILL.md": 4959,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/launch-with-aws/SKILL.md": 3115,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/aws-toolkit/plugins/aws-core/skills/signing-in-to-aws/SKILL.md": 1642
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 57466,
+          "max": 57466,
+          "mean": 57466
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:8d9b8a60503cfd1537200500299e56ef44c0bbcae0731949e4eeb81909256b9a",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T03:50:32Z",
+      "finishedOn": "2026-09-06T03:50:32Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

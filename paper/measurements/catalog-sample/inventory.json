@@ -1,0 +1,200 @@
+[
+  {
+    "marketplace": "official",
+    "plugin": "agentforce-adlc",
+    "repo": "https://github.com/SalesforceAIResearch/agentforce-adlc",
+    "path_in_repo": ".",
+    "commit": "d16d14ac7f817336e21bf9392cf51b6cac6194d8",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "4ae13b24fe3c59bcaf8e34acdcde133d5224a69f4285ef0490898dca839a9348",
+    "statement_file": "official/agentforce-adlc.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "ai-plugins",
+    "repo": "https://github.com/endorlabs/ai-plugins",
+    "path_in_repo": ".",
+    "commit": "2de00883bd2be8b8578b46ab09baf2c8731376de",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "350b0ce01198f807d32c2d049d389d26d2e5246e5087d2bf10ffa8309c82ccc8",
+    "statement_file": "official/ai-plugins.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "altimate-code",
+    "repo": "https://github.com/AltimateAI/altimate-claude-plugin",
+    "path_in_repo": "plugins/altimate-code",
+    "commit": "b7c8f68b3dfd303ab3ccf2f43934098811dfe2aa",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "17be1382d18abf6088ba941246b700be9af4e915d0aac571b452cf039b634553",
+    "statement_file": "official/altimate-code.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "aws-core",
+    "repo": "https://github.com/aws/agent-toolkit-for-aws",
+    "path_in_repo": "plugins/aws-core",
+    "commit": "10b28af8aa3417eeeac6f1ebb5dd4f470a0c3594",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "5b572b5b62b202d93d109d2a398cbb1c12a271cafed14053dda56df60fe41056",
+    "statement_file": "official/aws-core.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "aws-serverless",
+    "repo": "https://github.com/awslabs/agent-plugins",
+    "path_in_repo": "plugins/aws-serverless",
+    "commit": "34afdf5005325f17d5da2d1443b87f27a53b0a20",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "a953850b1d1fe37cea797f3a4e02d89812575172ce43098839bca42188d94485",
+    "statement_file": "official/aws-serverless.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "aws-startup-advisor",
+    "repo": "https://github.com/awslabs/startups",
+    "path_in_repo": "advisor/plugins/aws-startup-advisor",
+    "commit": "7ad465c4d1761d88eb3ec68e78dfcbdfaa003a85",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "b80b19f6c0d2f2c1ed468c73b8fd0a60e84383df54452c77b6a6987545946340",
+    "statement_file": "official/aws-startup-advisor.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "azure",
+    "repo": "https://github.com/microsoft/azure-skills",
+    "path_in_repo": ".",
+    "commit": "2fe0f02665574305657c6e79a619c6b9554e53dc",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "126f3d2b1a9756f27ffbb1e326ec26fb76185bb99d0d77d4a2955ced05470f47",
+    "statement_file": "official/azure.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "carta-cap-table",
+    "repo": "https://github.com/carta/plugins",
+    "path_in_repo": "plugins/carta-cap-table",
+    "commit": "cf7e25ef8d8ff5ec9f6194eafae9a809f66ffff4",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "c69dbe7fa37d073bba521c967695ad36aa0cd9b8616e80f963800a70e682db31",
+    "statement_file": "official/carta-cap-table.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "carta-crm",
+    "repo": "https://github.com/carta/plugins",
+    "path_in_repo": "plugins/carta-crm",
+    "commit": "cf7e25ef8d8ff5ec9f6194eafae9a809f66ffff4",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "f8b2b4540568d5cb7fc7bb9907c5d4cb87e376c78384232c6b7f8688c37d91af",
+    "statement_file": "official/carta-crm.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "carta-investors",
+    "repo": "https://github.com/carta/plugins",
+    "path_in_repo": "plugins/carta-investors",
+    "commit": "cf7e25ef8d8ff5ec9f6194eafae9a809f66ffff4",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "b1c42b169a22c909817868ae23355f89146c3d5049b5361143e474a07d1550d1",
+    "statement_file": "official/carta-investors.json"
+  },
+  {
+    "marketplace": "wshobson-agents",
+    "plugin": "review-agent-governance",
+    "repo": "https://github.com/wshobson/agents",
+    "path_in_repo": "plugins/review-agent-governance",
+    "commit": "a30778f8c4e6b0a87567941b7cca4f534bf642b6",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "e657be82152876f7289aaed927d6a4b933f88806e744c79066602f86a01437f6",
+    "statement_file": "wshobson-agents/review-agent-governance.json"
+  },
+  {
+    "marketplace": "wshobson-agents",
+    "plugin": "protect-mcp",
+    "repo": "https://github.com/wshobson/agents",
+    "path_in_repo": "plugins/protect-mcp",
+    "commit": "a30778f8c4e6b0a87567941b7cca4f534bf642b6",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "a259bf4bd1f1017a0912ca4f56680385407cbe653f0278a4c3ef840b9c8f0a6b",
+    "statement_file": "wshobson-agents/protect-mcp.json"
+  },
+  {
+    "marketplace": "othmanadi-planning-with-files",
+    "plugin": "planning-with-files",
+    "repo": "https://github.com/OthmanAdi/planning-with-files",
+    "path_in_repo": ".",
+    "commit": "d47a61950e784fc4237ba10ddc1e9e198bd0f275",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "86bef242d98dc690605310a3883617a847abf48d67b7fdeccbfbdfb48fd84f50",
+    "statement_file": "othmanadi-planning-with-files/planning-with-files.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "42crunch-api-security-testing",
+    "repo": "https://github.com/42Crunch-AI/claude-plugins",
+    "path_in_repo": "plugins/api-security-testing",
+    "commit": "30287f5e3f122a646d1ac5ca3ab96e130c52a3ad",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "d2232a5da2c2cdf5a207105eb55228ae35f67a5bcd738a5273cd6d6cd43c691f",
+    "statement_file": "official/42crunch-api-security-testing.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "activecampaign",
+    "repo": "https://github.com/ActiveCampaign/activecampaign-plugin",
+    "path_in_repo": ".",
+    "commit": "0ff858728bc52aee335d5475b0d4eb5f3a9589b0",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "b2df7c400504f9e1ce81ac3b4c8a5b13002a9fba2f2100d9f23d0cd2da51315e",
+    "statement_file": "official/activecampaign.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "adobe-for-creativity",
+    "repo": "https://github.com/adobe/skills",
+    "path_in_repo": "plugins/creative-cloud/adobe-for-creativity",
+    "commit": "1307e2c03b9cd20c49872be8cbdfda7ee9aa8c7e",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "d8489dda3bb3c9405e32154c81251c532f5f78f4b8a5a31264adc19a4aef09eb",
+    "statement_file": "official/adobe-for-creativity.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "agent-sdk-dev",
+    "repo": "https://github.com/anthropics/claude-plugins-official",
+    "path_in_repo": "plugins/agent-sdk-dev",
+    "commit": "85cce0381e7860082641b59d961a2b8c368b8b79",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "5cc1435628af1be990a68f0ed7aa05ab4f483b347b7a9b9bf65b6b0c5c8d6f63",
+    "statement_file": "official/agent-sdk-dev.json"
+  },
+  {
+    "marketplace": "official",
+    "plugin": "aikido",
+    "repo": "https://github.com/AikidoSec/aikido-claude-plugin",
+    "path_in_repo": ".",
+    "commit": "1353c9d54b387f259f0c04f0ed3408842203c29e",
+    "subject_kind": "plugin",
+    "target": "claude_code",
+    "digest_sha256": "bab8f6dcfc05bdbd6330fd54e832bebf89718582c5fff4d7e4bb9adb3456a643",
+    "statement_file": "official/aikido.json"
+  }
+]

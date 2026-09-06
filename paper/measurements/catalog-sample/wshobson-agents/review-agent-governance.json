@@ -1,0 +1,315 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "review-agent-governance",
+      "digest": {
+        "sha256": "e657be82152876f7289aaed927d6a4b933f88806e744c79066602f86a01437f6"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:88acf0dd3ff13c25c9e1cc2eb11013573ba5107c64248ab2baf023d7846741ee",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:2ea6c45fbba292407dbb1c39740fa33ad5bc8bf0a30db1869188fcfa37eb7c0b",
+        "environment": {
+          "env": {
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/review-agent-governance"
+          }
+        },
+        "conditions": {
+          "cwdTested": [
+            "root",
+            "nested",
+            "parent",
+            "outside"
+          ],
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "if [ -f \"${REVIEW_APPROVAL_FLAG:-./.review-approved}\" ]; then exit 0; fi; npx protect-mcp@0.7.4 evaluate --policy \"${REVIEW_GOVERNANCE_POLICY:-./review-governance.cedar}\" --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --fail-on-missing-policy false"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "reachable_from": [
+                "root",
+                "nested",
+                "parent",
+                "outside"
+              ],
+              "unreachable_from": [],
+              "stderr_first_line": {
+                "root": "npm warn exec The following package was not found and will be installed: protect-mcp@0.7.4",
+                "nested": "",
+                "parent": "",
+                "outside": ""
+              },
+              "relative_script_path": false
+            }
+          },
+          "reachable_from": [
+            "root",
+            "nested",
+            "parent",
+            "outside"
+          ],
+          "unreachable_from": [],
+          "skippedHooks": [
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "npx protect-mcp@0.7.4 sign --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --output \"$TOOL_OUTPUT\" --receipts \"${REVIEW_GOVERNANCE_RECEIPTS:-./review-receipts/}\" --key \"${REVIEW_GOVERNANCE_KEY:-./review-governance.key}\"",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        }
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:4a1e3c407e6aae1466d101637385933e1621a1e26eae9060eaf1ad348593e4e8",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:52551f5ec513d9b036cce3fe940e08e44a55da3ffb5dab30034e0a822537806c",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:b96578ba87c0374a0fa3d746ea57a7f683529e042ab785eb9bec32494daf66d7",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:37c32c5a802dda0caac60ec1e8a833a3efd69dfed25c68974b99824c2d232633",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:c5267202c34958eeafc01cc1c70ce5d668ed7eda33ba0656d87df7e8961fc0e1",
+        "environment": {
+          "env": {
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/review-agent-governance"
+          }
+        },
+        "conditions": {
+          "cwd": "root",
+          "cases": [
+            "on_malformed_json",
+            "on_empty_stdin",
+            "on_null_tool_input",
+            "control_benign"
+          ],
+          "target": "claude_code",
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "if [ -f \"${REVIEW_APPROVAL_FLAG:-./.review-approved}\" ]; then exit 0; fi; npx protect-mcp@0.7.4 evaluate --policy \"${REVIEW_GOVERNANCE_POLICY:-./review-governance.cedar}\" --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --fail-on-missing-policy false"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "on_malformed_json": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"allowed\":true,\"reason\":\"no_policy_configured\"}"
+              },
+              "on_empty_stdin": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"allowed\":true,\"reason\":\"no_policy_configured\"}"
+              },
+              "on_null_tool_input": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"allowed\":true,\"reason\":\"no_policy_configured\"}"
+              },
+              "control_benign": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"allowed\":true,\"reason\":\"no_policy_configured\"}"
+              }
+            }
+          },
+          "wouldAllowAny": true,
+          "skippedHooks": [
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "npx protect-mcp@0.7.4 sign --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --output \"$TOOL_OUTPUT\" --receipts \"${REVIEW_GOVERNANCE_RECEIPTS:-./review-receipts/}\" --key \"${REVIEW_GOVERNANCE_KEY:-./review-governance.key}\"",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        },
+        "reasoning": "exit 0 on malformed input is how a Claude Code hook fails open; whether that is acceptable is the consumer's threshold."
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:36582c60f07b2c425dabb307d3484e3410aeaa2866b78684f45e591430d8b4fc",
+        "environmentSensitive": true,
+        "environment": {
+          "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+          "python": "3.11.15",
+          "cpu_count": 4,
+          "env": {
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/review-agent-governance"
+          }
+        },
+        "conditions": {
+          "n": 20,
+          "aggregation": "sum-across-hooks",
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "if [ -f \"${REVIEW_APPROVAL_FLAG:-./.review-approved}\" ]; then exit 0; fi; npx protect-mcp@0.7.4 evaluate --policy \"${REVIEW_GOVERNANCE_POLICY:-./review-governance.cedar}\" --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --fail-on-missing-policy false"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "unit": "ms",
+              "n": 20,
+              "percentiles": {
+                "50": 666.7292469999211,
+                "95": 711.2375240001256,
+                "99": 723.4639650000645
+              },
+              "min": 637.1192599999631,
+              "max": 723.4639650000645,
+              "mean": 673.2475759500062,
+              "stddev": 21.947950436013247
+            }
+          },
+          "skippedHooks": [
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "npx protect-mcp@0.7.4 sign --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --output \"$TOOL_OUTPUT\" --receipts \"${REVIEW_GOVERNANCE_RECEIPTS:-./review-receipts/}\" --key \"${REVIEW_GOVERNANCE_KEY:-./review-governance.key}\"",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        },
+        "measurement": {
+          "unit": "ms",
+          "n": 20,
+          "percentiles": {
+            "50": 666.7292469999211,
+            "95": 711.2375240001256,
+            "99": 723.4639650000645
+          },
+          "min": 637.1192599999631,
+          "max": 723.4639650000645,
+          "mean": 673.2475759500062
+        }
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:f1c58712aa62f7a5fa1efaf41bb6e00a5a89c938396e36fff08b0e06da1cbc58",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 2
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/review-agent-governance/hooks/hooks.json": 251,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/review-agent-governance/skills/review-agent-setup/SKILL.md": 1383
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 1634,
+          "max": 1634,
+          "mean": 1634
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:b4d3a2763a3188f6fc4998a13a6ccf8da155ec738d78b8049ce096a268c6df58",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T03:50:34Z",
+      "finishedOn": "2026-09-06T03:50:59Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

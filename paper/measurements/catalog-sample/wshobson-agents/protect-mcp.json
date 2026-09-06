@@ -1,0 +1,315 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "protect-mcp",
+      "digest": {
+        "sha256": "a259bf4bd1f1017a0912ca4f56680385407cbe653f0278a4c3ef840b9c8f0a6b"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:22c378457f9ee7ae91fdcf0864b58ca21e8261d83db5e786b08b253bc73b0fe9",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:a2b4ace5e838bd870f1995d067f507c396db6ea0ebd9b74a6ca5ce6b1a9b7857",
+        "environment": {
+          "env": {
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/protect-mcp"
+          }
+        },
+        "conditions": {
+          "cwdTested": [
+            "root",
+            "nested",
+            "parent",
+            "outside"
+          ],
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "npx protect-mcp@0.7.4 evaluate --policy \"${PROTECT_MCP_POLICY:-./protect.cedar}\" --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --fail-on-missing-policy false"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "reachable_from": [
+                "root",
+                "nested",
+                "parent",
+                "outside"
+              ],
+              "unreachable_from": [],
+              "stderr_first_line": {
+                "root": "",
+                "nested": "",
+                "parent": "",
+                "outside": ""
+              },
+              "relative_script_path": false
+            }
+          },
+          "reachable_from": [
+            "root",
+            "nested",
+            "parent",
+            "outside"
+          ],
+          "unreachable_from": [],
+          "skippedHooks": [
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "npx protect-mcp@0.7.4 sign --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --output \"$TOOL_OUTPUT\" --receipts \"${PROTECT_MCP_RECEIPTS:-./receipts/}\" --key \"${PROTECT_MCP_KEY:-./protect-mcp.key}\"",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        }
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:bd3b26e52bf5b568f51f37d2d0e4f70ddf44ef359e35b4426ff67dc3a3dd798d",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:06191d9af253f01717b394eec65cfacf4e8f80de9821d0a0b552d029a2d69ff1",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:3d52b32835e869a56cbd3524fb8bf34fab75ba5d5f1ad87a4ff81d011806ee43",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:4f76c975a4450fce800d64f79ef47129d73bbc75bbccec25d92edbbfccc3dadc",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:d5452201a5ea579e1619a4ce31bbf0a42762d63eb2da680c39159b1dca1f8bcf",
+        "environment": {
+          "env": {
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/protect-mcp"
+          }
+        },
+        "conditions": {
+          "cwd": "root",
+          "cases": [
+            "on_malformed_json",
+            "on_empty_stdin",
+            "on_null_tool_input",
+            "control_benign"
+          ],
+          "target": "claude_code",
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "npx protect-mcp@0.7.4 evaluate --policy \"${PROTECT_MCP_POLICY:-./protect.cedar}\" --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --fail-on-missing-policy false"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "on_malformed_json": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"allowed\":true,\"reason\":\"no_policy_configured\"}"
+              },
+              "on_empty_stdin": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"allowed\":true,\"reason\":\"no_policy_configured\"}"
+              },
+              "on_null_tool_input": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"allowed\":true,\"reason\":\"no_policy_configured\"}"
+              },
+              "control_benign": {
+                "exit": 0,
+                "stdout_decision": null,
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"allowed\":true,\"reason\":\"no_policy_configured\"}"
+              }
+            }
+          },
+          "wouldAllowAny": true,
+          "skippedHooks": [
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "npx protect-mcp@0.7.4 sign --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --output \"$TOOL_OUTPUT\" --receipts \"${PROTECT_MCP_RECEIPTS:-./receipts/}\" --key \"${PROTECT_MCP_KEY:-./protect-mcp.key}\"",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        },
+        "reasoning": "exit 0 on malformed input is how a Claude Code hook fails open; whether that is acceptable is the consumer's threshold."
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:053cca44021d2bd201216f0dc6bd97f09b9f2ef8d47a92b78b18ec220534062f",
+        "environmentSensitive": true,
+        "environment": {
+          "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+          "python": "3.11.15",
+          "cpu_count": 4,
+          "env": {
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/protect-mcp"
+          }
+        },
+        "conditions": {
+          "n": 20,
+          "aggregation": "sum-across-hooks",
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "npx protect-mcp@0.7.4 evaluate --policy \"${PROTECT_MCP_POLICY:-./protect.cedar}\" --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --fail-on-missing-policy false"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "unit": "ms",
+              "n": 20,
+              "percentiles": {
+                "50": 664.5953659999577,
+                "95": 717.532877999929,
+                "99": 746.4993279997998
+              },
+              "min": 635.7849250000527,
+              "max": 746.4993279997998,
+              "mean": 675.3368181499923,
+              "stddev": 28.914825537202322
+            }
+          },
+          "skippedHooks": [
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "npx protect-mcp@0.7.4 sign --tool \"$TOOL_NAME\" --input \"$TOOL_INPUT\" --output \"$TOOL_OUTPUT\" --receipts \"${PROTECT_MCP_RECEIPTS:-./receipts/}\" --key \"${PROTECT_MCP_KEY:-./protect-mcp.key}\"",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        },
+        "measurement": {
+          "unit": "ms",
+          "n": 20,
+          "percentiles": {
+            "50": 664.5953659999577,
+            "95": 717.532877999929,
+            "99": 746.4993279997998
+          },
+          "min": 635.7849250000527,
+          "max": 746.4993279997998,
+          "mean": 675.3368181499923
+        }
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:b0a0356530ca8ea1834ef5391dfd95270f3365def05558a2c42c7a877f9123c7",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 2
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/protect-mcp/hooks/hooks.json": 219,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/wshobson-agents/plugins/protect-mcp/skills/protect-mcp-setup/SKILL.md": 1626
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 1845,
+          "max": 1845,
+          "mean": 1845
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:73cd6c33338a3e489828295e7b5975662482be547fd0da7e1a02174db2ae0ca6",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T03:50:59Z",
+      "finishedOn": "2026-09-06T03:51:18Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

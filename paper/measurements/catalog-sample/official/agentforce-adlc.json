@@ -1,0 +1,317 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "agentforce-adlc",
+      "digest": {
+        "sha256": "4ae13b24fe3c59bcaf8e34acdcde133d5224a69f4285ef0490898dca839a9348"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:d470fd421b6a1dcf0306a56e30701a471b9db0ecc382ac37989c8f5375a560a8",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:48d897068014f4f459140117db43071dba31ca73364ca03adde4343ab2bc4033",
+        "environment": {
+          "env": {
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc"
+          }
+        },
+        "conditions": {
+          "cwdTested": [
+            "root",
+            "nested",
+            "parent",
+            "outside"
+          ],
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "python3 ${CLAUDE_PLUGIN_ROOT}/shared/hooks/scripts/guardrails.py"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "reachable_from": [
+                "root",
+                "nested",
+                "parent",
+                "outside"
+              ],
+              "unreachable_from": [],
+              "stderr_first_line": {
+                "root": "",
+                "nested": "",
+                "parent": "",
+                "outside": ""
+              },
+              "relative_script_path": false
+            }
+          },
+          "reachable_from": [
+            "root",
+            "nested",
+            "parent",
+            "outside"
+          ],
+          "unreachable_from": [],
+          "skippedHooks": [
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "python3 ${CLAUDE_PLUGIN_ROOT}/shared/hooks/scripts/agent-validator.py",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        }
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:4b85f8503b0c735d29022e3612282db1ab15b17e4a0ff6c4231429dcf15ca188",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:d65371d6e1535f3b7c71bf17f930a74164925730e0ead8d963682075bebabd28",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:1c901f35773a4de40de7682dfcf6bd09b0dd7ac29b8d365c464362c4a2444262",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:052df68a775a11e8b8683b52795657442d4ed18be283306d02e945bca2cc6afc",
+        "reasoning": "observing what the claude_code client does when the hook fails requires driving that client; the v0.1 producer does not. Documented behaviour (basis vendor-docs, NOT measured): exit 2 blocks; exit 1 or any other non-zero proceeds with a notice; JSON failing schema is non-blocking; timeout discards the hook's output and the tool call proceeds. Hooks run in the current cwd with a fallback chain."
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:92b10a9e54910e8c5674bbcaf51674b12bb53beb37fb1241847be231242e9cd8",
+        "environment": {
+          "env": {
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc"
+          }
+        },
+        "conditions": {
+          "cwd": "root",
+          "cases": [
+            "on_malformed_json",
+            "on_empty_stdin",
+            "on_null_tool_input",
+            "control_benign"
+          ],
+          "target": "claude_code",
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "python3 ${CLAUDE_PLUGIN_ROOT}/shared/hooks/scripts/guardrails.py"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "on_malformed_json": {
+                "exit": 0,
+                "stdout_decision": "allow",
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"allow\"}}"
+              },
+              "on_empty_stdin": {
+                "exit": 0,
+                "stdout_decision": "allow",
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"allow\"}}"
+              },
+              "on_null_tool_input": {
+                "exit": 0,
+                "stdout_decision": "allow",
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"allow\"}}"
+              },
+              "control_benign": {
+                "exit": 0,
+                "stdout_decision": "allow",
+                "would_allow": true,
+                "stderr_first_line": "",
+                "stdout_first_line": "{\"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"allow\"}}"
+              }
+            }
+          },
+          "wouldAllowAny": true,
+          "skippedHooks": [
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "python3 ${CLAUDE_PLUGIN_ROOT}/shared/hooks/scripts/agent-validator.py",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        },
+        "reasoning": "exit 0 on malformed input is how a Claude Code hook fails open; whether that is acceptable is the consumer's threshold."
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:1ea5fb1fb3016e7c2b29540a19a646fc11c7c2eb724c36cb420d5c3e5f896c31",
+        "environmentSensitive": true,
+        "environment": {
+          "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+          "python": "3.11.15",
+          "cpu_count": 4,
+          "env": {
+            "CLAUDE_PLUGIN_ROOT": "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc"
+          }
+        },
+        "conditions": {
+          "n": 20,
+          "aggregation": "sum-across-hooks",
+          "hooks": [
+            {
+              "hook_id": "PreToolUse:0",
+              "command": "python3 ${CLAUDE_PLUGIN_ROOT}/shared/hooks/scripts/guardrails.py"
+            }
+          ],
+          "payload": {
+            "shape": "claude_code/PreToolUse/v0.1",
+            "basis": "live-run"
+          }
+        },
+        "values": {
+          "perHook": {
+            "PreToolUse:0": {
+              "unit": "ms",
+              "n": 20,
+              "percentiles": {
+                "50": 26.62987000007888,
+                "95": 28.006418999893867,
+                "99": 28.110946999959197
+              },
+              "min": 25.671976000012364,
+              "max": 28.110946999959197,
+              "mean": 26.718370500009314,
+              "stddev": 0.6759087947745829
+            }
+          },
+          "skippedHooks": [
+            {
+              "hook_id": "PostToolUse:0",
+              "event": "PostToolUse",
+              "command": "python3 ${CLAUDE_PLUGIN_ROOT}/shared/hooks/scripts/agent-validator.py",
+              "reason": "v0.1 measures pre-tool hooks only"
+            }
+          ]
+        },
+        "measurement": {
+          "unit": "ms",
+          "n": 20,
+          "percentiles": {
+            "50": 26.62987000007888,
+            "95": 28.006418999893867,
+            "99": 28.110946999959197
+          },
+          "min": 25.671976000012364,
+          "max": 28.110946999959197,
+          "mean": 26.718370500009314
+        }
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:c627634ea205f6c2b084592c0402f19ae6337c7cc83859b5672fc5bc88b41e3b",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 4
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc/hooks/hooks.json": 131,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc/skills/agentforce-generate/SKILL.md": 14557,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc/skills/agentforce-observe/SKILL.md": 4710,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/agentforce-adlc/skills/agentforce-test/SKILL.md": 10227
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 29625,
+          "max": 29625,
+          "mean": 29625
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:3146bb0c77089a6d093ba654bcf769847960d7e9a5e7a4ada1c4ee75e250f2f1",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T03:53:06Z",
+      "finishedOn": "2026-09-06T03:53:07Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

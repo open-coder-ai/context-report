@@ -1,0 +1,137 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "adobe-for-creativity",
+      "digest": {
+        "sha256": "d8489dda3bb3c9405e32154c81251c532f5f78f4b8a5a31264adc19a4aef09eb"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:aea229b40175e583962df13a18c10529d1bf5c89190dbca3544e2dae5d555c12",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:6b203496d73f6376ded008976e791e077b765bf25981b461dfacc55b7b535cee",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:7a733add46d49ddb9327ab7d40986e2ea2f47f98b4780fb1defbe66cbcbfcf2d",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:b6729dd1bb96511dac5a27a05fb1613226d9e60263daabe46c0393f48cc6dd7d",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:00a85455f049f4325de256120f4bf14bca1502c00867362b53d021618a6b6157",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:c645248b4458033858cd16c5e5381b86226b5c052b9fbc0d492227446bb987b5",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:67101d7293af31067a510879879a790cfbac7dfc798c9d63ee11a7db5ccc5385",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:0dbb63f83191129446d8ad4ac10d47f2c38902f01c2d949868acf9601f96b8ae",
+        "reasoning": "the plugin declares no hooks"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:6446082e9f271b9eef422e6b348e370c508c0c2174891b109199ed0718386b0f",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 8
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-batch-edit-photos/SKILL.md": 9294,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-create-pdfs-from-data/SKILL.md": 3273,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-create-social-variations/SKILL.md": 7230,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-design-from-template/SKILL.md": 3783,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-edit-quick-cut/SKILL.md": 3774,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-resize-photos-and-videos/SKILL.md": 4865,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe-retouch-portraits/SKILL.md": 9123,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/adobe/plugins/creative-cloud/adobe-for-creativity/skills/adobe/SKILL.md": 2305
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 43647,
+          "max": 43647,
+          "mean": 43647
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:d5f8830e85fb3425b337d9c361fa68e55fa77e757efcfa2bd47a9b189be4d185",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T03:51:19Z",
+      "finishedOn": "2026-09-06T03:51:19Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}

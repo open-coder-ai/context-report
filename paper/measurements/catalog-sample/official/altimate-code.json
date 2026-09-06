@@ -1,0 +1,132 @@
+{
+  "_type": "https://in-toto.io/Statement/v1",
+  "subject": [
+    {
+      "name": "altimate-code",
+      "digest": {
+        "sha256": "17be1382d18abf6088ba941246b700be9af4e915d0aac571b452cf039b634553"
+      }
+    }
+  ],
+  "predicateType": "https://open-coder-ai.github.io/context-report/attestation/v0.1",
+  "predicate": {
+    "subjectKind": "plugin",
+    "target": {
+      "name": "claude_code"
+    },
+    "producer": {
+      "id": "https://github.com/open-coder-ai/context-report#local",
+      "version": {
+        "context-report": "0.1.0"
+      }
+    },
+    "attributes": [
+      {
+        "attribute": "conformance",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:30bbe0e35131d3cc7bf4affc6cc1b8083c7332378281e3fd40ab3c44a3455f78",
+        "reasoning": "v0.1 producer does not validate the bundle against the target agent's plugin schema"
+      },
+      {
+        "attribute": "reachability",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:8fc38239a5af1a1554a23ea920ea2c547f8c9dfdbe8d42610abd1c93c9d04909",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "decision",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:42f45ad8b07ee9f469adc21dc7b2ffe69147da069941a9f8e3414253d68aa1a0",
+        "reasoning": "no declared positive/negative cases were supplied; v0.1 has no decision replay"
+      },
+      {
+        "attribute": "fault.scriptMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:7efc9efd40ce4e739ee96e5d575c77660ad716d9722dba7b3f3d82cef9d84efa",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "fault.interpreterMissing",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:66b53d3144094dcec464bc6be062bdde26e66531287080ee7d2344e9e10e8ef9",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "fault.timeout",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:661adaa574373713bade66738c114614f4fb74d9da82d6b752301e70c6e6f481",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "fault.malformedOutput",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:eb043ecdb5cf03f6bbedb6d8e723c0a6cea948b4229d1445c88349de208876be",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "cost.latency_ms",
+        "basis": "re-derivable",
+        "result": "NotApplicable",
+        "inputHash": "sha256:46698a750e9ad148b7a3ff9ea366360c3f3c861b948705d39f0ac5c8b52aa145",
+        "reasoning": "the plugin declares hooks, but none on claude_code's pre-tool event"
+      },
+      {
+        "attribute": "cost.context_tokens",
+        "basis": "re-derivable",
+        "result": "PASSED",
+        "inputHash": "sha256:089e582bc1777fed1c9c2cc997a0995079f8bfd65f629199a9222401502a7eff",
+        "conditions": {
+          "tokenizer": "approx-regex-v1",
+          "files": 3
+        },
+        "values": {
+          "per_file": {
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/altimate/plugins/altimate-code/hooks/hooks.json": 146,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/altimate/plugins/altimate-code/skills/altimate-code/SKILL.md": 2094,
+            "/tmp/claude-0/-home-user-org-plan/6578e767-8d3e-5bd5-8c30-7d7361534bdd/scratchpad/catalog/ext/altimate/plugins/altimate-code/skills/review/SKILL.md": 1700
+          }
+        },
+        "measurement": {
+          "unit": "tokens",
+          "n": 1,
+          "min": 3940,
+          "max": 3940,
+          "mean": 3940
+        }
+      },
+      {
+        "attribute": "interference",
+        "basis": "re-derivable",
+        "result": "NotAvailable",
+        "inputHash": "sha256:49945a4114fa4f0eb0bf65f6c3e87516af9006ad3b5da99f7a02e72472f16556",
+        "reasoning": "no co-installed artifacts were declared; v0.1 producer does not measure interference"
+      },
+      {
+        "attribute": "efficacy",
+        "basis": "claimed",
+        "result": "NotAvailable",
+        "reasoning": "efficacy (paired ablation) was not run; use `context-report run` with models"
+      }
+    ],
+    "metadata": {
+      "startedOn": "2026-09-06T03:50:32Z",
+      "finishedOn": "2026-09-06T03:50:32Z"
+    },
+    "configuration": [
+      {
+        "name": "produce-args",
+        "digest": {
+          "sha256": "6b09d6c4f590d88b0e39cb8da2d88e721722985412e3d9bf26440c7e13bca323"
+        },
+        "mediaType": "application/json"
+      }
+    ]
+  }
+}
