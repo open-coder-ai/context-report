@@ -19,18 +19,24 @@ on:
     # published after the last commit, which is a weekly-scale event, not a per-push one.
     - cron: "17 4 * * 1"
 
-permissions:
-  contents: read
+# Nothing at the workflow level: the one job declares what CodeQL needs.
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   analyze:
     name: Analyze Python
     if: github.event.repository.private == false
     runs-on: ubuntu-latest
+    # contents to read the source, security-events to upload the SARIF, actions to read
+    # the run's own metadata, which the CodeQL action requires.
     permissions:
       contents: read
-      security-events: write
-      actions: read
+      security-events: write # upload the SARIF to code scanning
+      actions: read # the CodeQL action reads its own run metadata
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:

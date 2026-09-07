@@ -15,15 +15,21 @@ on:
     branches: [main]
   pull_request:
 
-permissions:
-  contents: read
+# Nothing at the workflow level: each job below declares the least it needs.
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   zizmor:
+    name: zizmor audits the workflows
     runs-on: ubuntu-latest
+    # contents to read the workflows, security-events to upload the SARIF.
     permissions:
       contents: read
-      security-events: write
+      security-events: write # upload zizmor's SARIF to code scanning
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:
@@ -36,7 +42,11 @@ jobs:
           advanced-security: ${{ github.event.repository.private == false }}
 
   actionlint:
+    name: actionlint checks the workflows
     runs-on: ubuntu-latest
+    # Reads the workflows; writes nothing.
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:
@@ -49,7 +59,11 @@ jobs:
           "$(go env GOPATH)/bin/actionlint" -color
 
   semgrep:
+    name: semgrep scans the source
     runs-on: ubuntu-latest
+    # Reads the source; writes nothing.
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:
@@ -62,7 +76,7 @@ jobs:
         # incidents; this repo has none recorded), so this runs semgrep's general Python
         # and security registry rulesets instead of a custom `--config` directory.
         run: |
-          pip install semgrep==1.176.1
+          pip install --require-hashes -r requirements/semgrep.txt
           # python37-compatibility-importlib2 flags importlib.resources for Python < 3.7;
           # this project requires 3.10 (pyproject), so that rule cannot apply here.
           semgrep scan --config auto --error \

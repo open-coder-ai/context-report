@@ -13,15 +13,24 @@ on:
     branches: [main]
   workflow_dispatch:
 
-permissions: read-all
+# Nothing at the workflow level: the one job declares what Scorecard needs.
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   analysis:
+    name: Scorecard analysis
     if: github.repository == 'open-coder-ai/context-report'
     runs-on: ubuntu-latest
+    # contents to read the repository, security-events to upload the SARIF,
+    # id-token to publish the score (OIDC).
     permissions:
-      security-events: write # upload SARIF to code scanning
-      id-token: write # publish results (OIDC)
+      contents: read
+      security-events: write # upload the SARIF to code scanning
+      id-token: write # publish the score to the Scorecard API (OIDC)
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:

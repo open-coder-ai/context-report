@@ -9,15 +9,21 @@ on:
     - cron: "23 5 * * *"
   workflow_dispatch:
 
-permissions:
-  contents: read
+# Nothing at the workflow level: the one job declares what the stale action needs.
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
   stale:
+    name: Mark quiet threads stale
     runs-on: ubuntu-latest
+    # The action labels and closes issues and pull requests; it reads no code.
     permissions:
-      issues: write
-      pull-requests: write
+      issues: write # label and close stale issues
+      pull-requests: write # label and close stale pull requests
     steps:
       - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93  # v11
         with:
