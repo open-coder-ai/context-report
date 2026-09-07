@@ -11,6 +11,14 @@ Per in-toto convention, `0.X` versions are major: fields may change until 1.0.
   chat-completions shape, hosted or local, with `baseUrl` and an optional `apiKeyEnv`; standard
   library only, no SDK.
 
+### Changed
+
+- `statement.validate()` now prefixes every schema error with its JSON-pointer-style path
+  (`predicate/attributes/3/environmentSensitive: ...`), matching the convention `run/manifest.py`
+  already used; a root-level error gets the stable `(root)` prefix instead of an empty one. A
+  `const` mismatch also names the expected and offending values in the same line. The two
+  `validate()` functions now share one formatter, `context_report.schema_errors`.
+
 ## [0.1.0] - 2026-09-06
 
 First public release: the format, a reference producer and verifier, a run manifest for

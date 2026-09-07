@@ -13,6 +13,7 @@ from typing import Any
 from jsonschema import Draft202012Validator
 
 from context_report.rows import PREDICATE_TYPE, STATEMENT_TYPE, Row
+from context_report.schema_errors import format_errors
 
 SUBJECT_KINDS = ("plugin", "instruction-file", "skill", "hook", "mcp-server", "subagent")
 
@@ -129,5 +130,9 @@ def schema() -> dict[str, Any]:
 
 
 def validate(stmt: dict[str, Any]) -> list[str]:
-    """Schema errors for a statement, empty when it conforms. Never raises on a bad instance."""
-    return sorted(e.message for e in Draft202012Validator(schema()).iter_errors(stmt))
+    """Schema errors for a statement as `path: message` strings, empty when it conforms.
+
+    Never raises on a bad instance. See `schema_errors.format_error` for the path convention,
+    including the `(root)` marker used for a top-level error.
+    """
+    return format_errors(Draft202012Validator(schema()).iter_errors(stmt))
