@@ -89,7 +89,6 @@ class Recomputer(Protocol):
 
     def recompute(self, row: dict[str, Any], subject_path: str) -> dict[str, Any] | None:
         """Return a recomputed row for the same attribute, or None if this recomputer can't help."""
-        ...
 
 
 @dataclass(frozen=True)

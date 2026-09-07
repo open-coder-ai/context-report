@@ -37,7 +37,8 @@ class RuleCard:
 class Runner(Protocol):
     """Produce agent output for a task. ``rule=None`` is the control arm (rule absent)."""
 
-    def run(self, task: str, rule: str | None) -> str: ...
+    def run(self, task: str, rule: str | None) -> str:
+        """The agent's output for `task`, with `rule` prepended when given."""
 
 
 class Judge(Protocol):
@@ -48,7 +49,8 @@ class Judge(Protocol):
     is how the criterion came to be carried and never consulted.
     """
 
-    def obeys(self, rule: str, task: str, output: str, criterion: str) -> bool: ...
+    def obeys(self, rule: str, task: str, output: str, criterion: str) -> bool:
+        """True when `output` met `criterion` for this task."""
 
 
 @dataclass(frozen=True)

@@ -375,7 +375,7 @@ def run(
         judge = AskerJudge(asker_factory(manifest.judge, effort=JUDGE_EFFORT))
 
     started_on = _now()
-    out = layout_root = manifest.out
+    layout_root = manifest.out
     out = _run_dir_for(layout_root, resume=resume, run_id=run_id)
     out.mkdir(parents=True, exist_ok=True)
     _write_json(out / MANIFEST_FILENAME, _resolved_manifest_doc(manifest))

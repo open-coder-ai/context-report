@@ -17,8 +17,13 @@ def key_for(*parts: object) -> str:
 
 
 class Store(Protocol):
-    def get(self, key: str) -> str | None: ...
-    def set(self, key: str, value: str) -> None: ...
+    """A key-value store for cached model answers."""
+
+    def get(self, key: str) -> str | None:
+        """The cached value, or None."""
+
+    def set(self, key: str, value: str) -> None:
+        """Remember `value` under `key`."""
 
 
 class MemStore:
