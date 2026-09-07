@@ -1,0 +1,5 @@
+# chock v0.8.0 runtime dependencies (its pyproject at that tag); chock itself installs --no-deps.
+pyyaml>=6.0
+jsonschema>=4.18,<5
+referencing>=0.35,<0.38
+agentseam==0.2.1

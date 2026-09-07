@@ -93,7 +93,11 @@ jobs:
           ref: ${{ env.FRAMEWORK_REF }}
           path: .framework
       - name: Install chock
-        run: pip install ./.framework
+        # chock's own dependencies are hash-pinned in requirements/chock.txt (its pyproject at
+        # the pinned tag); chock itself then installs from the pinned checkout with no resolution.
+        run: |
+          pip install --require-hashes -r requirements/chock.txt
+          pip install --no-deps ./.framework
       - name: This repo is a valid adopter
         run: |
           chock check
