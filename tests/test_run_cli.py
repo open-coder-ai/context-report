@@ -275,7 +275,7 @@ def test_run_cli_reports_the_run_directory(tmp_path: Path) -> None:
 
 def test_workdir_reaches_the_backend_and_the_resolved_manifest(tmp_path: Path) -> None:
     """`subjects[].workdir` is where the subject model works; the run records it, resolved."""
-    manifest = _build_manifest(tmp_path, provider="claude-cli")
+    _build_manifest(tmp_path, provider="claude-cli")
     repo = tmp_path / "checkout"
     repo.mkdir()
     doc = json.loads((tmp_path / "run.json").read_text())
@@ -322,7 +322,7 @@ def test_rule_history_shows_each_rule_across_runs_and_the_last_change(tmp_path: 
 
 def test_openai_compatible_models_carry_their_endpoint_and_reach_the_factory(tmp_path: Path):
     """Any server speaking the chat-completions shape is a subject model; the key never lands."""
-    manifest = _build_manifest(tmp_path)
+    _build_manifest(tmp_path)
     doc = json.loads((tmp_path / "run.json").read_text())
     doc["models"] = [
         {

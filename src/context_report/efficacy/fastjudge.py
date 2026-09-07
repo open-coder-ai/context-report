@@ -22,10 +22,15 @@ class CannotJudgeError(Exception):
 
 
 class Checker(Protocol):
+    """A deterministic grader for one kind of rule."""
+
     name: str
 
-    def applies(self, rule: str) -> bool: ...
-    def obeys(self, rule: str, code: str) -> bool: ...
+    def applies(self, rule: str) -> bool:
+        """True when this checker can grade `rule` without a model."""
+
+    def obeys(self, rule: str, code: str) -> bool:
+        """True when `code` complies with `rule`."""
 
 
 class NoAnyType:
