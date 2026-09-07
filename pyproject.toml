@@ -88,6 +88,8 @@ ignore = ["TRY003", "S101"]
 "src/context_report/efficacy/cli.py" = ["T20", "PLC0415"]
 "src/context_report/efficacy/api_backend.py" = ["PLC0415"]
 "src/context_report/run/judge.py" = ["PLC0415"]
+# The URL is the manifest's baseUrl; the scheme is checked in __init__ (http or https only).
+"src/context_report/efficacy/openai_backend.py" = ["S310"]
 # Deferred to break the manifest <-> evalcases import cycle (evalcases imports manifest's types).
 "src/context_report/run/manifest.py" = ["PLC0415"]
 "src/context_report/run/judge_cli.py" = ["T20"]

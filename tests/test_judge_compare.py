@@ -200,7 +200,9 @@ def test_non_anthropic_judge_is_refused_before_any_asker_call(tmp_path: Path) ->
 
 def test_run_judge_cli_exits_2_for_an_unsupported_provider(tmp_path: Path) -> None:
     out_dir, _manifest = _one_subject_run(tmp_path)
-    args = argparse.Namespace(out=str(out_dir), judge="openai/gpt-4", run=None)
+    args = argparse.Namespace(
+        out=str(out_dir), judge="openai/gpt-4", run=None, base_url=None, api_key_env=None
+    )
     assert run_judge(args) == 2
 
 

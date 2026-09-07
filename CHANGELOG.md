@@ -5,6 +5,12 @@ Per in-toto convention, `0.X` versions are major: fields may change until 1.0.
 
 ## Unreleased
 
+### Added
+
+- `openai-compatible` provider for `models[]` and `judge`: any server speaking the OpenAI
+  chat-completions shape, hosted or local, with `baseUrl` and an optional `apiKeyEnv`; standard
+  library only, no SDK.
+
 ## [0.1.0] - 2026-09-06
 
 First public release: the format, a reference producer and verifier, a run manifest for

@@ -15,6 +15,14 @@ def add_judge_parser(subparsers: Any) -> None:
     p.add_argument("out", help="the manifest's `out` directory (or one run directory)")
     p.add_argument("--judge", required=True, help="provider/id of the judge model")
     p.add_argument("--run", default=None, help="run id under out/runs/ (default: the latest)")
+    p.add_argument(
+        "--base-url", default=None, help="openai-compatible judge: the server's API root"
+    )
+    p.add_argument(
+        "--api-key-env",
+        default=None,
+        help="openai-compatible judge: environment variable holding the bearer key",
+    )
 
 
 def add_compare_parser(subparsers: Any) -> None:
@@ -53,7 +61,13 @@ def _outcome_line(outcome: judge.JudgeOutcome) -> str:
 
 def run_judge(args: argparse.Namespace) -> int:
     try:
-        outcomes, code = judge.judge_out(Path(args.out), args.judge, run_id=args.run)
+        outcomes, code = judge.judge_out(
+            Path(args.out),
+            args.judge,
+            run_id=args.run,
+            base_url=args.base_url,
+            api_key_env=args.api_key_env,
+        )
     except (OSError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

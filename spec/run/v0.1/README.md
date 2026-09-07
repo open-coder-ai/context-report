@@ -34,8 +34,8 @@ It is metadata only — how an artifact actually works (what a plugin's hooks ar
   clientVersion}` — the same shape as the predicate's own `target` field. To compare two agents,
   run the manifest twice with a different `target.name`; this schema deliberately has no field for
   a second agent in the same run.
-- **`models`** — the subject models to run the paired ablation on, `[{provider, id}, ...]`. Two
-  providers have a backend in v0.1: `anthropic` (the API; `id` is a model id) and `claude-cli`
+- **`models`** — the subject models to run the paired ablation on, `[{provider, id}, ...]`. Three
+  providers have a backend in v0.1: `anthropic` (the API; `id` is a model id), `claude-cli`
   (the local `claude` CLI under its own login; `id` is an alias such as `opus`, `sonnet`, `fable`,
   or a full id), so one manifest can list the same rules against several models. An
   empty array means the run produces only deterministic rows (`reachability`, `fault.*`,
@@ -45,6 +45,13 @@ It is metadata only — how an artifact actually works (what a plugin's hooks ar
 - **`tasks`** — either a path to a tasks file (a string, resolved relative to the manifest) or the
   tasks given inline as `{"tasks": [...]}`. The same task set is used for every model named in
   `models`. See Tasks below.
+  The third, `openai-compatible`, is any server that speaks the OpenAI chat-completions shape,
+  `{provider: "openai-compatible", id, baseUrl, apiKeyEnv?}`: `baseUrl` is the server's API root
+  (`https://api.openai.com/v1`, Gemini's or Mistral's compatibility endpoint, or a local
+  `http://localhost:11434/v1` for Ollama, vLLM or LM Studio); `apiKeyEnv` names the environment
+  variable holding the bearer key and is omitted for a local server. The key itself never enters
+  the manifest or the report. This backend has no filesystem or tools: a task that needs the
+  agent to act in a checkout is answered, not performed, and `workdir` is rejected with it.
 - **`arms`** — `{nPerArm, seed, mode}`. `nPerArm` is how many times each task is run in each arm
   (once with the rule, once without). `seed` fixes task order and any sampling so a re-run of the
   same manifest reproduces the same trials. `mode` is `"isolated"` (default) — each subject is

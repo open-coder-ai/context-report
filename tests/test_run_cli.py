@@ -302,7 +302,7 @@ def test_workdir_must_exist_and_the_api_provider_cannot_honour_it(tmp_path: Path
     (tmp_path / "missing").mkdir()
     doc["models"] = [{"provider": "anthropic", "id": "claude-sonnet-5"}]
     (tmp_path / "run.json").write_text(json.dumps(doc))
-    with pytest.raises(RunError, match="cannot honour"):
+    with pytest.raises(RunError, match="only the 'claude-cli' provider can honour"):
         preflight(m.load(tmp_path / "run.json"))
 
 
@@ -318,3 +318,47 @@ def test_rule_history_shows_each_rule_across_runs_and_the_last_change(tmp_path: 
     assert "100% / 0% (+100%, keep)" in table  # the fake obeys with the rule, prints without
     assert table.rstrip().endswith("| +0% |")  # same lift in both runs: nothing moved
     assert "no runs recorded" in compare.render_history(tmp_path / "empty", rules=True)
+
+
+def test_openai_compatible_models_carry_their_endpoint_and_reach_the_factory(tmp_path: Path):
+    """Any server speaking the chat-completions shape is a subject model; the key never lands."""
+    manifest = _build_manifest(tmp_path)
+    doc = json.loads((tmp_path / "run.json").read_text())
+    doc["models"] = [
+        {
+            "provider": "openai-compatible",
+            "id": "gemma3",
+            "baseUrl": "http://localhost:11434/v1",
+        },
+        {
+            "provider": "openai-compatible",
+            "id": "gpt-4.1",
+            "baseUrl": "https://api.openai.com/v1",
+            "apiKeyEnv": "OPENAI_API_KEY",
+        },
+    ]
+    (tmp_path / "run.json").write_text(json.dumps(doc))
+    manifest = m.load(tmp_path / "run.json")
+    assert manifest.models[0].base_url == "http://localhost:11434/v1"
+    assert manifest.models[1].api_key_env == "OPENAI_API_KEY"
+    seen: list = []
+
+    def factory(model, *, effort=None, cwd=None):  # noqa: ARG001
+        seen.append(model)
+        return FakeAsker()
+
+    out = run(manifest, asker_factory=factory)
+    assert [x.id for x in seen] == ["gemma3", "gpt-4.1"]
+    recorded = json.loads((out / "manifest.json").read_text())
+    assert recorded["models"][1] == {
+        "provider": "openai-compatible",
+        "id": "gpt-4.1",
+        "baseUrl": "https://api.openai.com/v1",
+        "apiKeyEnv": "OPENAI_API_KEY",
+    }
+    assert (out / "house-rules" / "openai-compatible--gpt-4.1.json").is_file()
+
+    doc["models"] = [{"provider": "openai-compatible", "id": "nowhere"}]
+    (tmp_path / "run.json").write_text(json.dumps(doc))
+    with pytest.raises(m.ManifestError, match="baseUrl"):
+        m.load(tmp_path / "run.json")

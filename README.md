@@ -108,6 +108,14 @@ a prompt-injection rule moved nothing on any model. See
 - **A researcher or reviewer** wants a re-derivable record of what was actually measured, not a
   vendor's prose description of it.
 
+## Every model you can reach
+
+Subject models come from the manifest, never from code: `anthropic`, `claude-cli`, or
+`openai-compatible` with a `baseUrl`, which is any server speaking the chat-completions shape,
+hosted (OpenAI, Gemini, Mistral, Groq) or local (Ollama, vLLM, LM Studio). One manifest lines up
+every model you can reach; the API-shaped ones answer without tools or a checkout, which the run
+spec states.
+
 ## Two models, not one
 
 Efficacy needs two roles, never one: the **subject model** runs a task with the rule prepended and
