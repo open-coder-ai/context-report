@@ -63,8 +63,10 @@ def test_index_pages_contain_the_predicate_type(path):
 
 
 def test_pages_workflow_publishes_the_spec_directory():
+    """Pages serves the rendered spec: the renderer reads `spec`, the upload ships its output."""
     workflow_text = PAGES_WORKFLOW.read_text()
-    assert re.search(r"^\s*path:\s*spec\s*$", workflow_text, re.MULTILINE)
+    assert re.search(r"render_pages\.py spec _site\s*$", workflow_text, re.MULTILINE)
+    assert re.search(r"^\s*path:\s*_site\s*$", workflow_text, re.MULTILINE)
 
 
 @pytest.mark.parametrize("path", [SPEC_INDEX, V01_INDEX])

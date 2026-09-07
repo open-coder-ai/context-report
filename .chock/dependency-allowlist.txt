@@ -23,3 +23,4 @@ pytest
 ruff
 hatchling
 matplotlib
+markdown
