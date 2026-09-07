@@ -8,7 +8,8 @@ version: 2
 # trains everyone to ignore the one that matters.
 updates:
   - package-ecosystem: pip
-    directory: "/"
+    # pyproject.toml at the root, plus the hash-pinned files CI installs from.
+    directories: ["/", "/requirements"]
     schedule:
       interval: weekly
       day: monday

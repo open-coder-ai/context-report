@@ -23,7 +23,18 @@ cd context-report
 
 # 2. Install editable with dev dependencies (Python 3.10-3.13 supported; CI runs all four).
 pip install -e '.[dev]'
+```
 
+CI installs the same packages from `requirements/ci.txt`, which pins every third-party package by
+hash (`pip install --require-hashes`), then the package itself with `--no-deps`. The other files
+under `requirements/` do the same for the build, Pages and semgrep jobs. To change a pin, edit the
+`.in` file and regenerate:
+
+```
+pip-compile --generate-hashes --allow-unsafe --strip-extras -o requirements/ci.txt requirements/ci.in
+```
+
+```bash
 # 3. Verify your environment — everything below should pass
 python -m ruff check .               # lint
 python -m ruff format --check .      # format

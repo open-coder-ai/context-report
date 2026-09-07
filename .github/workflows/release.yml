@@ -2,11 +2,18 @@ name: Release
 on:
   push:
     tags: ["v*"]
-permissions:
-  contents: read
+# Nothing at the workflow level: build reads, publish holds the one OIDC permission.
+permissions: {}
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   build:
+    name: Build the wheel and sdist
     runs-on: ubuntu-latest
+    # Reads the tagged checkout; writes nothing.
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:
@@ -14,7 +21,7 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
         with:
           python-version: "3.11"
-      - run: pip install build
+      - run: pip install --require-hashes -r requirements/build.txt
       - run: python -m build
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
         with:
@@ -22,6 +29,7 @@ jobs:
           path: dist/
 
   publish:
+    name: Publish to PyPI
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -30,7 +38,7 @@ jobs:
     permissions:
       # No secrets: PyPI trusted publishing exchanges this token for a short-lived
       # upload credential (see https://docs.pypi.org/trusted-publishers/).
-      id-token: write
+      id-token: write # exchanged for a short-lived PyPI upload credential
     steps:
       - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7
         with:

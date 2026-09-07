@@ -3,14 +3,21 @@ on:
   push:
     branches: [main]
   pull_request:
-permissions:
-  contents: read
+# Nothing at the workflow level: each job below declares the least it needs.
+permissions: {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   # Every PR commit must carry a Signed-off-by trailer (Developer Certificate of
   # Origin -- see CONTRIBUTING.md). Same in-workflow check chock and chock-catalog run.
   dco:
+    name: DCO sign-off on every commit
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    # Reads the PR's commits; writes nothing.
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:
@@ -33,7 +40,11 @@ jobs:
           exit "$missing"
 
   check:
+    name: Lint and test
     runs-on: ubuntu-latest
+    # Reads the checkout; writes nothing.
+    permissions:
+      contents: read
     strategy:
       matrix:
         python: ["3.10", "3.11", "3.12", "3.13"]
@@ -44,7 +55,10 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
         with:
           python-version: ${{ matrix.python }}
-      - run: pip install -e ".[dev]"
+      # Every third-party package is hash-pinned in requirements/ci.txt; the package
+      # itself is installed on top with no dependency resolution of its own.
+      - run: pip install --require-hashes -r requirements/ci.txt
+      - run: pip install --no-deps -e .
       - run: python -m ruff check .
       - run: python -m ruff format --check .
       - run: python -m pytest -q
@@ -55,7 +69,11 @@ jobs:
   # the gap `git commit --no-verify` and an un-synced clone would otherwise leave open
   # (see SECURITY.md).
   policies:
+    name: chock adoption is valid
     runs-on: ubuntu-latest
+    # Reads this checkout and the pinned framework checkout; writes nothing.
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
         with:

@@ -3,16 +3,20 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+# Nothing at the workflow level: the deploy job alone holds the Pages permissions.
+permissions: {}
 concurrency:
   group: pages
   cancel-in-progress: false
 jobs:
   deploy:
+    name: Render and deploy the spec
     runs-on: ubuntu-latest
+    # contents to read the spec, pages and id-token to publish the artifact to GitHub Pages.
+    permissions:
+      contents: read
+      pages: write # deploy the artifact to GitHub Pages
+      id-token: write # the OIDC token the Pages deploy action exchanges
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -23,7 +27,7 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
         with:
           python-version: "3.12"
-      - run: pip install markdown==3.10.3
+      - run: pip install --require-hashes -r requirements/pages.txt
       # Pages serves the artifact as static files: an index.md is never rendered, so the root was
       # a 404. Render every Markdown file to HTML beside it and publish the rendered tree.
       - run: python .github/scripts/render_pages.py spec _site
