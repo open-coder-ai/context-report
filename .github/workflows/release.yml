@@ -1,7 +1,12 @@
 name: Release
+# Publishing is one act: the maintainer creates a GitHub Release from a `v*` tag, with the
+# release notes. That event builds the wheel and sdist, publishes them to PyPI through trusted
+# publishing, signs them with Sigstore, and attaches the artifacts and their signature bundles
+# to the same Release, so what is on PyPI and what is on GitHub are the same bytes, and anyone
+# can verify who built them.
 on:
-  push:
-    tags: ["v*"]
+  release:
+    types: [published]
 # Nothing at the workflow level: build reads, publish holds the one OIDC permission.
 permissions: {}
 concurrency:
@@ -45,3 +50,22 @@ jobs:
           name: dist
           path: dist/
       - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33  # v1.14.2
+
+  sign:
+    name: Sign the artifacts and attach them to the Release
+    needs: publish
+    runs-on: ubuntu-latest
+    # id-token for the Sigstore keyless signature; contents to upload the artifacts and
+    # their signature bundles to the Release that triggered this run.
+    permissions:
+      id-token: write # Sigstore keyless signing identity
+      contents: write # attach dist/* and the .sigstore.json bundles to the Release
+    steps:
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7
+        with:
+          name: dist
+          path: dist/
+      - uses: sigstore/gh-action-sigstore-python@790bc6befb9d733738f18d8f895854b453640ec9  # v3.5.0
+        with:
+          inputs: ./dist/*.tar.gz ./dist/*.whl
+          release-signing-artifacts: true
