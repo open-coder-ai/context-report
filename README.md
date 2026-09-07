@@ -33,7 +33,7 @@ The optional `context-report[efficacy]` extra pulls in the `anthropic` client fo
 row (`context-report efficacy --help`). `context-report run` reads a JSON manifest matching
 [`spec/run/v0.1/schema.json`](spec/run/v0.1/schema.json) — see
 [`spec/run/v0.1/examples/run.json`](spec/run/v0.1/examples/run.json) for a worked one (two
-subjects, two models, three tasks) — and supports `--dry-run` (rules and call budget, no model
+subjects, four models across the three providers, three tasks) — and supports `--dry-run` (rules and call budget, no model
 touched), `--n` (override `arms.nPerArm` for a smoke run), and `--resume` (continue the latest run,
 reusing every existing statement and matching transcript, calling only for the rest). Two providers
 have a backend: `anthropic` (the API) and `claude-cli` (the local `claude` CLI, so one manifest can
