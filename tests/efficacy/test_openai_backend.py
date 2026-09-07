@@ -10,7 +10,6 @@ from unittest import mock
 
 import pytest
 
-from context_report.efficacy import openai_backend
 from context_report.efficacy.openai_backend import OpenAICompatibleAsker
 
 SEEN: list[dict] = []
@@ -100,19 +99,16 @@ def test_http_errors_and_odd_answers_are_plain_errors(server):
 def test_base_url_must_be_http_and_one_timeout_is_retried():
     with pytest.raises(ValueError, match="http"):
         OpenAICompatibleAsker("m", "ftp://nope")
+    with pytest.raises(ValueError, match="http"):
+        OpenAICompatibleAsker("m", "file:///etc/passwd")
     asker = OpenAICompatibleAsker("m", "http://localhost:1/v1", timeout=1)
-    good = mock.MagicMock()
-    good.read.return_value = json.dumps({"choices": [{"message": {"content": "late"}}]}).encode()
-    good.__enter__.return_value = good
-    with mock.patch.object(
-        openai_backend.urllib.request, "urlopen", side_effect=[TimeoutError(), good]
-    ) as m:
+    assert (asker.host, asker.port, asker.path) == ("localhost", 1, "/v1/chat/completions")
+    late = (200, json.dumps({"choices": [{"message": {"content": "late"}}]}).encode())
+    with mock.patch.object(asker, "_send", side_effect=[TimeoutError(), late]) as m:
         assert asker.ask("x") == "late"
         assert m.call_count == 2
     with (
-        mock.patch.object(
-            openai_backend.urllib.request, "urlopen", side_effect=[TimeoutError(), TimeoutError()]
-        ),
+        mock.patch.object(asker, "_send", side_effect=[TimeoutError(), TimeoutError()]),
         pytest.raises(RuntimeError, match="no answer within 1s"),
     ):
         asker.ask("x")

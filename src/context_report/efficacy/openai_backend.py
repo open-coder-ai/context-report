@@ -1,24 +1,25 @@
 """Backend for any server speaking the OpenAI chat-completions shape: no SDK, standard library only.
 
 OpenAI, Gemini's compatibility endpoint, Mistral, Groq, Ollama, vLLM and LM Studio all serve
-`POST <base_url>/chat/completions`, so one backend covers hosted and local models alike.
+`POST <base_url>/chat/completions`, so one backend covers hosted and local models alike. It talks
+`http.client` to a host and a path, never a URL opener, so no scheme but http and https exists.
 """
 
 from __future__ import annotations
 
+import http.client
 import json
 import os
-import urllib.error
-import urllib.request
+from urllib.parse import urlsplit
 
 _TIMEOUT = 600  # one answer can take minutes; a real hang still ends the run
 _ATTEMPTS = 2  # a timed-out call is retried once before the run is given up
-_SCHEMES = ("http://", "https://")
-_BAD_URL = "baseUrl must start with http:// or https://, not {url!r}"
+_BAD_URL = "baseUrl must be http://host[:port]/path or https://..., not {url!r}"
 _NO_KEY = "environment variable {env!r} (apiKeyEnv) is not set"
 _HTTP_ERROR = "{url} answered {code}: {body}"
 _TIMED_OUT = "{url} gave no answer within {seconds}s, {attempts} attempt(s)"
 _NO_CHOICE = "{url} answered without a choices[0].message.content"
+_OK = range(200, 300)
 
 
 class OpenAICompatibleAsker:
@@ -31,10 +32,15 @@ class OpenAICompatibleAsker:
         api_key_env: str | None = None,
         timeout: int = _TIMEOUT,
     ) -> None:
-        if not base_url.startswith(_SCHEMES):
+        parts = urlsplit(base_url)
+        if parts.scheme not in ("http", "https") or not parts.hostname:
             raise ValueError(_BAD_URL.format(url=base_url))
         self.model = model
-        self.url = base_url.rstrip("/") + "/chat/completions"
+        self.tls = parts.scheme == "https"
+        self.host = parts.hostname
+        self.port = parts.port
+        self.path = parts.path.rstrip("/") + "/chat/completions"
+        self.url = f"{parts.scheme}://{parts.netloc}{self.path}"
         self.api_key_env = api_key_env
         self.timeout = timeout
         self.last_usage: dict[str, int] | None = None
@@ -49,29 +55,34 @@ class OpenAICompatibleAsker:
             headers["Authorization"] = f"Bearer {key}"
         return headers
 
+    def _send(self, body: bytes) -> tuple[int, bytes]:
+        """One POST; returns the status and raw body. Raises TimeoutError when the server stalls."""
+        conn_type = http.client.HTTPSConnection if self.tls else http.client.HTTPConnection
+        conn = conn_type(self.host, self.port, timeout=self.timeout)
+        try:
+            conn.request("POST", self.path, body=body, headers=self._headers())
+            response = conn.getresponse()
+            return response.status, response.read()
+        finally:
+            conn.close()
+
     def ask(self, prompt: str) -> str:
         body = json.dumps(
             {"model": self.model, "messages": [{"role": "user", "content": prompt}]}
         ).encode("utf-8")
-        request = urllib.request.Request(
-            self.url, data=body, headers=self._headers(), method="POST"
-        )
         for attempt in range(1, _ATTEMPTS + 1):
             try:
-                response = urllib.request.urlopen(request, timeout=self.timeout)
-            except urllib.error.HTTPError as exc:
-                detail = exc.read().decode("utf-8", errors="replace")[:200]
-                raise RuntimeError(
-                    _HTTP_ERROR.format(url=self.url, code=exc.code, body=detail)
-                ) from exc
+                status, raw = self._send(body)
             except TimeoutError as exc:
                 if attempt == _ATTEMPTS:
                     raise RuntimeError(
                         _TIMED_OUT.format(url=self.url, seconds=self.timeout, attempts=attempt)
                     ) from exc
                 continue
-            with response:
-                return self._parse(json.loads(response.read().decode("utf-8")))
+            if status not in _OK:
+                detail = raw.decode("utf-8", errors="replace")[:200]
+                raise RuntimeError(_HTTP_ERROR.format(url=self.url, code=status, body=detail))
+            return self._parse(json.loads(raw.decode("utf-8")))
         raise AssertionError("unreachable")  # pragma: no cover
 
     def _parse(self, doc: dict) -> str:
