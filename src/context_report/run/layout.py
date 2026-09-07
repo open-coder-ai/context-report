@@ -78,6 +78,12 @@ def _cell(row: dict[str, Any]) -> str:
     return f"{row['result']} {point:+.1%} [{lower:+.1%}, {upper:+.1%}]"
 
 
+_HISTORY_INTRO = (
+    "Each column is one run under `runs/<run id>/`; a cell is that run's pooled efficacy "
+    "result and lift with its 95% interval. Read left to right for what a change moved."
+)
+
+
 def history_markdown(index: list[dict[str, Any]]) -> str:
     """One row per (subject, model), one column per run: what moved between runs, at a glance."""
     if not index:
@@ -94,8 +100,7 @@ def history_markdown(index: list[dict[str, Any]]) -> str:
     lines = [
         f"# Runs of this manifest ({len(index)})",
         "",
-        "Each column is one run under `runs/<run id>/`; a cell is that run's pooled efficacy "
-        "result and lift with its 95% interval. Read left to right for what a change moved.",
+        _HISTORY_INTRO,
         "",
         "| subject | model | " + " | ".join(ids) + " |",
         "|---|---|" + "---|" * len(ids),

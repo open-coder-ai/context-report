@@ -12,7 +12,8 @@ _NO_VERDICT = "could not parse a YES/NO verdict from: {text!r}"
 class Asker(Protocol):
     """Send one prompt to a model, get its text back."""
 
-    def ask(self, prompt: str) -> str: ...
+    def ask(self, prompt: str) -> str:
+        """One prompt in, the model's text out."""
 
 
 def parse_yesno(text: str) -> bool:

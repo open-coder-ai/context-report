@@ -45,9 +45,18 @@ class CliAsker:
         argv = [executable, "-p", prompt, "--output-format", "json"]
         if self.model:
             argv += ["--model", self.model]
+        proc = self._run(argv)
+        if proc.returncode != 0:
+            raise RuntimeError(
+                _EXITED.format(cli=_CLI, code=proc.returncode, stderr=proc.stderr.strip()[:200])
+            )
+        return self._parse(proc.stdout)
+
+    def _run(self, argv: list[str]) -> subprocess.CompletedProcess[str]:
+        """Run the CLI once, retrying a single timeout; a second timeout ends the run."""
         for attempt in range(1, _ATTEMPTS + 1):
             try:
-                proc = subprocess.run(  # noqa: S603 - fixed argv, resolved path, prompt is not a shell string
+                return subprocess.run(  # noqa: S603 - fixed argv, resolved path, prompt is not a shell string
                     argv,
                     capture_output=True,
                     text=True,
@@ -55,17 +64,12 @@ class CliAsker:
                     check=False,
                     cwd=self.cwd,
                 )
-                break
             except subprocess.TimeoutExpired as exc:
                 if attempt == _ATTEMPTS:
                     raise RuntimeError(
                         _TIMED_OUT.format(cli=_CLI, seconds=self.timeout, attempts=attempt)
                     ) from exc
-        if proc.returncode != 0:
-            raise RuntimeError(
-                _EXITED.format(cli=_CLI, code=proc.returncode, stderr=proc.stderr.strip()[:200])
-            )
-        return self._parse(proc.stdout)
+        raise AssertionError("unreachable")  # pragma: no cover
 
     def _parse(self, stdout: str) -> str:
         try:

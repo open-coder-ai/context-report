@@ -28,8 +28,8 @@ def newcombe_diff(
     lo_a, hi_a = wilson(successes_a, n_a, z)
     lo_b, hi_b = wilson(successes_b, n_b, z)
     diff = p_a - p_b
-    lo = diff - math.sqrt((p_a - lo_a) ** 2 + (hi_b - p_b) ** 2)
-    hi = diff + math.sqrt((hi_a - p_a) ** 2 + (p_b - lo_b) ** 2)
+    lo = diff - math.hypot(p_a - lo_a, hi_b - p_b)
+    hi = diff + math.hypot(hi_a - p_a, p_b - lo_b)
     return max(-1.0, lo), min(1.0, hi)
 
 
