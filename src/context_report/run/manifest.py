@@ -11,6 +11,8 @@ from typing import Any
 
 from jsonschema import Draft202012Validator
 
+from context_report.schema_errors import format_errors
+
 MANIFEST_VERSION = "v0.1"
 MODE_ISOLATED = "isolated"
 MODE_LEAVE_ONE_OUT = "leave-one-out"
@@ -102,11 +104,7 @@ def schema() -> dict[str, Any]:
 
 def validate(doc: dict[str, Any]) -> list[str]:
     """Schema errors as `path: message` strings; empty means well-formed."""
-    validator = Draft202012Validator(schema())
-    return [
-        "/".join(str(p) for p in e.absolute_path) + ": " + e.message
-        for e in sorted(validator.iter_errors(doc), key=lambda e: list(e.absolute_path))
-    ]
+    return format_errors(Draft202012Validator(schema()).iter_errors(doc))
 
 
 def _resolve(base: Path, raw: str) -> Path:

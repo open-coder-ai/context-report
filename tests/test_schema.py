@@ -9,6 +9,8 @@ from pathlib import Path
 import pytest
 from jsonschema import Draft202012Validator
 
+from context_report.statement import validate
+
 ROOT = Path(__file__).resolve().parents[1]
 V01 = ROOT / "spec" / "attestation" / "v0.1"
 SCHEMA = json.loads((V01 / "schema.json").read_text(encoding="utf-8"))
@@ -129,6 +131,46 @@ def test_measured_latency_must_record_its_environment() -> None:
     bad = copy.deepcopy(EXAMPLE)
     row(bad, "cost.latency_ms")["environmentSensitive"] = False
     assert errors(bad), "latency is environmentSensitive by definition"
+
+
+def test_const_mismatch_names_the_path_and_the_expected_and_actual_values() -> None:
+    """A const failure (here: the cost.latency_ms row's environmentSensitive) names both sides."""
+    bad = copy.deepcopy(EXAMPLE)
+    idx, r = next(
+        (i, a)
+        for i, a in enumerate(bad["predicate"]["attributes"])
+        if a["attribute"] == "cost.latency_ms"
+    )
+    r["environmentSensitive"] = False
+    errs = validate(bad)
+    assert any(
+        e == f"predicate/attributes/{idx}/environmentSensitive: expected True, got False"
+        for e in errs
+    )
+
+
+def test_nested_if_then_failure_under_a_subject_kind_block_is_path_prefixed() -> None:
+    """An instruction-file's cost.latency_ms row must be NotApplicable; the path names the row."""
+    bad = copy.deepcopy(EXAMPLE)
+    bad["predicate"]["subjectKind"] = "instruction-file"
+    idx = next(
+        i
+        for i, a in enumerate(bad["predicate"]["attributes"])
+        if a["attribute"] == "cost.latency_ms"
+    )
+    errs = validate(bad)
+    assert any(
+        e == f"predicate/attributes/{idx}/result: expected 'NotApplicable', got 'PASSED'"
+        for e in errs
+    )
+
+
+def test_root_level_error_keeps_a_stable_non_empty_prefix() -> None:
+    """A missing top-level field has no JSON path segment of its own; it still gets a prefix."""
+    bad = copy.deepcopy(EXAMPLE)
+    del bad["_type"]
+    errs = validate(bad)
+    assert any(e.startswith("(root): ") and "_type" in e for e in errs)
 
 
 def test_attribute_that_does_not_apply_to_the_kind_must_be_not_applicable() -> None:
