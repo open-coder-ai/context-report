@@ -26,7 +26,12 @@ from context_report.run.manifest import MODE_LEAVE_ONE_OUT, Manifest, ModelRef, 
 
 ANTHROPIC = "anthropic"
 CLAUDE_CLI = "claude-cli"
-PROVIDERS = (ANTHROPIC, CLAUDE_CLI)  # the API with a key; the local Claude Code CLI with its login
+OPENAI_COMPATIBLE = "openai-compatible"
+PROVIDERS = (
+    ANTHROPIC,
+    CLAUDE_CLI,
+    OPENAI_COMPATIBLE,
+)  # the API with a key; the local Claude Code CLI with its login
 MANIFEST_FILENAME = "manifest.json"
 SUMMARY_FILENAME = "SUMMARY.md"
 
@@ -46,11 +51,25 @@ def default_asker_factory(
         from context_report.efficacy.cli_backend import CliAsker  # noqa: PLC0415
 
         return CliAsker(model=model.id, cwd=cwd)  # no effort knob; the judge runs as-is
-    return ApiAsker(model.id, effort=effort)  # the API has no filesystem: cwd is rejected upstream
+    if model.provider == OPENAI_COMPATIBLE:
+        from context_report.efficacy.openai_backend import OpenAICompatibleAsker  # noqa: PLC0415
+
+        return OpenAICompatibleAsker(model.id, model.base_url or "", model.api_key_env)
+    return ApiAsker(model.id, effort=effort)  # an API has no filesystem: cwd is rejected upstream
 
 
 def _today() -> str:
     return datetime.now(timezone.utc).date().isoformat()
+
+
+def _model_doc(model: ModelRef) -> dict[str, Any]:
+    """A model reference as the manifest wrote it: never the key, only the variable's name."""
+    doc: dict[str, Any] = {"provider": model.provider, "id": model.id}
+    if model.base_url:
+        doc["baseUrl"] = model.base_url
+    if model.api_key_env:
+        doc["apiKeyEnv"] = model.api_key_env
+    return doc
 
 
 def _resolved_manifest_doc(manifest: Manifest) -> dict[str, Any]:
@@ -68,7 +87,7 @@ def _resolved_manifest_doc(manifest: Manifest) -> dict[str, Any]:
             for s in manifest.subjects
         ],
         "target": {"name": manifest.target.name, "clientVersion": manifest.target.client_version},
-        "models": [{"provider": m.provider, "id": m.id} for m in manifest.models],
+        "models": [_model_doc(m) for m in manifest.models],
         "tasks": [
             {
                 "id": t.id,
@@ -84,9 +103,7 @@ def _resolved_manifest_doc(manifest: Manifest) -> dict[str, Any]:
             "seed": manifest.arms.seed,
             "mode": manifest.arms.mode,
         },
-        "judge": {"provider": manifest.judge.provider, "id": manifest.judge.id}
-        if manifest.judge
-        else None,
+        "judge": _model_doc(manifest.judge) if manifest.judge else None,
         "out": str(manifest.out),
     }
 
@@ -106,11 +123,11 @@ def preflight(manifest: Manifest) -> None:
             f"no backend for judge provider {manifest.judge.provider!r} in v0.1 (have {PROVIDERS})"
         )
     with_workdir = [s.id for s in manifest.subjects if s.workdir is not None]
-    api_models = [m.qualified for m in manifest.models if m.provider == ANTHROPIC]
+    api_models = [m.qualified for m in manifest.models if m.provider != CLAUDE_CLI]
     if with_workdir and api_models:
         raise RunError(
-            f"subjects {with_workdir} set a workdir, which the {ANTHROPIC!r} provider cannot "
-            f"honour (no filesystem behind the API); use {CLAUDE_CLI!r} for {api_models}"
+            f"subjects {with_workdir} set a workdir, which only the {CLAUDE_CLI!r} provider can "
+            f"honour (an API has no filesystem); {api_models} would answer without it"
         )
 
 

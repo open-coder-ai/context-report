@@ -33,6 +33,8 @@ class Subject:
 class ModelRef:
     provider: str
     id: str
+    base_url: str | None = None  # openai-compatible: where the endpoint lives
+    api_key_env: str | None = None  # openai-compatible: env var holding the bearer key, if any
 
     @property
     def slug(self) -> str:
@@ -150,6 +152,20 @@ def _inside(path: Path, root: Path) -> bool:
     return True
 
 
+OPENAI_COMPATIBLE = "openai-compatible"
+
+
+def _model_ref(raw: dict[str, Any]) -> ModelRef:
+    """One `{provider, id, baseUrl?, apiKeyEnv?}`; an openai-compatible entry must say where."""
+    ref = ModelRef(raw["provider"], raw["id"], raw.get("baseUrl"), raw.get("apiKeyEnv"))
+    if ref.provider == OPENAI_COMPATIBLE and not ref.base_url:
+        raise ManifestError(
+            f"model {ref.qualified!r}: provider {OPENAI_COMPATIBLE!r} needs a baseUrl "
+            "(the server's API root, e.g. https://api.openai.com/v1)"
+        )
+    return ref
+
+
 def _subject(base: Path, raw: dict[str, Any]) -> Subject:
     """One `subjects[]` entry, paths resolved against the manifest and checked to exist."""
     p = _resolve(base, raw["path"])
@@ -209,14 +225,14 @@ def load(path: str | Path) -> Manifest:
     return Manifest(
         subjects=tuple(subjects),
         target=Target(target_raw["name"], target_raw.get("clientVersion")),
-        models=tuple(ModelRef(m["provider"], m["id"]) for m in doc["models"]),
+        models=tuple(_model_ref(m) for m in doc["models"]),
         tasks=tuple(tasks),
         arms=Arms(
             n_per_arm=arms_raw["nPerArm"],
             seed=arms_raw.get("seed", 0),
             mode=arms_raw.get("mode", MODE_ISOLATED),
         ),
-        judge=ModelRef(judge_raw["provider"], judge_raw["id"]) if judge_raw else None,
+        judge=_model_ref(judge_raw) if judge_raw else None,
         out=out,
         source=source,
     )

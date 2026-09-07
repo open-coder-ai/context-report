@@ -7,7 +7,9 @@
   "target": {"name": "claude_code", "clientVersion": "2.1.0"},
   "models": [
     {"provider": "anthropic", "id": "claude-sonnet-5"},
-    {"provider": "anthropic", "id": "claude-haiku-4-5-20251001"}
+    {"provider": "claude-cli", "id": "opus"},
+    {"provider": "openai-compatible", "id": "gpt-4.1", "baseUrl": "https://api.openai.com/v1", "apiKeyEnv": "OPENAI_API_KEY"},
+    {"provider": "openai-compatible", "id": "gemma3", "baseUrl": "http://localhost:11434/v1"}
   ],
   "tasks": "evals",
   "arms": {"nPerArm": 20, "seed": 7, "mode": "isolated"},

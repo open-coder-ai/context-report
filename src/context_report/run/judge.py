@@ -18,7 +18,7 @@ from context_report.run.evalcases import checkers_for
 from context_report.run.layout import resolve_run_dir
 from context_report.run.manifest import Manifest, ModelRef
 from context_report.run.manifest import load as load_manifest
-from context_report.run.runner import PROVIDERS
+from context_report.run.runner import OPENAI_COMPATIBLE, PROVIDERS
 from context_report.statement import now_utc
 from context_report.statement import validate as validate_statement
 
@@ -137,12 +137,14 @@ def _judge_one(
     return JudgeOutcome(ref.subject_id, model, judged=True, message="judged", row=row.to_dict())
 
 
-def judge_out(
+def judge_out(  # noqa: PLR0913 -- keyword-only; an openai-compatible judge needs its endpoint
     out: Path,
     judge_spec: str,
     *,
     asker_factory: AskerFactory = _default_asker_factory,
     run_id: str | None = None,
+    base_url: str | None = None,
+    api_key_env: str | None = None,
 ) -> tuple[list[JudgeOutcome], int]:
     """Grade every recorded statement of one run under `out` (the latest unless `run_id`).
 
@@ -150,9 +152,11 @@ def judge_out(
     a non-anthropic model) -- only when *nothing at all* could be judged does it become 1.
     """
     provider, model_id = parse_judge_ref(judge_spec)  # before anything: no manifest, no asker
+    if provider == OPENAI_COMPATIBLE and not base_url:
+        raise ValueError(f"--judge {judge_spec!r} needs --base-url (the server's API root)")
     out = resolve_run_dir(out, run_id)
     manifest = load_manifest(out / "manifest.json")
-    aj = AskerJudge(asker_factory(ModelRef(provider, model_id)))
+    aj = AskerJudge(asker_factory(ModelRef(provider, model_id, base_url, api_key_env)))
     judge_model = f"{provider}/{model_id}"
     outcomes = [
         _judge_one(manifest, ref, judge_model, aj) for ref in _statement_files(out, manifest)

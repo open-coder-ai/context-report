@@ -71,9 +71,13 @@
       "type": "object",
       "additionalProperties": false,
       "required": ["provider", "id"],
+      "if": {"properties": {"provider": {"const": "openai-compatible"}}},
+      "then": {"required": ["provider", "id", "baseUrl"]},
       "properties": {
         "provider": {"type": "string", "minLength": 1},
-        "id": {"type": "string", "minLength": 1}
+        "id": {"type": "string", "minLength": 1},
+        "baseUrl": {"description": "openai-compatible only: the server's API root, e.g. https://api.openai.com/v1 or http://localhost:11434/v1.", "type": "string", "pattern": "^https?://"},
+        "apiKeyEnv": {"description": "openai-compatible only: name of the environment variable holding the bearer key; omit for a local server.", "type": "string", "minLength": 1}
       }
     },
     "taskFile": {
