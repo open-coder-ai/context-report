@@ -41,10 +41,14 @@ proof an artifact works everywhere. The fault rows for what a real client does o
 timeout are `NotAvailable` in v0.1 — it does not yet drive a live client, and says so rather than
 guessing from documentation.
 
-**Try it in five minutes**: `pip install -e ".[dev]"` from a checkout, then
+**Try it in five minutes**: `pip install context-report` (0.1.0 is on PyPI), then
 `context-report produce --subject ./your-artifact --kind plugin --target claude_code --n 20
 --out report.json` produces a statement against your own plugin, hook, or instruction file; `context-report
-verify report.json --subject ./your-artifact` checks it against the schema.
+verify report.json --subject ./your-artifact` checks it against the schema. The same functions are
+a Python library (`from context_report import produce_statement, verify`) for a catalog or CI job.
+A run manifest lines up any model you can reach: Anthropic, the `claude` CLI, or any
+OpenAI-compatible endpoint, hosted or local, with a `baseUrl`; every run is kept and the history
+renders side by side so you can see what a change to the artifact did.
 
 **How to help**: measure your own artifact and open the resulting statement as a PR to
 `spec/attestation/v0.1/examples/`; add a target agent's payload shape to
@@ -77,4 +81,5 @@ Every row is `re-derivable` (a catalog can recompute it) or `claimed` (labeled, 
 no thresholds, no certification, just facts.
 Measured 88 bundles, 18 public plugins, and 7 instruction files so far — three plugins turned out
 unreachable (exit 126, no execute bit) and every hook allowed malformed input.
+`pip install context-report` to try it on your own artifact.
 Repo: https://github.com/open-coder-ai/context-report — spec feedback and your own reports welcome.

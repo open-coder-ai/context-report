@@ -22,7 +22,7 @@ whole (the consumer sets its own thresholds).
 ## 30-second quickstart
 
 ```bash
-pip install context-report            # once published; today: pip install -e ".[dev]" from a checkout
+pip install context-report            # 0.1.0 on PyPI; pip install -e ".[dev]" from a checkout to hack on it
 context-report produce --subject ./my-plugin --kind plugin --target claude_code --n 20 \
   --out report.json                   # one statement: reachability, cost and fault rows for one target
 context-report run run.json           # a whole manifest: subjects x models x tasks in one shot
