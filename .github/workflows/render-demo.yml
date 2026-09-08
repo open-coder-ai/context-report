@@ -1,0 +1,45 @@
+name: Render demo GIF
+# Dispatch-only: this never commits to main (protected), it just proves docs/assets/demo.gif is
+# reproducible from docs/assets/demo.tape. Download the demo-gif artifact and commit it by hand.
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  render:
+    name: Render docs/assets/demo.tape
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
+        with:
+          python-version: "3.12"
+      - run: pip install .
+      # No verified pin for charmbracelet/vhs-action was available to this change (see the PR
+      # description's Deviations); this reproduces the same tape with the plain VHS binary
+      # instead, using the release URL already pinned in docs/README-refresh's render recipe.
+      - name: Install ttyd, ffmpeg and vhs
+        # Checksum from charmbracelet/vhs's own v0.10.0 release checksums.txt -- verified before
+        # this pin was added; a corrupted or substituted download fails the sha256sum check below.
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ttyd ffmpeg
+          curl -sSL -o /tmp/vhs.tgz https://github.com/charmbracelet/vhs/releases/download/v0.10.0/vhs_0.10.0_Linux_x86_64.tar.gz
+          echo "b552c3870aca101dcafe533cfef32dceb7b783400ad32642e728775c9f125407  /tmp/vhs.tgz" | sha256sum -c -
+          tar xzf /tmp/vhs.tgz -C /tmp
+          sudo install -m 0755 /tmp/vhs_0.10.0_Linux_x86_64/vhs /usr/local/bin/vhs
+      - name: Render as a non-root user (Chromium refuses to run as root)
+        run: |
+          sudo useradd -m vhsuser
+          sudo chmod -R a+rX "$PWD"
+          sudo chmod 777 docs/assets
+          sudo su vhsuser -c "cd $PWD && vhs docs/assets/demo.tape"
+          sudo chown "$(id -u)":"$(id -g)" docs/assets/demo.gif
+          sudo chmod 755 docs/assets
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7
+        with:
+          name: demo-gif
+          path: docs/assets/demo.gif
