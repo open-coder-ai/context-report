@@ -5,6 +5,13 @@ Per in-toto convention, `0.X` versions are major: fields may change until 1.0.
 
 ## Unreleased
 
+### Docs
+
+- README: a rendered `produce`/`verify` demo GIF (`docs/assets/demo.tape`, reproducible via
+  `.github/workflows/render-demo.yml`), a quickstart with real `report.json` rows verified in CI
+  (`tools/quickstart_block.py`, `.github/workflows/ci.yml`'s `quickstart` job), and a Supported
+  agents table.
+
 ### Added
 
 - `openai-compatible` provider for `models[]` and `judge`: any server speaking the OpenAI

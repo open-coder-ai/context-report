@@ -1,10 +1,21 @@
-# context-report
+<div align="center">
+
+<h1>context-report</h1>
+
+<p><b>An open, signed report format for whether an agent context artifact actually works.</b></p>
 
 [![CI](https://github.com/open-coder-ai/context-report/actions/workflows/ci.yml/badge.svg)](https://github.com/open-coder-ai/context-report/actions/workflows/ci.yml)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/context-report)](https://pypi.org/project/context-report/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/open-coder-ai/context-report/badge)](https://scorecard.dev/viewer/?uri=github.com/open-coder-ai/context-report)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+</div>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/assets/demo.gif" width="760" alt="Terminal recording: context-report produce measures my-plugin, a two-file Claude Code plugin bundle (a PreToolUse hook that denies a command containing &quot;destructive-pattern&quot;), for reachability, cost and fault, writing report.json; context-report verify then reprints every row's re-derivable or claimed basis and ends with the line 'well-formed and bound: True'.">
+</p>
 
 `context-report` is an open, signed report format for one question: **does this agent context
 artifact actually work?**
@@ -22,23 +33,72 @@ whole (the consumer sets its own thresholds).
 ## 30-second quickstart
 
 ```bash
-pip install context-report            # 0.1.0 on PyPI; pip install -e ".[dev]" from a checkout to hack on it
-context-report produce --subject ./my-plugin --kind plugin --target claude_code --n 20 \
-  --out report.json                   # one statement: reachability, cost and fault rows for one target
-context-report run run.json           # a whole manifest: subjects x models x tasks in one shot
-context-report compare out --history  # every run of that manifest side by side
+pip install context-report
+mkdir -p my-plugin/hooks
+cat > my-plugin/hooks/guard.py <<'PY'
+#!/usr/bin/env python3
+import json, sys
+event = json.load(sys.stdin)
+command = event.get("tool_input", {}).get("command", "")
+if "destructive-pattern" in command:
+    print(json.dumps({"decision": "deny", "reason": "blocked destructive command"}))
+sys.exit(0)
+PY
+cat > my-plugin/hooks/hooks.json <<'JSON'
+{
+  "hooks": {
+    "PreToolUse": [
+      {"hooks": [{"command": "python3", "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/guard.py"]}]}
+    ]
+  }
+}
+JSON
+context-report produce --subject ./my-plugin --kind plugin --target claude_code --n 20 --out report.json
+context-report verify report.json --subject ./my-plugin
 ```
 
-The optional `context-report[efficacy]` extra pulls in the `anthropic` client for the `efficacy`
-row (`context-report efficacy --help`). `context-report run` reads a JSON manifest matching
-[`spec/run/v0.1/schema.json`](spec/run/v0.1/schema.json) — see
-[`spec/run/v0.1/examples/run.json`](spec/run/v0.1/examples/run.json) for a worked one (two
-subjects, four models across the three providers, three tasks) — and supports `--dry-run` (rules and call budget, no model
-touched), `--n` (override `arms.nPerArm` for a smoke run), and `--resume` (continue the latest run,
-reusing every existing statement and matching transcript, calling only for the rest). Two providers
-have a backend: `anthropic` (the API) and `claude-cli` (the local `claude` CLI, so one manifest can
-compare `opus`/`sonnet`/`fable`); any other subject model gets an honest `NotAvailable` efficacy
-row instead of a guess.
+`verify` reprints each row's `basis` and `result`, then ends with `well-formed and bound: True` —
+never a "pass" for the artifact as a whole. `report.json` is one row per fact; each row's `basis`
+is **re-derivable** (anyone can recompute it from the subject) or **claimed** (the author asserts
+it). Three real rows from the `report.json` this exact block just produced:
+
+```json
+[
+  {
+    "attribute": "reachability",
+    "basis": "re-derivable",
+    "result": "FAILED",
+    "inputHash": "sha256:fc126ed825ddfeb440a0d1d5bf133780e4b275b8c4c18d1556ea5ab251405bc9",
+    "conditions": {"cwdTested": ["root", "nested", "parent", "outside"]},
+    "values": {"reachable_from": ["parent"], "unreachable_from": ["root", "nested", "outside"]}
+  },
+  {
+    "attribute": "fault.malformedOutput",
+    "basis": "re-derivable",
+    "result": "PASSED",
+    "inputHash": "sha256:85fab0cf63d9db25ab5aba6ada7d396feceb0474f3018f83c24ce542441c1a88",
+    "conditions": {"cases": ["on_malformed_json", "on_empty_stdin", "on_null_tool_input", "control_benign"]},
+    "reasoning": "exit 0 on malformed input is how a Claude Code hook fails open; whether that is acceptable is the consumer's threshold."
+  },
+  {
+    "attribute": "cost.context_tokens",
+    "basis": "re-derivable",
+    "result": "PASSED",
+    "inputHash": "sha256:8d2af315178e658732a9e48147395296f8b33277bfb7413d55ad9722053b9026",
+    "conditions": {"tokenizer": "approx-regex-v1", "files": 1},
+    "measurement": {"unit": "tokens", "n": 1, "min": 50, "max": 50, "mean": 50}
+  }
+]
+```
+
+`reachability` `FAILED` here is not a bug in the example: `${CLAUDE_PLUGIN_ROOT}` resolves to the
+relative path `./my-plugin` you passed, so the hook only starts from the one cwd where that path
+still points at the plugin — the exact failure mode the measurement below calls out.
+
+Beyond one statement at a time, `context-report run` drives a whole manifest — subjects × models ×
+tasks — and `context-report compare` puts every run of that manifest side by side; see
+[`docs/cli.md`](docs/cli.md) for the manifest schema, `--dry-run`/`--n`/`--resume`, and which
+model providers a manifest can reach.
 
 ## What a report looks like
 
@@ -102,19 +162,11 @@ a prompt-injection rule moved nothing on any model. See
 
 ## Who it's for
 
-- **An artifact author** wants a report their own CI can produce before anyone else asks for one.
-- **A catalog maintainer** wants a submission format their existing verifier can check without
-  adopting anyone else's test suite, and a `re-derivable`/`claimed` split to build a policy on.
-- **A researcher or reviewer** wants a re-derivable record of what was actually measured, not a
-  vendor's prose description of it.
-
-## Every model you can reach
-
-Subject models come from the manifest, never from code: `anthropic`, `claude-cli`, or
-`openai-compatible` with a `baseUrl`, which is any server speaking the chat-completions shape,
-hosted (OpenAI, Gemini, Mistral, Groq) or local (Ollama, vLLM, LM Studio). One manifest lines up
-every model you can reach; the API-shaped ones answer without tools or a checkout, which the run
-spec states.
+| Who | What they want |
+| :--- | :--- |
+| An artifact author | a report their own CI can produce before anyone else asks for one |
+| A catalog maintainer | a submission format their existing verifier can check without adopting anyone else's test suite, and a `re-derivable`/`claimed` split to build a policy on |
+| A researcher or reviewer | a re-derivable record of what was actually measured, not a vendor's prose description of it |
 
 ## Two models, not one
 
@@ -122,6 +174,19 @@ Efficacy needs two roles, never one: the **subject model** runs a task with the 
 without it; the **judge model** never performs the task, only reads the transcript and decides
 whether that arm met the rule's criterion, held fixed across every subject model so a comparison
 across models is fair. A machine-checkable criterion is graded by code instead, never guessed at.
+
+Subject models come from the manifest, never from code — one manifest lines up every model you can
+reach, the API-shaped ones answering without tools or a checkout:
+
+| Provider | What it reaches |
+| :--- | :--- |
+| `anthropic` | the Anthropic API |
+| `claude-cli` | the local `claude` CLI — compares `opus`, `sonnet` and `fable` under one account login |
+| `openai-compatible` | any server speaking the chat-completions shape, given a `baseUrl`: hosted (OpenAI, Gemini, Mistral, Groq) or local (Ollama, vLLM, LM Studio) |
+| anything else | an honest `NotAvailable` efficacy row, never a guess |
+
+See [`docs/cli.md`](docs/cli.md#every-model-you-can-reach) for the full picture of what a manifest
+can reach.
 
 ## Use as a library
 
@@ -139,6 +204,22 @@ result = verify(stmt, subject_path="clone/")  # bound + schema check, never a ve
 
 See [`docs/library.md`](docs/library.md) for a full catalog-verification and CI-production example.
 
+## Supported agents
+
+`produce` drives the subject's own hook command through recorded per-target payloads — no live
+agent required. `reachability`, `cost.latency_ms` and `fault.malformedOutput` are re-derivable for
+every target below; the three fault rows that need a live client (`fault.scriptMissing`,
+`fault.interpreterMissing`, `fault.timeout`) are always `NotAvailable` in v0.1 and cite a vendor-docs
+oracle where one is on file (none yet for `codex_cli` — see
+[Good first contributions](CONTRIBUTING.md#good-first-contributions)).
+
+| Agent | What is measured | Config file |
+| :--- | :--- | :--- |
+| `claude_code` | reachability · cost · fault (malformedOutput measured; scriptMissing/interpreterMissing/timeout `NotAvailable`, oracle on file) | `hooks/hooks.json` (+ `.claude-plugin/plugin.json`) |
+| `codex_cli` | reachability · cost · fault (malformedOutput measured; scriptMissing/interpreterMissing/timeout `NotAvailable`, no oracle on file) | `hooks/hooks.json` |
+| `copilot` | reachability · cost · fault (malformedOutput measured; scriptMissing/interpreterMissing/timeout `NotAvailable`, oracle on file) | `com.github.copilot/hooks/hooks.json` |
+| `cursor` | reachability · cost · fault (malformedOutput measured; scriptMissing/interpreterMissing/timeout `NotAvailable`, oracle on file) | `hooks/hooks.json` |
+
 ## Contributing
 
 Bug reports, spec feedback, and PRs are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the
@@ -146,6 +227,10 @@ development loop and the DCO sign-off every commit needs. Discussion, spec propo
 of your own runs happen in
 [GitHub Discussions](https://github.com/open-coder-ai/context-report/discussions). See
 [SECURITY.md](SECURITY.md) to report a vulnerability privately.
+
+```bash
+python -m ruff check . && python -m ruff format --check . && python -m pytest -q
+```
 
 Scoped starting points, each naming the file it lives in, are listed under
 [Good first contributions](CONTRIBUTING.md#good-first-contributions): another target agent's
@@ -157,19 +242,17 @@ measurements. Comment on a
 keep the `Co-Authored-By` trailer if an agent helped — every diff is read in full before
 merge either way.
 
-## Part of the open-coder-ai family
+## Part of open-coder-ai
 
-Everything under [open-coder-ai](https://github.com/open-coder-ai) is built on one rule: a claim must match a
-mechanism. Where this repository sits among the others:
-
-| Repository | What it is |
-| :--- | :--- |
-| [chock](https://github.com/open-coder-ai/chock) | The framework: write a policy once, enforce it on git hooks, CI, and every agent |
-| [chock-catalog](https://github.com/open-coder-ai/chock-catalog) | The policies, each graded by what it actually enforces |
-| [agentseam](https://github.com/open-coder-ai/agentseam) | The primitives layer under chock: one handler API over every agent's hooks, with a capability matrix that carries its provenance |
-| [chock-threat-intel](https://github.com/open-coder-ai/chock-threat-intel) | A weekly, human-reviewed threat digest scored against the catalog |
-| [chock-claude-plugins](https://github.com/open-coder-ai/chock-claude-plugins) · [copilot](https://github.com/open-coder-ai/chock-copilot-plugins) · [cursor](https://github.com/open-coder-ai/chock-cursor-plugins) · [codex](https://github.com/open-coder-ai/chock-codex-plugins) | The catalog compiled into each client's native plugin format; generated only, rebuilt and diffed in CI |
-| [chock-quickstart](https://github.com/open-coder-ai/chock-quickstart) · [chock-example](https://github.com/open-coder-ai/chock-example) | Template repositories: exactly what `chock init` leaves behind, and a working adoption with one policy per layer |
+| | |
+|---|---|
+| [agentseam](https://github.com/open-coder-ai/agentseam) | the primitives — one handler API and a verified capability matrix across 16 agents |
+| [chock](https://github.com/open-coder-ai/chock) | the compiler — one policy into git hooks, CI gates and native pre-tool hooks |
+| [chock-catalog](https://github.com/open-coder-ai/chock-catalog) | the policies — 39, each labelled enforced or advisory, with replayed evals |
+| [context-report](https://github.com/open-coder-ai/context-report) | the evidence — a signed report of whether an agent artifact actually works |
+| [chock-threat-intel](https://github.com/open-coder-ai/chock-threat-intel) | the threat ledger the catalog's policies answer to |
+| chock-{claude,cursor,copilot,codex}-plugins | the catalog, packaged for each agent's plugin format (generated) |
+| chock-quickstart · chock-example | template repos: what `chock init` leaves behind, and a full adoption |
 
 ## License
 
