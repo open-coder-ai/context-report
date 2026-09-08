@@ -147,6 +147,30 @@ of your own runs happen in
 [GitHub Discussions](https://github.com/open-coder-ai/context-report/discussions). See
 [SECURITY.md](SECURITY.md) to report a vulnerability privately.
 
+Scoped starting points, each naming the file it lives in, are listed under
+[Good first contributions](CONTRIBUTING.md#good-first-contributions): another target agent's
+payload shape, `codex_cli`'s documented fault behaviour, a producer that drives a live client
+for the fault rows, `decision` replay, `interference` measurement, a real tokenizer behind a
+new `method` value, `leave-one-out` arms, and another instruction-file sample for the paper's
+measurements. Comment on a
+[`good first issue`](https://github.com/open-coder-ai/context-report/labels/good%20first%20issue) to claim it, and
+keep the `Co-Authored-By` trailer if an agent helped — every diff is read in full before
+merge either way.
+
+## Part of the open-coder-ai family
+
+Everything under [open-coder-ai](https://github.com/open-coder-ai) is built on one rule: a claim must match a
+mechanism. Where this repository sits among the others:
+
+| Repository | What it is |
+| :--- | :--- |
+| [chock](https://github.com/open-coder-ai/chock) | The framework: write a policy once, enforce it on git hooks, CI, and every agent |
+| [chock-catalog](https://github.com/open-coder-ai/chock-catalog) | The policies, each graded by what it actually enforces |
+| [agentseam](https://github.com/open-coder-ai/agentseam) | The primitives layer under chock: one handler API over every agent's hooks, with a capability matrix that carries its provenance |
+| [chock-threat-intel](https://github.com/open-coder-ai/chock-threat-intel) | A weekly, human-reviewed threat digest scored against the catalog |
+| [chock-claude-plugins](https://github.com/open-coder-ai/chock-claude-plugins) · [copilot](https://github.com/open-coder-ai/chock-copilot-plugins) · [cursor](https://github.com/open-coder-ai/chock-cursor-plugins) · [codex](https://github.com/open-coder-ai/chock-codex-plugins) | The catalog compiled into each client's native plugin format; generated only, rebuilt and diffed in CI |
+| [chock-quickstart](https://github.com/open-coder-ai/chock-quickstart) · [chock-example](https://github.com/open-coder-ai/chock-example) | Template repositories: exactly what `chock init` leaves behind, and a working adoption with one policy per layer |
+
 ## License
 
 Apache-2.0.
