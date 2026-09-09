@@ -1,0 +1,48 @@
+name: Quick start
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions: {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  # Proves the README's own quick start still works, and that docs/quickstart.sh (the same
+  # commands, committed for anyone who wants a runnable script) has not drifted from it.
+  # tools/quickstart_block.py stays the single source: this job regenerates
+  # docs/quickstart.sh from the README and diffs it before running it.
+  quickstart:
+    name: Quick start verified
+    runs-on: ubuntu-latest
+    # Reads the checkout; writes nothing (docs/quickstart.sh is checked for drift, not committed).
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
+        with:
+          python-version: "3.12"
+      # Installed from this checkout, not PyPI, so the README's own `pip install context-report`
+      # line finds itself already satisfied and does not fetch a different released version.
+      - run: pip install .
+      - name: Regenerate docs/quickstart.sh and check it matches the committed copy
+        run: |
+          {
+            printf '#!/usr/bin/env bash\n'
+            printf 'set -euo pipefail\n'
+            printf '# Generated from the README.md quickstart block by tools/quickstart_block.py. Do not edit by hand.\n'
+            python3 tools/quickstart_block.py README.md
+          } > /tmp/quickstart.sh.generated
+          if ! diff -u docs/quickstart.sh /tmp/quickstart.sh.generated; then
+            echo "::error::docs/quickstart.sh is stale -- regenerate it from README.md's quickstart block (tools/quickstart_block.py) and commit it."
+            exit 1
+          fi
+      - name: Run docs/quickstart.sh in a fresh directory
+        run: |
+          workdir=$(mktemp -d)
+          cp docs/quickstart.sh "$workdir/quickstart.sh"
+          cd "$workdir"
+          bash -euo pipefail quickstart.sh
