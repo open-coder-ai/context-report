@@ -80,16 +80,13 @@ extend-exclude = [".chock/bin/"]
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C90", "S", "BLE", "FBT", "T20", "SIM", "RET", "ARG", "ERA", "PIE", "PL", "TRY", "RUF"]
 ignore = ["TRY003", "S101"]
-# docs/figures/palette.py and make_family.py are the open-coder-ai family's shared visual
-# language, copied byte-identical from every sibling repo (block 2, BRIEF.md) and never edited
-# here. They are `ruff format`-clean at every sibling's line length (88/100/120) by construction,
-# but this repo's own PL/FBT/ARG selections still flag their helpers' multi-positional-argument
-# shape (box/text/arrow take up to 8 positional args by design; _block's boolean `filled` flag is
-# likewise deliberate) -- rules a line-width fix cannot satisfy without changing the shared API,
-# which BRIEF.md forbids doing here. Lint-only exclude; format checking stays on for both files.
-exclude = ["docs/figures/palette.py", "docs/figures/make_family.py"]
-
 [tool.ruff.lint.per-file-ignores]
+# The open-coder-ai family's shared visual language, carried byte-identical by four
+# repositories and never edited here. Its drawing primitives take many arguments because
+# they take coordinates, and a generator prints what it wrote. Ignored by name rather than
+# excluded: a blanket exclude would also hide an undefined name in a file nobody edits here.
+"docs/figures/palette.py" = ["PLR0913", "PLR0917"]
+"docs/figures/make_family.py" = ["PLR0913"]
 "tests/*" = ["PLR2004"]
 # Test doubles implement Runner/Judge Protocols by contract; unused args and terse asserts are fine.
 "tests/efficacy/*" = ["ARG002", "ARG005", "E702", "FBT002"]
