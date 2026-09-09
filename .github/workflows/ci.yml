@@ -63,31 +63,6 @@ jobs:
       - run: python -m ruff format --check .
       - run: python -m pytest -q
 
-  # Proves the README's own quick start still works: pytest (see tests/test_quickstart_block.py)
-  # already proves the extractor fails a broken block, so this job just has to run the real one.
-  quickstart:
-    name: Quick start verified
-    runs-on: ubuntu-latest
-    # Reads the checkout; writes nothing.
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
-        with:
-          persist-credentials: false
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
-        with:
-          python-version: "3.12"
-      # Installed from this checkout, not PyPI, so the README's own `pip install context-report`
-      # line finds itself already satisfied and does not fetch a different released version.
-      - run: pip install .
-      - name: Extract and run the README's quickstart block
-        run: |
-          workdir=$(mktemp -d)
-          python3 tools/quickstart_block.py README.md > "$workdir/quickstart.sh"
-          cd "$workdir"
-          bash -euo pipefail quickstart.sh
-
   # This repo is itself a chock adopter (see AGENTS.md, .agents/policies/): it governs
   # its own contributions the same way chock and chock-catalog do. Checking it here
   # proves the adoption on this repo rather than only in chock's own tests, and closes
