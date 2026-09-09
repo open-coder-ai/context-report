@@ -1,0 +1,186 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="528" viewBox="0 0 700 528" role="img" aria-labelledby="t d">
+  <title id="t">Catalog plugin status: 18 plugins by 4 measured attributes</title>
+  <desc id="d">A grid of 18 public Claude Code plugins by reachability, malformed-input handling, latency and context tokens, one cell per statement's result. Three plugins fail reachability outright; every plugin that measures malformed-input handling passes it; cells marked not-applicable (dash, neutral grey) mean the row does not apply to that plugin, not that it scored low.</desc>
+  <rect width="700" height="528" fill="#1a1a19"/>
+  <text x="16" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#c3c2b7" text-anchor="start">one cell per statement's result, from the 18-plugin catalog sample</text>
+  <text x="290" y="54" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle">reachability</text>
+  <text x="398" y="46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle">malformed</text>
+  <text x="398" y="60" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle">input</text>
+  <text x="506" y="54" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle">latency</text>
+  <text x="614" y="46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle">context</text>
+  <text x="614" y="60" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="600" fill="#ffffff" text-anchor="middle">tokens</text>
+  <text x="16" y="95" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">agentforce-adlc</text>
+  <rect x="238" y="82" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="290" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="346" y="82" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="398" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="454" y="82" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="506" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="562" y="82" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="95" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="117" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">ai-plugins</text>
+  <rect x="238" y="104" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="290" y="117" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="346" y="104" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="398" y="117" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="454" y="104" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="506" y="117" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="562" y="104" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="117" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="139" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">altimate-code</text>
+  <rect x="238" y="126" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="290" y="139" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="346" y="126" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="398" y="139" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="454" y="126" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="506" y="139" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="562" y="126" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="139" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="161" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">aws-core</text>
+  <rect x="238" y="148" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="290" y="161" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="346" y="148" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="398" y="161" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="454" y="148" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="506" y="161" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="562" y="148" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="161" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="183" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">aws-serverless</text>
+  <rect x="238" y="170" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="290" y="183" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="346" y="170" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="398" y="183" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="454" y="170" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="506" y="183" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="562" y="170" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="183" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="205" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">aws-startup-advisor</text>
+  <rect x="238" y="192" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="290" y="205" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="346" y="192" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="398" y="205" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="454" y="192" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="506" y="205" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="562" y="192" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="205" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="227" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">azure</text>
+  <rect x="238" y="214" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="290" y="227" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="346" y="214" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="398" y="227" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="454" y="214" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="506" y="227" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="562" y="214" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="227" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="249" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">carta-cap-table</text>
+  <rect x="238" y="236" width="104" height="18" rx="3" fill="#184f95"/>
+  <text x="290" y="249" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">F</text>
+  <rect x="346" y="236" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="398" y="249" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="454" y="236" width="104" height="18" rx="3" fill="#3987e5"/>
+  <text x="506" y="249" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">E</text>
+  <rect x="562" y="236" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="249" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="271" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">carta-crm</text>
+  <rect x="238" y="258" width="104" height="18" rx="3" fill="#184f95"/>
+  <text x="290" y="271" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">F</text>
+  <rect x="346" y="258" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="398" y="271" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="454" y="258" width="104" height="18" rx="3" fill="#3987e5"/>
+  <text x="506" y="271" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">E</text>
+  <rect x="562" y="258" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="271" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="293" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">carta-investors</text>
+  <rect x="238" y="280" width="104" height="18" rx="3" fill="#184f95"/>
+  <text x="290" y="293" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">F</text>
+  <rect x="346" y="280" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="398" y="293" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="454" y="280" width="104" height="18" rx="3" fill="#3987e5"/>
+  <text x="506" y="293" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#1a1a19" text-anchor="middle">E</text>
+  <rect x="562" y="280" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="293" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="315" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">protect-mcp</text>
+  <rect x="238" y="302" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="290" y="315" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="346" y="302" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="398" y="315" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="454" y="302" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="506" y="315" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="562" y="302" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="315" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="337" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">review-agent-governance</text>
+  <rect x="238" y="324" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="290" y="337" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="346" y="324" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="398" y="337" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="454" y="324" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="506" y="337" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="562" y="324" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="337" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="359" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">planning-with-files</text>
+  <rect x="238" y="346" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="290" y="359" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="346" y="346" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="398" y="359" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="454" y="346" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="506" y="359" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="562" y="346" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="359" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="381" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">42crunch-api-security-testing</text>
+  <rect x="238" y="368" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="290" y="381" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="346" y="368" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="398" y="381" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="454" y="368" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="506" y="381" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="562" y="368" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="381" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="403" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">activecampaign</text>
+  <rect x="238" y="390" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="290" y="403" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="346" y="390" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="398" y="403" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="454" y="390" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="506" y="403" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="562" y="390" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="403" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="425" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">adobe-for-creativity</text>
+  <rect x="238" y="412" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="290" y="425" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="346" y="412" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="398" y="425" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="454" y="412" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="506" y="425" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="562" y="412" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="425" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="16" y="447" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">agent-sdk-dev</text>
+  <rect x="238" y="434" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="290" y="447" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="346" y="434" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="398" y="447" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="454" y="434" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="506" y="447" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="562" y="434" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="614" y="447" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <text x="16" y="469" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="10" font-weight="400" fill="#ffffff" text-anchor="start">aikido</text>
+  <rect x="238" y="456" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="290" y="469" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="346" y="456" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="398" y="469" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="454" y="456" width="104" height="18" rx="3" fill="#383835"/>
+  <text x="506" y="469" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <rect x="562" y="456" width="104" height="18" rx="3" fill="#9ec5f4"/>
+  <text x="614" y="469" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <rect x="16" y="504" width="16" height="16" rx="3" fill="#9ec5f4"/>
+  <text x="24" y="516" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" font-weight="600" fill="#ffffff" text-anchor="middle">P</text>
+  <text x="38" y="516" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#c3c2b7" text-anchor="start">PASSED</text>
+  <rect x="183" y="504" width="16" height="16" rx="3" fill="#3987e5"/>
+  <text x="191" y="516" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" font-weight="600" fill="#1a1a19" text-anchor="middle">E</text>
+  <text x="205" y="516" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#c3c2b7" text-anchor="start">Error</text>
+  <rect x="350" y="504" width="16" height="16" rx="3" fill="#184f95"/>
+  <text x="358" y="516" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" font-weight="600" fill="#1a1a19" text-anchor="middle">F</text>
+  <text x="372" y="516" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#c3c2b7" text-anchor="start">FAILED</text>
+  <rect x="517" y="504" width="16" height="16" rx="3" fill="#383835"/>
+  <text x="525" y="516" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="9" font-weight="600" fill="#ffffff" text-anchor="middle">-</text>
+  <text x="539" y="516" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" font-weight="400" fill="#c3c2b7" text-anchor="start">n/a (not applicable)</text>
+</svg>

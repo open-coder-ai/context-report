@@ -80,6 +80,14 @@ extend-exclude = [".chock/bin/"]
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C90", "S", "BLE", "FBT", "T20", "SIM", "RET", "ARG", "ERA", "PIE", "PL", "TRY", "RUF"]
 ignore = ["TRY003", "S101"]
+# docs/figures/palette.py and make_family.py are the open-coder-ai family's shared visual
+# language, copied byte-identical from every sibling repo (block 2, BRIEF.md) and never edited
+# here. They are `ruff format`-clean at every sibling's line length (88/100/120) by construction,
+# but this repo's own PL/FBT/ARG selections still flag their helpers' multi-positional-argument
+# shape (box/text/arrow take up to 8 positional args by design; _block's boolean `filled` flag is
+# likewise deliberate) -- rules a line-width fix cannot satisfy without changing the shared API,
+# which BRIEF.md forbids doing here. Lint-only exclude; format checking stays on for both files.
+exclude = ["docs/figures/palette.py", "docs/figures/make_family.py"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["PLR2004"]
@@ -96,3 +104,9 @@ ignore = ["TRY003", "S101"]
 # Chock policy-authoring skill template: a runnable stub scaffolded into new policies,
 # printing is its whole point. Matches chock's own per-file-ignore for the same file.
 ".agents/skills/policy-init/assets/templates/scripts-stub.py" = ["T201"]
+# Figure generators (block 2, BRIEF.md): run by hand or in CI's figures job, never imported;
+# each prints what it wrote/computed, same pattern as the shared make_family.py above (excluded
+# rather than ignored, since that file cannot be edited here). make_social_card.py's cairosvg
+# import is deferred so the CI figures job -- which never installs cairosvg, see its docstring --
+# can still regenerate the SVG and skip only the PNG step.
+"docs/figures/make_*.py" = ["T201", "PLC0415"]
