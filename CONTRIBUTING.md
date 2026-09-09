@@ -14,6 +14,37 @@ You do **not** need to write Python to make a real difference here:
   ambiguous `basis` case, a `NotApplicable` reason that isn't actionable.
 - **Ideas & feedback** — start a [Discussion](https://github.com/open-coder-ai/context-report/discussions). Telling us what's confusing *is* a contribution.
 
+## The ladder
+
+Contributions here get larger in one direction, and you can stop at any rung:
+
+1. **An evidence report** — run a probe, paste what actually happened. No code, and it is the
+   most useful thing a newcomer can do, because a claim nobody re-ran is just a claim. In this
+   repo that rung is not an analogy: an evidence report *is* the product. Run
+   `context-report produce --subject <path> --kind plugin --target claude_code --n 20 --out
+   report.json` against any public plugin, then `context-report verify report.json --subject
+   <path>` — the README's whole 30-second quickstart — and open the resulting `report.json` as an
+   issue or a PR. That is rung 1, done.
+2. **An eval case** — an input that should be caught, or should not be, with the expected
+   verdict. This is how a guard stops regressing.
+3. **A policy** — a rule plus the mechanism that enforces it, honestly labelled as enforced or
+   advisory.
+4. **An adapter** — support for one more agent, matched to what that agent's hooks can really do.
+   Here that means one more target entry in `src/context_report/data/payloads-v0.1.json` and
+   `bundle-layout-v0.1.json` (a target agent's plugin-bundle layout), or one more `Asker` backend
+   registered in `PROVIDERS` in `src/context_report/run/runner.py` (a model `run` and `judge` can
+   actually reach).
+5. **Review** — reading someone else's evidence and saying whether it holds.
+
+**Becoming a maintainer:** three merged pull requests earns triage rights — labelling, closing
+duplicates, and asking for the evidence a report is missing. Nobody is asked to commit to more
+than they want to.
+
+This project runs its own chock policies (`.chock/`, the same `protect-main-branch` rule
+dogfooded below) plus DCO sign-off, on every pull request, and that pair is the filter for
+low-effort machine-generated contributions — not a human gatekeeper. A PR that cannot say what it
+checked will not pass, whoever or whatever wrote it.
+
 ## Development setup
 
 ```bash
@@ -163,6 +194,11 @@ Browse issues by label to find your entry point:
 - [`help wanted`](https://github.com/open-coder-ai/context-report/labels/help%20wanted) — we'd love a hand.
 - `bug` — confirmed defects.
 - `documentation` — no code required.
+
+The [open, seeded good-first-issue
+list](https://github.com/open-coder-ai/context-report/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+is maintained separately from this file — expect the kind of thing in "Good first contributions"
+below: a missing target's payload shape, a citation to source, a `NotAvailable` row worth closing.
 
 Comment on an issue to claim it — we'll assign it to you so no one double-works.
 

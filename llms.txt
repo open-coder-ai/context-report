@@ -1,0 +1,58 @@
+# context-report
+
+> An open, signed report format for whether an agent context artifact — a plugin, an
+> `AGENTS.md`, a skill, a hook, an MCP server — actually works.
+
+`context-report` is a predicate an author's CI produces and a catalog verifies at submission:
+one row per fact (`reachability`, `cost`, `fault.*`, `interference`, `efficacy`, ...), each
+declaring its `basis` as `re-derivable` (anyone can recompute it from the subject) or `claimed`
+(the author asserts it) — never a single pass/fail for the artifact as a whole. `produce` runs the
+measurement, `verify` reprints the report and checks its hashes, and `run`/`compare` drive whole
+manifests of subjects × models × tasks over time.
+
+License: Apache-2.0. Status: pre-1.0 (`v0.1`) — the schema, CLI surface, and row set can change
+between MINOR releases; see the Compatibility note in the spec READMEs below.
+
+## Docs
+
+- [README](https://github.com/open-coder-ai/context-report/blob/main/README.md): the problem,
+  the 30-second quickstart, a real report's anatomy, and the three headline findings from the
+  measurement paper.
+- [CONTRIBUTING](https://github.com/open-coder-ai/context-report/blob/main/CONTRIBUTING.md): the
+  contribution ladder from an evidence report to review, development setup, branch/PR workflow,
+  and the DCO + chock policy pair every PR must pass.
+- [CONVENTIONS](https://github.com/open-coder-ai/context-report/blob/main/CONVENTIONS.md): house
+  style — docstrings, templating (`__TOKEN__` placeholders, never f-strings), where facts about
+  the world live versus code.
+- [AGENTS](https://github.com/open-coder-ai/context-report/blob/main/AGENTS.md): the same
+  conventions distilled for an agent working in this repo.
+- [SECURITY](https://github.com/open-coder-ai/context-report/blob/main/SECURITY.md): supported
+  versions and how to report a vulnerability.
+- [GOVERNANCE](https://github.com/open-coder-ai/context-report/blob/main/GOVERNANCE.md): solo
+  maintainer, decision-making, and the succession plan if the maintainer disappears.
+- [CHANGELOG](https://github.com/open-coder-ai/context-report/blob/main/CHANGELOG.md): every
+  user-visible behavior change, one entry each.
+
+## Spec
+
+- [attestation/v0.1 README](https://github.com/open-coder-ai/context-report/blob/main/spec/attestation/v0.1/README.md):
+  normative spec for the report predicate itself — what each field means, what a producer or
+  verifier MUST/SHOULD/MAY do; the schema at `schema.json` is authoritative over this prose.
+- [run/v0.1 README](https://github.com/open-coder-ai/context-report/blob/main/spec/run/v0.1/README.md):
+  normative spec for the `run` manifest — subjects, target agent, subject models, tasks, arms.
+
+## CLI and library
+
+- [docs/cli.md](https://github.com/open-coder-ai/context-report/blob/main/docs/cli.md): `run` and
+  `compare` — manifest shape, `--dry-run`/`--n`/`--resume`, and the three model providers
+  (`anthropic`, `claude-cli`, `openai-compatible`) a manifest can reach.
+- [docs/library.md](https://github.com/open-coder-ai/context-report/blob/main/docs/library.md):
+  using `context-report` as a library — the public function surface a catalog or CI job can call
+  directly instead of shelling out.
+
+## Method
+
+- [paper/context-report.md](https://github.com/open-coder-ai/context-report/blob/main/paper/context-report.md):
+  the measurement paper — method, the three findings from running the reference producer over
+  chock's bundles, 18 public plugins, and seven instruction files/skills, and what v0.1 still
+  cannot measure.
