@@ -95,6 +95,14 @@ it). Three real rows from the `report.json` this exact block just produced:
 relative path `./my-plugin` you passed, so the hook only starts from the one cwd where that path
 still points at the plugin — the exact failure mode the measurement below calls out.
 
+The full statement has 11 rows, not 3 — every row's basis, from this exact quickstart block run
+fresh:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/fig-row-basis-dark.svg">
+  <img alt="Of 11 rows in the report.json this quickstart block produces, 3 are recomputed from the artifact, 1 is the author's unverified claim, and 7 have not been measured this run — shown as absence of evidence, not a weak score." src="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/fig-row-basis-light.svg" width="760">
+</picture>
+
 Beyond one statement at a time, `context-report run` drives a whole manifest — subjects × models ×
 tasks — and `context-report compare` puts every run of that manifest side by side; see
 [`docs/cli.md`](docs/cli.md) for the manifest schema, `--dry-run`/`--n`/`--resume`, and which
@@ -143,7 +151,10 @@ skills. Three findings from that run:
 `FAILED, 0 of 4`, exit 126. Every hook that runs, across both samples, allows on malformed input.
 See [§5.2](paper/context-report.md#52-top-n-catalog-plugins).
 
-![Eighteen plugins by four measured attributes](paper/figures/fig-catalog-status.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/fig-catalog-status-dark.svg">
+  <img alt="Grid of 18 catalog plugins by 4 measured attributes: three plugins fail reachability outright, every plugin that measures malformed-input handling passes it, and not-applicable cells are shown as a neutral dash, never a low score." src="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/fig-catalog-status-light.svg" width="760">
+</picture>
 
 **Cost spans two orders of magnitude.** Hooks that shell out to `npx` cost 916.8–941.5 ms p50; a
 local script costs 7.3–53.9 ms. Context weight varies about a hundredfold across the sample,
@@ -243,6 +254,11 @@ keep the `Co-Authored-By` trailer if an agent helped — every diff is read in f
 merge either way.
 
 ## Part of open-coder-ai
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/family-dark.svg">
+  <img alt="The open-coder-ai family: agentseam is the foundation, chock sits on it, chock-catalog feeds chock and generates the four plugin repositories, chock-threat-intel feeds the catalog, and context-report runs as a verification arm measuring all four." src="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/family-light.svg" width="800">
+</picture>
 
 | | |
 |---|---|

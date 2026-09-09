@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="320" viewBox="0 0 700 320" role="img" aria-labelledby="t d">
+  <title id="t">Row bases in one context-report statement</title>
+  <desc id="d">Of 11 rows in the report.json the README's own quickstart block produces fresh, 3 are recomputed from the artifact, 1 is the author's unverified claim, and 7 have not been measured this run -- shown as absence of evidence, not a weak score.</desc>
+  <rect width="700" height="320" fill="#1a1a19"/>
+  <pattern id="hatch-dark" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+    <rect width="6" height="6" fill="#383835"/>
+    <line x1="0" y1="0" x2="0" y2="6" stroke="#1a1a19" stroke-width="2"/>
+  </pattern>
+  <text x="16" y="26" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#c3c2b7" text-anchor="start">report.json from the README's quickstart, run fresh -- 11 rows total</text>
+  <text x="16" y="48" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="start">recomputed from the artifact</text>
+  <text x="16" y="63" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#c3c2b7" text-anchor="start">re-derivable, and a real result was measured</text>
+  <rect x="16" y="70" width="286.286" height="20" rx="3" fill="#184f95"/>
+  <text x="294.286" y="84" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#1a1a19" text-anchor="end">3</text>
+  <text x="16" y="120" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="start">the author's claim</text>
+  <text x="16" y="135" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#c3c2b7" text-anchor="start">basis: claimed -- not independently checked this run</text>
+  <rect x="16" y="142" width="95.4286" height="20" rx="3" fill="#9ec5f4"/>
+  <text x="103.429" y="156" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="end">1</text>
+  <text x="16" y="192" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="start">not measured this run</text>
+  <text x="16" y="207" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#c3c2b7" text-anchor="start">re-derivable in principle; NotAvailable/Error here</text>
+  <rect x="16" y="214" width="668" height="20" rx="3" fill="url(#hatch-dark)"/>
+  <text x="676" y="228" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="end">7</text>
+  <text x="16" y="306" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" font-weight="400" fill="#c3c2b7" text-anchor="start">ordered by strength of evidence: recomputed &gt; claimed &gt; not measured (absence, not a lower grade)</text>
+</svg>

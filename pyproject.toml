@@ -80,8 +80,13 @@ extend-exclude = [".chock/bin/"]
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C90", "S", "BLE", "FBT", "T20", "SIM", "RET", "ARG", "ERA", "PIE", "PL", "TRY", "RUF"]
 ignore = ["TRY003", "S101"]
-
 [tool.ruff.lint.per-file-ignores]
+# The open-coder-ai family's shared visual language, carried byte-identical by four
+# repositories and never edited here. Its drawing primitives take many arguments because
+# they take coordinates, and a generator prints what it wrote. Ignored by name rather than
+# excluded: a blanket exclude would also hide an undefined name in a file nobody edits here.
+"docs/figures/palette.py" = ["PLR0913", "PLR0917"]
+"docs/figures/make_family.py" = ["PLR0913"]
 "tests/*" = ["PLR2004"]
 # Test doubles implement Runner/Judge Protocols by contract; unused args and terse asserts are fine.
 "tests/efficacy/*" = ["ARG002", "ARG005", "E702", "FBT002"]
@@ -96,3 +101,9 @@ ignore = ["TRY003", "S101"]
 # Chock policy-authoring skill template: a runnable stub scaffolded into new policies,
 # printing is its whole point. Matches chock's own per-file-ignore for the same file.
 ".agents/skills/policy-init/assets/templates/scripts-stub.py" = ["T201"]
+# Figure generators (block 2, BRIEF.md): run by hand or in CI's figures job, never imported;
+# each prints what it wrote/computed, same pattern as the shared make_family.py above (excluded
+# rather than ignored, since that file cannot be edited here). make_social_card.py's cairosvg
+# import is deferred so the CI figures job -- which never installs cairosvg, see its docstring --
+# can still regenerate the SVG and skip only the PNG step.
+"docs/figures/make_*.py" = ["T201", "PLC0415"]

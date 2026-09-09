@@ -102,3 +102,27 @@ jobs:
         run: |
           chock check
           chock sync --repo . --check
+
+  # A stale generated figure fails the build: regenerate every docs/figures/*.svg and diff against
+  # what is committed. make_row_basis.py and make_social_card.py both shell out to the README's
+  # own quickstart block (see tools/quickstart_block.py) to draw their numbers from a real,
+  # freshly produced report.json, so context-report itself must be installed first.
+  figures:
+    name: Generated figures are not stale
+    runs-on: ubuntu-latest
+    # Reads the checkout; writes nothing (the regenerated files are diffed, never pushed).
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
+        with:
+          python-version: "3.12"
+      - run: pip install --require-hashes -r requirements/ci.txt
+      - run: pip install --no-deps -e .
+      - name: Regenerate figures
+        run: cd docs/figures && for g in make_*.py; do python "$g"; done
+      - name: Fail on drift
+        run: git diff --exit-code -- docs/figures

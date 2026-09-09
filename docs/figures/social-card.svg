@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="t d">
+  <title id="t">context-report</title>
+  <desc id="d">context-report: an open, signed report of whether an agent context artifact actually works. 3 of 11 rows recomputed from the artifact, fresh.</desc>
+  <rect width="1280" height="640" fill="#fcfcfb"/>
+  <rect x="0" y="0" width="14" height="640" rx="0" fill="#104281"/>
+  <text x="72" y="260" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="64" font-weight="600" fill="#0b0b0b" text-anchor="start">context-report</text>
+  <text x="72" y="320" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="26" font-weight="400" fill="#52514e" text-anchor="start">an open, signed report of whether an agent context artifact actually works</text>
+  <rect x="72" y="380" width="760" height="3" rx="0" fill="#d8d7d2"/>
+  <text x="72" y="440" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace" font-size="30" font-weight="600" fill="#104281" text-anchor="start">3 of 11 rows recomputed from the artifact, fresh</text>
+</svg>
