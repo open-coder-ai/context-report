@@ -5,6 +5,18 @@ Per in-toto convention, `0.X` versions are major: fields may change until 1.0.
 
 ## Unreleased
 
+### CI
+
+- `.github/workflows/render-demo.yml` renamed to `demo-gif.yml`: the `workflow_dispatch`
+  trigger still renders and uploads the `demo-gif` artifact, and a new `push` trigger (on
+  `docs/assets/demo.tape`, non-default branches only) renders and commits the regenerated GIF
+  back to the branch, since `main` is protected with no bypass and cannot receive a workflow
+  push directly.
+- The `quickstart` job moved out of `ci.yml` into its own `.github/workflows/quickstart.yml`
+  (`push`, `pull_request`). It still extracts and runs the README's fenced quickstart block via
+  `tools/quickstart_block.py`, and now also regenerates `docs/quickstart.sh` from that block and
+  fails if the committed copy has drifted, so the README stays the single source.
+
 ### Docs
 
 - README: a rendered `produce`/`verify` demo GIF (`docs/assets/demo.tape`, reproducible via
