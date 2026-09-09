@@ -56,14 +56,16 @@ def _produce_fresh_report() -> dict:
         repo_src + os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else repo_src
     )
     with tempfile.TemporaryDirectory() as workdir:
-        subprocess.run(  # noqa: S602 -- fixed, repo-owned script; same command the README documents
-            block,
-            shell=True,
+        # bash is invoked directly rather than through a shell: the block is repo-owned,
+        # but shell=True propagates the caller's shell settings for no benefit here, and
+        # -euo pipefail matches exactly how CI's quickstart job runs the same block.
+        subprocess.run(  # noqa: S603 -- argv is literal but for `block`, read from this
+            # repo's own README at the commit being generated; there is no external input.
+            ["/bin/bash", "-euo", "pipefail", "-c", block],
             cwd=workdir,
             check=True,
             capture_output=True,
             text=True,
-            executable="/bin/bash",
             env=env,
         )
         return json.loads((Path(workdir) / "report.json").read_text(encoding="utf-8"))
