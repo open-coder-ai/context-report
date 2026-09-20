@@ -57,6 +57,40 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/usr/local/bin/python3\" \".chock/bin/antigravity.py\" --gate \".chock/compiled/block-invisible-unicode/stop/gate.json\""
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/usr/local/bin/python3\" \".chock/bin/antigravity.py\" --gate \".chock/compiled/block-wildcard-agent-permissions/stop/gate.json\""
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/usr/local/bin/python3\" \".chock/bin/antigravity.py\" --gate \".chock/compiled/pin-github-actions/stop/gate.json\""
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/usr/local/bin/python3\" \".chock/bin/antigravity.py\" --gate \".chock/compiled/scan-secrets/stop/gate.json\""
+          }
+        ]
+      }
     ]
   }
 }
