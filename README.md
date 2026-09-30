@@ -285,10 +285,10 @@ oracle where one is on file (none yet for `codex_cli` — see
 
 ## Part of open-coder-ai
 
-`context-report` is the evidence arm of a family of security guardrails for coding agents. Chock
-refuses the dangerous action before it lands — as a git hook, a CI gate, or the agent's own
-pre-tool hook; `context-report` measures whether such a guard actually starts, how it fails and
-what it costs. *A rule an agent reads is advice. A hook that exits non-zero is a control.*
+`context-report` is the evidence arm of a family that brings application security to the code AI
+agents write: Chock checks that code at the agent's own hook where the client has one, and again
+at commit and in CI; `context-report` is the supply-chain evidence for the agent context those
+guards ship as — whether a guard actually starts, how it fails and what it costs. *A rule an agent reads is advice. A hook that exits non-zero is a control.*
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/family-dark.svg">
