@@ -2,7 +2,9 @@
 
 <h1>context-report</h1>
 
-<p><b>An open, signed report format for whether an agent context artifact actually works.</b></p>
+<p><b>Supply-chain trust for agent context.</b><br>
+A signed, re-derivable report of whether an agent plugin, hook, skill, <code>AGENTS.md</code> or MCP
+server actually works — and how it fails when it doesn't.</p>
 
 [![CI](https://github.com/open-coder-ai/context-report/actions/workflows/ci.yml/badge.svg)](https://github.com/open-coder-ai/context-report/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/context-report)](https://pypi.org/project/context-report/)
@@ -10,6 +12,11 @@
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/open-coder-ai/context-report/badge)](https://scorecard.dev/viewer/?uri=github.com/open-coder-ai/context-report)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+<br>
+[![in-toto Statement/v1](https://img.shields.io/badge/in--toto-Statement%2Fv1-D9B45C?labelColor=0D1626)](spec/attestation/v0.1/README.md#envelope)
+[![Signed via Sigstore (actions/attest)](https://img.shields.io/badge/signed_via-Sigstore_%28actions%2Fattest%29-D9B45C?labelColor=0D1626)](spec/attestation/v0.1/README.md#envelope)
+[![Report rows: 11](https://img.shields.io/badge/report_rows-11-D9B45C?labelColor=0D1626)](#what-a-report-proves)
+[![Spec: v0.1 draft](https://img.shields.io/badge/spec-v0.1_draft-D9B45C?labelColor=0D1626)](spec/attestation/v0.1/README.md)
 
 </div>
 
@@ -20,15 +27,33 @@
 `context-report` is an open, signed report format for one question: **does this agent context
 artifact actually work?**
 
-## The problem
+## Why it matters: a guard you can't see run is not a guard
 
 A plugin, an `AGENTS.md`, a skill, a hook, an MCP server — every catalog ships them, and none come
-with evidence attached. Nobody records whether the artifact reaches the agent at all, how it fails
-when it can't run, or what it costs in latency and context tokens, and whether the artifact's own
-instructions change what the agent does is rarely checked at all. `context-report` is a predicate an
-author's CI produces and a catalog verifies at submission — one row per fact, a `basis` declaring
-whether the row is recomputable or only claimed, and never a "pass"/"fail" for the artifact as a
-whole (the consumer sets its own thresholds).
+with evidence attached. You install a "security hook" and trust that it fires. The measurement
+behind this repo shows why that trust needs evidence:
+
+| Finding (from the [measurement paper](paper/context-report.md)) | Security reading |
+| :--- | :--- |
+| **3 of 18** public Claude Code plugins (`carta-cap-table`, `carta-crm`, `carta-investors`) are *reachable but not executable* — a shared dispatch script with no execute bit: `reachability` `FAILED, 0 of 4`, exit 126 | the hook is registered and never runs: a guard that silently isn't there |
+| **Every hook that runs**, across both samples, **allows on malformed input** | hooks **fail open** — malformed input goes through instead of being blocked |
+| Hooks that shell out to `npx` cost **916.8–941.5 ms p50**; a local script **7.3–53.9 ms**; context weight spans roughly **1,500 to 147,000 tokens** | the cost of a guard varies by two orders of magnitude, per tool call and per context window |
+| **No efficacy row reaches `PASSED`**; a prompt-injection rule moved nothing on any model | a rule the agent *reads* is advice, not a control — measure it before relying on it |
+
+Nobody records whether the artifact reaches the agent at all, how it fails when it can't run, or
+what it costs in latency and context tokens, and whether the artifact's own instructions change
+what the agent does is rarely checked at all. `context-report` is a predicate an author's CI
+produces and a catalog verifies at submission — one row per fact, a `basis` declaring whether the
+row is recomputable or only claimed, and never a "pass"/"fail" for the artifact as a whole (the
+consumer sets its own thresholds).
+
+**Signed like any other supply-chain artifact.** A report is an
+[in-toto Statement/v1](https://github.com/in-toto/attestation), bound to the artifact **by
+digest**. A producer SHOULD emit it via [`actions/attest`](https://github.com/actions/attest),
+which wraps it in a DSSE envelope inside a Sigstore bundle, signs it with the CI workflow's OIDC
+identity via Fulcio and records it in the public Rekor log; a consumer checks it with
+`gh attestation verify <artifact> --predicate-type https://open-coder-ai.github.io/context-report/attestation/v0.1`.
+See [the spec's Envelope section](spec/attestation/v0.1/README.md#envelope).
 
 ## 30-second quickstart
 
@@ -108,6 +133,28 @@ tasks — and `context-report compare` puts every run of that manifest side by s
 [`docs/cli.md`](docs/cli.md) for the manifest schema, `--dry-run`/`--n`/`--resume`, and which
 model providers a manifest can reach.
 
+## What a report proves
+
+Eleven v0.1 rows, each answering one question a security reviewer would otherwise take on faith.
+A row that could not be measured says `NotAvailable`, `Error` or `NotApplicable` **and why** —
+never a silent pass. Full definitions:
+[`spec/attestation/v0.1/attributes.md`](spec/attestation/v0.1/attributes.md).
+
+| Row | Question it answers | Why it matters for security | v0.1 reference producer |
+| :--- | :--- | :--- | :--- |
+| `reachability` | Is the artifact registered where the agent reads it, from every cwd? | a guard that never starts is a guard you don't have | ✅ measured, re-derivable |
+| `fault.malformedOutput` | On malformed input, does the tool call proceed or block? | fail-open vs fail-closed, per hook | ✅ measured, re-derivable |
+| `fault.scriptMissing` · `fault.interpreterMissing` · `fault.timeout` | Script gone, interpreter missing, or too slow: does the call proceed? | the ways a guard silently disappears in a fresh environment | ◻ `NotAvailable` (needs a live client); cites a vendor-docs oracle where one is on file |
+| `cost.latency_ms` | Wall-clock time added per tool call | what every guarded tool call pays | ✅ measured, re-derivable |
+| `cost.context_tokens` | Tokens added to the agent's context window | context weight competes with the task and with other rules | ✅ measured, re-derivable |
+| `efficacy` | Does installing it change what the agent does? | whether a rule the agent *reads* does anything at all | ◐ measured by `context-report run` ablation; `claimed` (stochastic) |
+| `conformance` | Does it validate against the agent's own bundle/manifest schema? | a malformed bundle can be quietly ignored | ◻ `NotAvailable` in v0.1 |
+| `decision` | Does a hook allow/deny exactly as its author declared? | the guard blocks what it says it blocks | ◻ `NotAvailable` — [good first contribution](CONTRIBUTING.md#good-first-contributions) |
+| `interference` | Does it shadow or contradict another installed artifact? | one artifact overriding another's guard | ◻ `NotAvailable` — [good first contribution](CONTRIBUTING.md#good-first-contributions) |
+
+Subject kinds (`subjectKind`): `plugin` · `instruction-file` (e.g. `AGENTS.md`) · `skill` ·
+`hook` · `mcp-server` · `subagent`.
+
 ## What a report looks like
 
 Trimmed from a committed statement over a real public plugin
@@ -177,7 +224,12 @@ a prompt-injection rule moved nothing on any model. See
 | :--- | :--- |
 | An artifact author | a report their own CI can produce before anyone else asks for one |
 | A catalog maintainer | a submission format their existing verifier can check without adopting anyone else's test suite, and a `re-derivable`/`claimed` split to build a policy on |
+| A team adopting agent tooling | evidence, per target agent, that a guard starts, how it fails and what it costs, before it runs on the team's machines |
 | A researcher or reviewer | a re-derivable record of what was actually measured, not a vendor's prose description of it |
+
+A catalog corroborates a submission by recomputing the `re-derivable` rows itself and diffing
+`inputHash` and `result` row by row; any verdict lives in a separate statement (e.g. an in-toto
+SVR v0.2 verdict), never inside the report. See [the spec](spec/attestation/v0.1/README.md).
 
 ## Two models, not one
 
@@ -231,44 +283,56 @@ oracle where one is on file (none yet for `codex_cli` — see
 | `copilot` | reachability · cost · fault (malformedOutput measured; scriptMissing/interpreterMissing/timeout `NotAvailable`, oracle on file) | `com.github.copilot/hooks/hooks.json` |
 | `cursor` | reachability · cost · fault (malformedOutput measured; scriptMissing/interpreterMissing/timeout `NotAvailable`, oracle on file) | `hooks/hooks.json` |
 
-## Contributing
-
-Bug reports, spec feedback, and PRs are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the
-development loop and the DCO sign-off every commit needs. Discussion, spec proposals, and reports
-of your own runs happen in
-[GitHub Discussions](https://github.com/open-coder-ai/context-report/discussions). See
-[SECURITY.md](SECURITY.md) to report a vulnerability privately.
-
-```bash
-python -m ruff check . && python -m ruff format --check . && python -m pytest -q
-```
-
-Scoped starting points, each naming the file it lives in, are listed under
-[Good first contributions](CONTRIBUTING.md#good-first-contributions): another target agent's
-payload shape, `codex_cli`'s documented fault behaviour, a producer that drives a live client
-for the fault rows, `decision` replay, `interference` measurement, a real tokenizer behind a
-new `method` value, `leave-one-out` arms, and another instruction-file sample for the paper's
-measurements. Comment on a
-[`good first issue`](https://github.com/open-coder-ai/context-report/labels/good%20first%20issue) to claim it, and
-keep the `Co-Authored-By` trailer if an agent helped — every diff is read in full before
-merge either way.
-
 ## Part of open-coder-ai
+
+`context-report` is the evidence arm of a family that brings application security to the code AI
+agents write: Chock checks that code at the agent's own hook where the client has one, and again
+at commit and in CI; `context-report` is the supply-chain evidence for the agent context those
+guards ship as — whether a guard actually starts, how it fails and what it costs. *A rule an agent reads is advice. A hook that exits non-zero is a control.*
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/family-dark.svg">
   <img alt="The open-coder-ai family: agentseam is the foundation, chock sits on it, chock-catalog feeds chock and generates the four plugin repositories, chock-threat-intel feeds the catalog, and context-report runs as a verification arm measuring all four." src="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/family-light.svg" width="800">
 </picture>
 
-| | |
+| Repository | Role |
 |---|---|
 | [agentseam](https://github.com/open-coder-ai/agentseam) | the primitives — one handler API and a verified capability matrix across 16 agents |
 | [chock](https://github.com/open-coder-ai/chock) | the compiler — one policy into git hooks, CI gates and native pre-tool hooks |
-| [chock-catalog](https://github.com/open-coder-ai/chock-catalog) | the policies — 39, each labelled enforced or advisory, with replayed evals |
+| [chock-catalog](https://github.com/open-coder-ai/chock-catalog) | the policies — 48 (19 enforced-at-commit, 9 best-effort in-agent, 20 advisory), 1,179 eval cases, 1,019 replayed deterministically in CI |
 | [context-report](https://github.com/open-coder-ai/context-report) | the evidence — a signed report of whether an agent artifact actually works |
-| [chock-threat-intel](https://github.com/open-coder-ai/chock-threat-intel) | the threat ledger the catalog's policies answer to |
+| [chock-threat-intel](https://github.com/open-coder-ai/chock-threat-intel) | the threat ledger the catalog's policies answer to — weekly, human-reviewed |
 | chock-{claude,cursor,copilot,codex}-plugins | the catalog, packaged for each agent's plugin format (generated) |
 | chock-quickstart · chock-example | template repos: what `chock init` leaves behind, and a full adoption |
+
+## Contributing
+
+Bug reports, spec feedback, and PRs are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the
+development loop and the DCO sign-off every commit needs (`git commit -s`). Discussion, spec
+proposals, and reports of your own runs happen in
+[GitHub Discussions](https://github.com/open-coder-ai/context-report/discussions). See
+[SECURITY.md](SECURITY.md) to report a vulnerability privately — for example a `re-derivable` row
+that is not actually recomputable, or a verifier accepting a tampered statement.
+
+```bash
+python -m ruff check . && python -m ruff format --check . && python -m pytest -q
+```
+
+| First contribution | Where it lives |
+| :--- | :--- |
+| Report your own run — a hook that fails open, a plugin that can't be reached | [Discussions](https://github.com/open-coder-ai/context-report/discussions) |
+| Another target agent's payload shape (Windsurf, Zed, Gemini CLI, ...) | `src/context_report/data/payloads-v0.1.json` |
+| `codex_cli`'s documented fault behaviour | `src/context_report/produce/fault.py` |
+| A producer that drives a live client for the fault rows | `src/context_report/produce/fault.py` |
+| `decision` replay · `interference` measurement | `src/context_report/produce/run.py` |
+| A real tokenizer behind a new `method` value | `src/context_report/produce/cost.py` |
+| `leave-one-out` arms | `src/context_report/run/runner.py` |
+| Another instruction-file or skill sample for the paper's measurements | `paper/measurements/instruction-sample/` |
+
+Each is scoped under [Good first contributions](CONTRIBUTING.md#good-first-contributions). Comment
+on a [`good first issue`](https://github.com/open-coder-ai/context-report/labels/good%20first%20issue)
+to claim it, and keep the `Co-Authored-By` trailer if an agent helped — every diff is read in full
+before merge either way.
 
 ## License
 
