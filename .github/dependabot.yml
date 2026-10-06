@@ -23,7 +23,7 @@ updates:
     ignore:
       # matplotlib 3.11 dropped Python 3.10, which this package still supports; a
       # feature bump would also rewrite the floor in ci.in. Patch releases still flow.
-      - dependency-name: matplotlib
+      - dependency-name: agentseam
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
       # One PR for the routine patch churn, individual PRs for anything that could
