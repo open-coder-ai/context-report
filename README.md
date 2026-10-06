@@ -1,8 +1,10 @@
 <div align="center">
 
-<h1>context-report</h1>
+<img src="https://raw.githubusercontent.com/open-coder-ai/chock/main/docs/assets/readme/cover-context-report.png" alt="context-report cover panel in the dusk palette: a signed report with one row per fact about an agent plugin, hook or skill." width="760">
 
-<p><b>An open, signed report format for whether an agent context artifact actually works.</b></p>
+<h1>Teach your AI agent what not to do.</h1>
+
+<p><b>Open-source guardrails for AI coding agents: rules the agent reads, checks that run as it writes, and gates at commit and in CI.<br>context-report is the evidence arm: an open, signed report of whether an agent plugin, hook, skill or <code>AGENTS.md</code> actually works.</b></p>
 
 [![CI](https://github.com/open-coder-ai/context-report/actions/workflows/ci.yml/badge.svg)](https://github.com/open-coder-ai/context-report/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/context-report)](https://pypi.org/project/context-report/)
@@ -18,17 +20,57 @@
 </p>
 
 `context-report` is an open, signed report format for one question: **does this agent context
-artifact actually work?**
+artifact actually work?** A plugin, hook, skill, `AGENTS.md` or MCP server gets one row per measured
+fact, each row declaring whether it is recomputable by anyone or only claimed by the author, and never
+a single pass or fail for the artifact as a whole: the consumer sets its own thresholds.
 
-## The problem
+## Application security for the code your agents write
 
-A plugin, an `AGENTS.md`, a skill, a hook, an MCP server — every catalog ships them, and none come
-with evidence attached. Nobody records whether the artifact reaches the agent at all, how it fails
-when it can't run, or what it costs in latency and context tokens, and whether the artifact's own
-instructions change what the agent does is rarely checked at all. `context-report` is a predicate an
-author's CI produces and a catalog verifies at submission — one row per fact, a `basis` declaring
-whether the row is recomputable or only claimed, and never a "pass"/"fail" for the artifact as a
-whole (the consumer sets its own thresholds).
+A guard is only a guard if it starts. Chock's checks refuse known classes of flaw as the agent writes, at
+commit and in CI; many of them ship as agent plugins and hooks, and nobody records whether such an
+artifact reaches the agent at all, how it fails when it cannot run, or what it costs. context-report is
+the evidence for that: a predicate an author's CI produces and a catalog verifies at submission. A rule
+an agent reads is advice; a hook that exits non-zero is a control; context-report measures which one you
+actually have. The findings are under [What it stops](#what-it-stops).
+
+**No LLM, no tokens in the producer.** `context-report produce` (reachability, cost and fault rows) runs
+the subject's own hook command on recorded payloads; nothing under `src/context_report/produce` imports a
+networking or model module (`grep -rln "urllib\|anthropic\|http.client\|socket\|requests" src/context_report/produce`,
+empty at `3a1c0c3`). Only the efficacy path, `context-report run`, calls the subject and judge models you
+configure. Chock adds no new place your code goes, and a report is a set of hashes and measurements.
+
+## Install
+
+`pip install context-report` (Python 3.10 or newer; the quickstart below runs end to end). The guardrails
+whose artifacts it measures are adopted in two ways, and the chock.sh builder is a third.
+
+<p align="center"><img src="https://raw.githubusercontent.com/open-coder-ai/chock/main/docs/assets/readme/adopt.png" width="760" alt="Panel comparing two ways to adopt Chock guardrails: in your repository for teams, enforced at commit and in CI, or in your coding agent as plugins, best-effort and failing open."></p>
+
+| Way | For | What you get |
+|---|---|---|
+| **In your repository** | teams | commit gates enforced at commit and in CI; every clone runs `chock sync --repo .` once, because git never clones hooks |
+| **In your coding agent, as plugins** | one person, no repo changes | in-agent checks, best-effort, failing open; not run in CI |
+| **One Claude Code plugin from a selection** | trying it | the chock.sh builder (launching soon) gives a `chock install --selection '…' --apply` command |
+
+chock is not on PyPI. Install the frozen engine (Python 3.11 or newer):
+
+```bash
+pip install "chock @ git+https://github.com/open-coder-ai/chock@992711af4cf8d4fd9c4c861f10ef6e53374d75d7"
+```
+
+In your repository:
+
+```bash
+chock init .
+chock add <id> --ref <catalog commit> --verify-sha <sha256> --skip-compile   # once per policy
+chock sync --repo . --ci
+```
+
+Commit the result. Plugin route: [claude](https://github.com/open-coder-ai/chock-claude-plugins),
+[cursor](https://github.com/open-coder-ai/chock-cursor-plugins),
+[copilot](https://github.com/open-coder-ai/chock-copilot-plugins),
+[codex](https://github.com/open-coder-ai/chock-codex-plugins) and
+[devin](https://github.com/open-coder-ai/chock-devin-plugins); each README has its client's install lines.
 
 ## 30-second quickstart
 
@@ -108,9 +150,11 @@ tasks — and `context-report compare` puts every run of that manifest side by s
 [`docs/cli.md`](docs/cli.md) for the manifest schema, `--dry-run`/`--n`/`--resume`, and which
 model providers a manifest can reach.
 
-## What a report looks like
+## How it works
 
-Trimmed from a committed statement over a real public plugin
+A producer runs the artifact's own hook command against recorded per-target payloads and writes one row per fact.
+A verifier recomputes each `re-derivable` row from the subject and checks the statement is well-formed and
+bound to the artifact by digest. Trimmed from a committed statement over a real public plugin
 (`paper/measurements/catalog-sample/official/ai-plugins.json`):
 
 ```json
@@ -140,11 +184,62 @@ pass. **v0.1 draft**: schema at
 predicate type `https://open-coder-ai.github.io/context-report/attestation/v0.1`, hosted at
 https://open-coder-ai.github.io/context-report/attestation/v0.1/.
 
-## Three measurements
+### Two models, not one
 
-The [measurement paper](paper/context-report.md) ran the reference producer over chock's 88
-bundles, a sample of 18 public Claude Code plugins, and seven third-party instruction files and
-skills. Three findings from that run:
+Efficacy needs two roles, never one: the **subject model** runs a task with the rule prepended and
+without it; the **judge model** never performs the task, only reads the transcript and decides
+whether that arm met the rule's criterion, held fixed across every subject model so a comparison
+across models is fair. A machine-checkable criterion is graded by code instead, never guessed at.
+
+Subject models come from the manifest, never from code — one manifest lines up every model you can
+reach, the API-shaped ones answering without tools or a checkout:
+
+| Provider | What it reaches |
+| :--- | :--- |
+| `anthropic` | the Anthropic API |
+| `claude-cli` | the local `claude` CLI — compares `opus`, `sonnet` and `fable` under one account login |
+| `openai-compatible` | any server speaking the chat-completions shape, given a `baseUrl`: hosted (OpenAI, Gemini, Mistral, Groq) or local (Ollama, vLLM, LM Studio) |
+| anything else | an honest `NotAvailable` efficacy row, never a guess |
+
+See [`docs/cli.md`](docs/cli.md#every-model-you-can-reach) for the full picture of what a manifest
+can reach.
+
+### Use as a library
+
+Beyond the CLI, `context_report` exposes a small stable API for a catalog or CI job to import
+directly: `validate`, `verify`, `produce_statement`, `load_manifest`, `run`, `resolve_run_dir`,
+`history_markdown`, `rule_history_markdown`, `render_table`, `render_history` (see `__all__` in
+[`context_report/__init__.py`](src/context_report/__init__.py)).
+
+```python
+from context_report import validate, verify
+
+errors = validate(stmt)  # schema errors, [] means well-formed
+result = verify(stmt, subject_path="clone/")  # bound + schema check, never a verdict
+```
+
+See [`docs/library.md`](docs/library.md) for a full catalog-verification and CI-production example.
+
+## What it stops
+
+context-report stops nothing by itself; it makes a guard's failure visible before you rely on it. Each row
+below is a measured finding from the [measurement paper](paper/context-report.md), over chock's bundles, a sample of 18 public
+Claude Code plugins and seven third-party instruction files and skills.
+
+| Finding | Reading for a guard |
+| :--- | :--- |
+| 3 of 18 public Claude Code plugins (`carta-cap-table`, `carta-crm`, `carta-investors`) share a dispatch script with no execute bit: `reachability` `FAILED, 0 of 4`, exit 126 | the hook is registered and never runs |
+| Every hook that runs, across both samples, allows on malformed input | hooks fail open on malformed input |
+| `npx` hooks cost 916.8 to 941.5 ms p50; local scripts 7.3 to 53.9 ms; context weight about 1,500 to 147,000 tokens | cost varies by two orders of magnitude, per tool call and per context window |
+| No efficacy row reaches `PASSED`; a prompt-injection rule moved nothing on any model | measure a rule before relying on it |
+
+Source for each row: paper [§5.2](paper/context-report.md#52-top-n-catalog-plugins) (catalog plugins) and
+[§5.3](paper/context-report.md#53-instruction-files-and-skills-three-models) (instruction files, three
+models). Timings: produced 2026-09-06, n = 20 samples per hook, on a four-CPU Linux machine (paper line 226).
+
+Details and figures:
+
+### Three measurements
 
 **Reachable is not the same as executable.** Of 18 public plugins, three (`carta-cap-table`,
 `carta-crm`, `carta-investors`) share a dispatch script with no execute bit — `reachability`
@@ -171,49 +266,13 @@ a prompt-injection rule moved nothing on any model. See
 
 ![Pooled efficacy lift per subject and model](paper/figures/fig-efficacy-lift.svg)
 
-## Who it's for
+### Who it's for
 
 | Who | What they want |
 | :--- | :--- |
 | An artifact author | a report their own CI can produce before anyone else asks for one |
 | A catalog maintainer | a submission format their existing verifier can check without adopting anyone else's test suite, and a `re-derivable`/`claimed` split to build a policy on |
 | A researcher or reviewer | a re-derivable record of what was actually measured, not a vendor's prose description of it |
-
-## Two models, not one
-
-Efficacy needs two roles, never one: the **subject model** runs a task with the rule prepended and
-without it; the **judge model** never performs the task, only reads the transcript and decides
-whether that arm met the rule's criterion, held fixed across every subject model so a comparison
-across models is fair. A machine-checkable criterion is graded by code instead, never guessed at.
-
-Subject models come from the manifest, never from code — one manifest lines up every model you can
-reach, the API-shaped ones answering without tools or a checkout:
-
-| Provider | What it reaches |
-| :--- | :--- |
-| `anthropic` | the Anthropic API |
-| `claude-cli` | the local `claude` CLI — compares `opus`, `sonnet` and `fable` under one account login |
-| `openai-compatible` | any server speaking the chat-completions shape, given a `baseUrl`: hosted (OpenAI, Gemini, Mistral, Groq) or local (Ollama, vLLM, LM Studio) |
-| anything else | an honest `NotAvailable` efficacy row, never a guess |
-
-See [`docs/cli.md`](docs/cli.md#every-model-you-can-reach) for the full picture of what a manifest
-can reach.
-
-## Use as a library
-
-Beyond the CLI, `context_report` exposes a small stable API for a catalog or CI job to import
-directly: `validate`, `verify`, `produce_statement`, `load_manifest`, `run`, `resolve_run_dir`,
-`history_markdown`, `rule_history_markdown`, `render_table`, `render_history` (see `__all__` in
-[`context_report/__init__.py`](src/context_report/__init__.py)).
-
-```python
-from context_report import validate, verify
-
-errors = validate(stmt)  # schema errors, [] means well-formed
-result = verify(stmt, subject_path="clone/")  # bound + schema check, never a verdict
-```
-
-See [`docs/library.md`](docs/library.md) for a full catalog-verification and CI-production example.
 
 ## Supported agents
 
@@ -230,6 +289,31 @@ oracle where one is on file (none yet for `codex_cli` — see
 | `codex_cli` | reachability · cost · fault (malformedOutput measured; scriptMissing/interpreterMissing/timeout `NotAvailable`, no oracle on file) | `hooks/hooks.json` |
 | `copilot` | reachability · cost · fault (malformedOutput measured; scriptMissing/interpreterMissing/timeout `NotAvailable`, oracle on file) | `com.github.copilot/hooks/hooks.json` |
 | `cursor` | reachability · cost · fault (malformedOutput measured; scriptMissing/interpreterMissing/timeout `NotAvailable`, oracle on file) | `hooks/hooks.json` |
+
+## FAQ for people and agents
+
+**Does context-report use an LLM?** The producer for reachability, cost and fault rows does not: it makes no model call. Efficacy rows use the subject and judge models you configure in a manifest; without one the row says `NotAvailable`.
+
+**Does my code leave my machine?** context-report adds no new place your code goes. `produce` and `verify` run locally; `run` sends prompts to the model providers you configure.
+
+**Which agents does it work with?** `claude_code`, `codex_cli`, `copilot` and `cursor` (see Supported agents).
+
+**How do I install it, through the repo or through plugins?** `pip install context-report` for the tool. To adopt the guardrails it measures, see Install above.
+
+**What does it cost?** Free and open source (Apache-2.0). A `produce` run costs no tokens.
+
+**Does it replace SAST or code review?** No. It reports on agent artifacts (plugins, hooks, skills); it does not scan your code.
+
+**Which OWASP and CWE items does it cover?** None; it maps no standards. The catalog's OWASP mappings are partial and labelled so, in chock-catalog `docs/coverage.md`.
+
+## For tools and agents
+
+- [`llms.txt`](llms.txt): a short machine-readable summary of this repo.
+- [`spec/attestation/v0.1/schema.json`](spec/attestation/v0.1/schema.json): the predicate schema; predicate type `https://open-coder-ai.github.io/context-report/attestation/v0.1`.
+- [`spec/attestation/v0.1/attributes.md`](spec/attestation/v0.1/attributes.md): every row's definition.
+- [`spec/attestation/v0.1/examples/plugin-copilot.json`](spec/attestation/v0.1/examples/plugin-copilot.json): a worked example.
+- [`registry.yaml`](https://github.com/open-coder-ai/chock-catalog/blob/main/registry.yaml) and [`docs/coverage.md`](https://github.com/open-coder-ai/chock-catalog/blob/main/docs/coverage.md): the catalog's policies and coverage.
+- [`.claude-plugin/marketplace.json`](https://github.com/open-coder-ai/chock-claude-plugins/blob/main/.claude-plugin/marketplace.json): the Claude plugin marketplace.
 
 ## Contributing
 
@@ -255,20 +339,15 @@ merge either way.
 
 ## Part of open-coder-ai
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/family-dark.svg">
-  <img alt="The open-coder-ai family: agentseam is the foundation, chock sits on it, chock-catalog feeds chock and generates the four plugin repositories, chock-threat-intel feeds the catalog, and context-report runs as a verification arm measuring all four." src="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/figures/family-light.svg" width="800">
-</picture>
-
-| | |
+| Repository | Role |
 |---|---|
-| [agentseam](https://github.com/open-coder-ai/agentseam) | the primitives — one handler API and a verified capability matrix across 16 agents |
-| [chock](https://github.com/open-coder-ai/chock) | the compiler — one policy into git hooks, CI gates and native pre-tool hooks |
-| [chock-catalog](https://github.com/open-coder-ai/chock-catalog) | the policies — 39, each labelled enforced or advisory, with replayed evals |
-| [context-report](https://github.com/open-coder-ai/context-report) | the evidence — a signed report of whether an agent artifact actually works |
+| [agentseam](https://github.com/open-coder-ai/agentseam) | the primitives: one handler API and a verified capability matrix across 16 agents |
+| [chock](https://github.com/open-coder-ai/chock) | the compiler: one policy into git hooks, CI gates and native pre-tool hooks |
+| [chock-catalog](https://github.com/open-coder-ai/chock-catalog) | the policies: 71 (35 enforced at commit, 11 in-agent, 25 advisory; `registry.yaml` at `9a64623`) |
 | [chock-threat-intel](https://github.com/open-coder-ai/chock-threat-intel) | the threat ledger the catalog's policies answer to |
-| chock-{claude,cursor,copilot,codex}-plugins | the catalog, packaged for each agent's plugin format (generated) |
-| chock-quickstart · chock-example | template repos: what `chock init` leaves behind, and a full adoption |
+| [context-report](https://github.com/open-coder-ai/context-report) | the evidence: a signed report of whether an agent artifact actually works |
+| chock-{claude,cursor,copilot,codex,devin}-plugins | the catalog, packaged for each agent's plugin format (generated) |
+| [chock-quickstart](https://github.com/open-coder-ai/chock-quickstart) · [chock-example](https://github.com/open-coder-ai/chock-example) | template repos: what `chock init` leaves behind, and a full adoption |
 
 ## License
 
