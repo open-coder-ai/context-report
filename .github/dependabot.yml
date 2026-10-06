@@ -23,8 +23,11 @@ updates:
     ignore:
       # matplotlib 3.11 dropped Python 3.10, which this package still supports; a
       # feature bump would also rewrite the floor in ci.in. Patch releases still flow.
-      - dependency-name: agentseam
+      - dependency-name: matplotlib
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      # agentseam mirrors the dependencies of the chock pinned in .framework-ref
+      # (requirements/chock.in); it moves only with .framework-ref.
+      - dependency-name: agentseam
     groups:
       # One PR for the routine patch churn, individual PRs for anything that could
       # change behaviour.
