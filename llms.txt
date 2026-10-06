@@ -1,7 +1,8 @@
 # context-report
 
-> An open, signed report format for whether an agent context artifact — a plugin, an
-> `AGENTS.md`, a skill, a hook, an MCP server — actually works.
+> The evidence layer for AI coding agent guardrails: an open, signed report format for whether
+> an agent context artifact — a plugin, an `AGENTS.md`, a skill, a hook, an MCP server —
+> actually works.
 
 `context-report` is a predicate an author's CI produces and a catalog verifies at submission:
 one row per fact (`reachability`, `cost`, `fault.*`, `interference`, `efficacy`, ...), each
@@ -54,5 +55,5 @@ between MINOR releases; see the Compatibility note in the spec READMEs below.
 
 - [paper/context-report.md](https://github.com/open-coder-ai/context-report/blob/main/paper/context-report.md):
   the measurement paper — method, the three findings from running the reference producer over
-  chock's bundles, 18 public plugins, and seven instruction files/skills, and what v0.1 still
-  cannot measure.
+  chock's 88 bundles (22 policies for 4 target agents), 18 public plugins, and seven
+  instruction files/skills, and what v0.1 still cannot measure.
