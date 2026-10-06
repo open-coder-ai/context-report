@@ -9,7 +9,7 @@ version: 2
 updates:
   - package-ecosystem: pip
     # pyproject.toml at the root, plus the hash-pinned files CI installs from.
-    directories: ["/", "/requirements"]
+    directories: ["/"]
     schedule:
       interval: weekly
       day: monday
