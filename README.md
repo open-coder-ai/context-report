@@ -89,6 +89,10 @@ context-report produce --subject ./my-plugin --kind plugin --target claude_code 
 context-report verify report.json --subject ./my-plugin
 ```
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/open-coder-ai/context-report/main/docs/assets/demo.gif" width="760" alt="Terminal recording: context-report produce measures my-plugin, a two-file Claude Code plugin bundle (a PreToolUse hook that denies a command containing &quot;destructive-pattern&quot;), for reachability, cost and fault, writing report.json; context-report verify then reprints every row's re-derivable or claimed basis and ends with the line 'well-formed and bound: True'.">
+</p>
+
 `verify` reprints each row's `basis` and `result`, then ends with `well-formed and bound: True` —
 never a "pass" for the artifact as a whole. `report.json` is one row per fact; each row's `basis`
 is **re-derivable** (anyone can recompute it from the subject) or **claimed** (the author asserts
