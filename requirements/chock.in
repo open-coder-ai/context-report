@@ -3,3 +3,6 @@ pyyaml>=6.0
 jsonschema>=4.18,<5
 referencing>=0.35,<0.38
 agentseam==0.3.0
+# chock's build backend (its pyproject [build-system]), so CI builds the pinned checkout's
+# wheel with --no-build-isolation instead of fetching an unpinned setuptools.
+setuptools>=77

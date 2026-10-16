@@ -24,7 +24,11 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
         with:
           python-version: "3.12"
-      - run: pip install .
+      # Dependencies and build backend hash-pinned in requirements/install.txt; the wheel is
+      # built without build isolation and installed with no resolution of its own.
+      - run: pip install --require-hashes -r requirements/install.txt
+      - run: pip wheel --no-deps --no-build-isolation -w dist .
+      - run: pip install --no-deps dist/*.whl
       # No verified pin for charmbracelet/vhs-action was available to this change (see the PR
       # description's Deviations); this reproduces the same tape with the plain VHS binary
       # instead, using the release URL already pinned in docs/README-refresh's render recipe.
@@ -64,7 +68,10 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
         with:
           python-version: "3.12"
-      - run: pip install .
+      # Same pinned install as the render job above.
+      - run: pip install --require-hashes -r requirements/install.txt
+      - run: pip wheel --no-deps --no-build-isolation -w dist .
+      - run: pip install --no-deps dist/*.whl
       # No verified pin for charmbracelet/vhs-action was available to this change (see the PR
       # description's Deviations); this reproduces the same tape with the plain VHS binary
       # instead, using the release URL already pinned in docs/README-refresh's render recipe.
