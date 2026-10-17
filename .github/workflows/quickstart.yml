@@ -27,7 +27,11 @@ jobs:
           python-version: "3.12"
       # Installed from this checkout, not PyPI, so the README's own `pip install context-report`
       # line finds itself already satisfied and does not fetch a different released version.
-      - run: pip install .
+      # Its dependencies and build backend are hash-pinned in requirements/install.txt; the
+      # wheel is built without build isolation and installed with no resolution of its own.
+      - run: pip install --require-hashes -r requirements/install.txt
+      - run: pip wheel --no-deps --no-build-isolation -w dist .
+      - run: pip install --no-deps dist/*.whl
       - name: Regenerate docs/quickstart.sh and check it matches the committed copy
         run: |
           {
