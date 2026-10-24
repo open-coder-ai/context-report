@@ -33,6 +33,31 @@ _LAST_MESSAGE = "last_message"
 _VENDOR_ONLY_TYPES = {"tool_used", "tool_order", "file_exists", "baseline"}
 
 
+class _FrontmatterLoader(yaml.SafeLoader):
+    """SafeLoader without YAML 1.1 surprises: `no`/`yes`/`on`/`off`/`y`/`n` stay text, and mapping
+    keys stay the text written (so a key `no` or `null` is not False or None)."""
+
+    def construct_mapping(self, node, deep=False):  # noqa: FBT002
+        node.value = [
+            (
+                (yaml.ScalarNode("tag:yaml.org,2002:str", k.value), v)
+                if isinstance(k, yaml.ScalarNode)
+                else (k, v)
+            )
+            for k, v in node.value
+        ]
+        return super().construct_mapping(node, deep)
+
+
+_FrontmatterLoader.yaml_implicit_resolvers = {
+    ch: [(tag, rx) for tag, rx in rs if tag != "tag:yaml.org,2002:bool"]
+    for ch, rs in yaml.SafeLoader.yaml_implicit_resolvers.items()
+}
+_FrontmatterLoader.add_implicit_resolver(
+    "tag:yaml.org,2002:bool", re.compile(r"^(?:true|True|TRUE|false|False|FALSE)$"), list("tTfF")
+)
+
+
 def _frontmatter(path: Path) -> tuple[dict[str, Any], str]:
     """The YAML block between the first two `---` lines, and the trimmed body after it."""
     text = path.read_text(encoding="utf-8")
@@ -40,7 +65,7 @@ def _frontmatter(path: Path) -> tuple[dict[str, Any], str]:
     if not match:
         raise ManifestError(f"{path}: missing '---' frontmatter block")
     try:
-        meta = yaml.safe_load(match.group(1))
+        meta = yaml.load(match.group(1), Loader=_FrontmatterLoader)  # noqa: S506 (SafeLoader subclass)
     except yaml.YAMLError as exc:
         raise ManifestError(f"{path}: malformed frontmatter: {exc}") from exc
     if meta is None:
