@@ -8,9 +8,12 @@ OpenAI, Gemini's compatibility endpoint, Mistral, Groq, Ollama, vLLM and LM Stud
 from __future__ import annotations
 
 import http.client
+import ipaddress
 import json
 import os
-from urllib.parse import urlsplit
+import re
+import sys
+from urllib.parse import SplitResult, urlsplit
 
 _TIMEOUT = 600  # one answer can take minutes; a real hang still ends the run
 _ATTEMPTS = 2  # a timed-out call is retried once before the run is given up
@@ -20,6 +23,43 @@ _HTTP_ERROR = "{url} answered {code}: {body}"
 _TIMED_OUT = "{url} gave no answer within {seconds}s, {attempts} attempt(s)"
 _NO_CHOICE = "{url} answered without a choices[0].message.content"
 _OK = range(200, 300)
+_PLAIN_HTTP = "baseUrl {url!r} is plain http; use https (http is allowed only for localhost)"
+_BAD_ENV = "apiKeyEnv {env!r} must be named like a provider key: A-Z, 0-9, _ and ending in _KEY"
+_KEY_ENV = re.compile(r"[A-Z][A-Z0-9_]*_KEY")
+# Hosts a key variable is expected to go to; any other gets a notice before the first call.
+_DEFAULT_HOSTS = frozenset(
+    {
+        "api.openai.com",
+        "generativelanguage.googleapis.com",
+        "api.mistral.ai",
+        "api.groq.com",
+    }
+)
+
+
+def _is_loopback(host: str) -> bool:
+    if host == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def check_endpoint(base_url: str, api_key_env: str | None) -> SplitResult:
+    """Split `base_url`, refusing what could carry a key somewhere unintended.
+
+    https is required except to a loopback host (a local Ollama, vLLM or LM Studio), and the key
+    variable must be named like a provider key, so a manifest cannot point at `GITHUB_TOKEN`.
+    """
+    parts = urlsplit(base_url)
+    if parts.scheme not in ("http", "https") or not parts.hostname:
+        raise ValueError(_BAD_URL.format(url=base_url))
+    if parts.scheme == "http" and not _is_loopback(parts.hostname):
+        raise ValueError(_PLAIN_HTTP.format(url=base_url))
+    if api_key_env is not None and not _KEY_ENV.fullmatch(api_key_env):
+        raise ValueError(_BAD_ENV.format(env=api_key_env))
+    return parts
 
 
 class OpenAICompatibleAsker:
@@ -32,9 +72,7 @@ class OpenAICompatibleAsker:
         api_key_env: str | None = None,
         timeout: int = _TIMEOUT,
     ) -> None:
-        parts = urlsplit(base_url)
-        if parts.scheme not in ("http", "https") or not parts.hostname:
-            raise ValueError(_BAD_URL.format(url=base_url))
+        parts = check_endpoint(base_url, api_key_env)
         self.model = model
         self.tls = parts.scheme == "https"
         self.host = parts.hostname
@@ -45,6 +83,18 @@ class OpenAICompatibleAsker:
         self.timeout = timeout
         self.last_usage: dict[str, int] | None = None
         self.last_model: str | None = None
+        self._announced = False
+
+    def _announce(self) -> None:
+        """Once, before the first request: say where the key variable's value is about to go."""
+        if self._announced:
+            return
+        self._announced = True
+        if self.api_key_env and self.host not in _DEFAULT_HOSTS and not _is_loopback(self.host):
+            print(  # noqa: T201 -- stderr notice, the CLI's only channel here
+                f"warning: sending ${self.api_key_env} to {self.host}, not a default provider host",
+                file=sys.stderr,
+            )
 
     def _headers(self) -> dict[str, str]:
         headers = {"Content-Type": "application/json"}
@@ -70,6 +120,7 @@ class OpenAICompatibleAsker:
         body = json.dumps(
             {"model": self.model, "messages": [{"role": "user", "content": prompt}]}
         ).encode("utf-8")
+        self._announce()
         for attempt in range(1, _ATTEMPTS + 1):
             try:
                 status, raw = self._send(body)

@@ -93,9 +93,10 @@ def _hook_docs(subject_path: Path, info: dict[str, Any]) -> list[dict[str, Any]]
             inline.append(declared)
     docs: list[dict[str, Any]] = []
     seen: set[Path] = set()
+    bound = root.resolve()  # a hooks file outside the subject is not covered by its digest
     for path in sources:
         resolved = path.resolve()
-        if resolved in seen or not path.is_file():
+        if resolved in seen or not resolved.is_relative_to(bound) or not path.is_file():
             continue
         seen.add(resolved)
         try:

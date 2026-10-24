@@ -103,7 +103,7 @@ def _run_verify(args: argparse.Namespace) -> int:
 
     try:
         verification = verify_statement(stmt, subject_path=args.subject)
-    except (OSError, KeyError, TypeError) as exc:
+    except (OSError, KeyError, TypeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)  # noqa: T201
         return 2
 
