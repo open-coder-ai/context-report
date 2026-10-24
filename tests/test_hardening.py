@@ -148,3 +148,10 @@ def test_a_regex_grader_still_answers_normally():
     grader = GraderRegex("all clear", "i", "contains")
     assert grader.obeys("r", "ALL CLEAR") is True
     assert GraderRegex("x", "", "count:2").obeys("r", "x x") is True
+
+
+def test_the_schema_itself_rejects_a_key_variable_outside_the_convention():
+    doc = json.loads(Path("spec/run/v0.1/examples/run.json").read_text())
+    assert m.validate(doc) == []
+    doc["models"][2]["apiKeyEnv"] = "GITHUB_TOKEN"
+    assert any("apiKeyEnv" in e for e in m.validate(doc))

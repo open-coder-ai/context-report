@@ -50,7 +50,11 @@ It is metadata only — how an artifact actually works (what a plugin's hooks ar
   (`https://api.openai.com/v1`, Gemini's or Mistral's compatibility endpoint, or a local
   `http://localhost:11434/v1` for Ollama, vLLM or LM Studio); `apiKeyEnv` names the environment
   variable holding the bearer key and is omitted for a local server. The key itself never enters
-  the manifest or the report. This backend has no filesystem or tools: a task that needs the
+  the manifest or the report. `baseUrl` must be `https` except for a loopback host (`localhost`,
+  `127.0.0.0/8`, `::1`), and `apiKeyEnv` must match `^[A-Z][A-Z0-9_]*_KEY$`: a manifest is
+  shareable, so it cannot name an arbitrary variable (a `*_TOKEN`, say) for the tool to send to
+  a server of its choosing. The first request to a host that is not a default provider prints a
+  notice on stderr naming that host. This backend has no filesystem or tools: a task that needs the
   agent to act in a checkout is answered, not performed, and `workdir` is rejected with it.
 - **`arms`** — `{nPerArm, seed, mode}`. `nPerArm` is how many times each task is run in each arm
   (once with the rule, once without). `seed` fixes task order and any sampling so a re-run of the
