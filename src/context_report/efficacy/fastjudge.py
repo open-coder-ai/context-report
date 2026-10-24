@@ -35,7 +35,7 @@ def _count_matches(conn, pattern: str, flags: int, text: str) -> None:
         conn.close()
 
 
-def _bounded_count(pattern: str, flags: int, text: str) -> int:
+def _bounded_count(pattern: str, flags: int, text: str, *, _target=_count_matches) -> int:
     """`len(findall)` in a child process that is killed at the deadline.
 
     Python's `re` cannot be interrupted in-process, so a catastrophic pattern is only stoppable
@@ -43,7 +43,7 @@ def _bounded_count(pattern: str, flags: int, text: str) -> int:
     """
     ctx = multiprocessing.get_context("spawn")
     parent, child = ctx.Pipe(duplex=False)
-    proc = ctx.Process(target=_count_matches, args=(child, pattern, int(flags), text), daemon=True)
+    proc = ctx.Process(target=_target, args=(child, pattern, int(flags), text), daemon=True)
     proc.start()
     child.close()
     try:

@@ -86,13 +86,13 @@ class OpenAICompatibleAsker:
         self._announced = False
 
     def _announce(self) -> None:
-        """Once, before the first request: say where the key variable's value is about to go."""
+        """Once, before the first request: say which host the configured key is about to go to."""
         if self._announced:
             return
         self._announced = True
         if self.api_key_env and self.host not in _DEFAULT_HOSTS and not _is_loopback(self.host):
             print(  # noqa: T201 -- stderr notice, the CLI's only channel here
-                f"warning: sending ${self.api_key_env} to {self.host}, not a default provider host",
+                f"warning: sending the API key to {self.host}, not a default provider host",
                 file=sys.stderr,
             )
 

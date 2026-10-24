@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import json
-import os
+import time
 from pathlib import Path
 
 import pytest
 
 from context_report import rows
-from context_report.efficacy.fastjudge import GraderRegex, GraderTimeoutError
+from context_report.efficacy.fastjudge import GraderRegex, GraderTimeoutError, _bounded_count
 from context_report.produce.cost import injected_text_paths
 from context_report.produce.discover import discover_hooks
 from context_report.produce.reachability import reachability_row
@@ -132,16 +132,16 @@ def test_links_that_stay_inside_the_subject_are_still_hashed(tmp_path):
     assert [p.name for p in injected_text_paths(subject, "plugin")] == ["a.md"]
 
 
-_REDOS = "(a+)+$"
+def _never_answers(_conn, _pattern, _flags, _text):  # stands in for a pattern that never finishes
+    time.sleep(60)
 
 
-def test_a_regex_grader_that_blows_up_is_stopped(monkeypatch):
+def test_a_regex_grader_that_never_finishes_is_stopped(monkeypatch):
     monkeypatch.setattr("context_report.efficacy.fastjudge.GRADER_TIMEOUT_S", 1.0)
-    grader = GraderRegex(_REDOS, "", "contains")
-    started = os.times().elapsed
+    started = time.monotonic()
     with pytest.raises(GraderTimeoutError, match="regex"):
-        grader.obeys("r", "a" * 40 + "!")
-    assert os.times().elapsed - started < 20
+        _bounded_count("x", 0, "x", _target=_never_answers)
+    assert time.monotonic() - started < 20
 
 
 def test_a_regex_grader_still_answers_normally():

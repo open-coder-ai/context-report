@@ -39,7 +39,7 @@ def test_conventional_key_names_are_accepted(env):
     OpenAICompatibleAsker("m", "https://api.openai.com/v1", api_key_env=env)
 
 
-def test_first_request_to_a_non_default_host_warns_with_host_and_variable(monkeypatch, capsys):
+def test_first_request_to_a_non_default_host_warns_with_the_host(monkeypatch, capsys):
     monkeypatch.setenv("CUSTOM_API_KEY", "sk-test")
     asker = OpenAICompatibleAsker("m", "https://llm.example.net/v1", api_key_env="CUSTOM_API_KEY")
     with mock.patch.object(asker, "_send", return_value=_OK):
@@ -47,7 +47,6 @@ def test_first_request_to_a_non_default_host_warns_with_host_and_variable(monkey
         asker.ask("y")
     err = capsys.readouterr().err
     assert err.count("llm.example.net") == 1  # once, not per request
-    assert "CUSTOM_API_KEY" in err
     assert "sk-test" not in err
 
 
