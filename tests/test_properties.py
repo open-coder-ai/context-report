@@ -6,7 +6,7 @@ import importlib.util
 from pathlib import Path
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 from context_report.efficacy import rules
@@ -54,6 +54,15 @@ _key = st.from_regex(r"\A[a-z][a-z0-9_]{0,15}\Z")
 _value = st.from_regex(r"\A[A-Za-z][A-Za-z0-9 _.-]{0,39}\Z")
 
 
+# YAML 1.1 words (booleans, null) as keys and as values must stay the text that was written.
+@example(meta={"no": "A"}, body="")
+@example(meta={"yes": "A"}, body="")
+@example(meta={"on": "A"}, body="")
+@example(meta={"off": "A"}, body="")
+@example(meta={"y": "A", "n": "B"}, body="")
+@example(meta={"true": "A", "false": "B"}, body="")
+@example(meta={"null": "A"}, body="")
+@example(meta={"a": "no", "b": "yes", "c": "on", "d": "off", "e": "y", "f": "n"}, body="")
 @settings(max_examples=100, deadline=None)
 @given(
     st.dictionaries(_key, _value, max_size=4),
@@ -65,7 +74,7 @@ def test_frontmatter_round_trips_meta_and_body(tmp_path_factory, meta: dict, bod
     yaml_lines = "\n".join(f"{k}: {v}" for k, v in meta.items())
     path.write_text(f"---\n{yaml_lines}\n---\n{body}", encoding="utf-8")
     parsed_meta, parsed_body = evalcases._frontmatter(path)
-    assert set(parsed_meta) == set(meta)
+    assert parsed_meta == {k: v.strip() for k, v in meta.items()}  # plain scalars drop edge spaces
     assert parsed_body == body.strip()
 
 
