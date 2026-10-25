@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import multiprocessing
 import re
 from typing import ClassVar, Protocol
 
@@ -15,6 +16,51 @@ def code_of(output: str) -> str:
     """Fenced code blocks, so we judge code and not prose; falls back to all text."""
     blocks = _FENCE.findall(output)
     return "\n".join(blocks) if blocks else output
+
+
+GRADER_TIMEOUT_S = 5.0  # a regex grader that takes longer than this on one reply is stopped
+
+
+class GraderTimeoutError(RuntimeError):
+    """A regex grader did not finish within `GRADER_TIMEOUT_S`; the run stops rather than hangs."""
+
+
+def _count_matches(conn, pattern: str, flags: int, text: str) -> None:
+    """Child-process body: send back how many matches, or the error text."""
+    try:
+        conn.send(("ok", len(re.compile(pattern, flags).findall(text))))
+    except re.error as exc:
+        conn.send(("error", str(exc)))
+    finally:
+        conn.close()
+
+
+def _bounded_count(pattern: str, flags: int, text: str, *, _target=_count_matches) -> int:
+    """`len(findall)` in a child process that is killed at the deadline.
+
+    Python's `re` cannot be interrupted in-process, so a catastrophic pattern is only stoppable
+    by ending the process that runs it.
+    """
+    ctx = multiprocessing.get_context("spawn")
+    parent, child = ctx.Pipe(duplex=False)
+    proc = ctx.Process(target=_target, args=(child, pattern, int(flags), text), daemon=True)
+    proc.start()
+    child.close()
+    try:
+        if not parent.poll(GRADER_TIMEOUT_S):
+            raise GraderTimeoutError(
+                f"regex grader {pattern!r} did not finish within {GRADER_TIMEOUT_S:g}s; "
+                "simplify the pattern (nested repetition can take exponential time)"
+            )
+        kind, value = parent.recv()
+    finally:
+        parent.close()
+        if proc.is_alive():
+            proc.kill()
+        proc.join()
+    if kind == "error":
+        raise ValueError(value)
+    return int(value)
 
 
 class CannotJudgeError(Exception):
@@ -147,7 +193,7 @@ class GraderRegex:
 
     def obeys(self, rule: str, code: str) -> bool:
         """`code` here is the case's whole last-message output, not just its code fences."""
-        count = len(self._regex.findall(code))
+        count = _bounded_count(self._regex.pattern, self._regex.flags, code)
         if self.match == "contains":
             return count > 0
         if self.match == "not_contains":

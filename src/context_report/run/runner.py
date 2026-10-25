@@ -13,6 +13,7 @@ from typing import Any
 from context_report.efficacy.api_backend import JUDGE_EFFORT, ApiAsker
 from context_report.efficacy.backends import Asker, AskerJudge, AskerRunner
 from context_report.efficacy.core import RuleCard
+from context_report.efficacy.fastjudge import GraderTimeoutError
 from context_report.efficacy.grade import Graded, grade
 from context_report.efficacy.row import ATTRIBUTE as EFFICACY
 from context_report.efficacy.row import efficacy_row
@@ -243,7 +244,10 @@ def _run_model(  # noqa: PLR0913, PLR0917 -- one (subject, model) pair needs all
         resume=resume,
     )
     checkers = checkers_for(manifest.tasks_for(subject.id), cards)
-    graded = grade(cards, rec, judge, trials=n_per_arm, checkers=checkers)
+    try:
+        graded = grade(cards, rec, judge, trials=n_per_arm, checkers=checkers)
+    except GraderTimeoutError as exc:
+        raise RunError(f"{subject.id}: {exc}") from exc
     transcripts = len(list(bundle.root.glob("*.json"))) if bundle.root.exists() else 0
     row = efficacy_row(
         graded,

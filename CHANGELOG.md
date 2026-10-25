@@ -5,6 +5,18 @@ Per in-toto convention, `0.X` versions are major: fields may change until 1.0.
 
 ## Unreleased
 
+### Security
+
+- Hardening of inputs a run or a producer reads from a manifest or a subject:
+  - `openai-compatible` models: `baseUrl` must be https unless the host is loopback, `apiKeyEnv`
+    must be named like a provider key (`..._KEY`), and the first request to a host that is not a
+    default provider prints the host and variable name to stderr.
+  - A plugin manifest's `hooks` path must resolve inside the plugin.
+  - The reachability measurement removes only the scratch directory it created.
+  - A subject holding a link that resolves outside it is refused, so the digest and the rows
+    read the same bytes.
+  - A regex grader is stopped after 5 s and the run ends with a clear error instead of hanging.
+
 ### CI
 
 - `.github/workflows/render-demo.yml` renamed to `demo-gif.yml`: the `workflow_dispatch`

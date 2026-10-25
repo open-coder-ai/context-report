@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
 import shlex
 import shutil
@@ -94,6 +95,8 @@ def reachability_row(
     artifact_root = Path(artifact_root)
     resolved_payload = payload if payload is not None else DEFAULT_PAYLOAD
     payload_json = json.dumps(resolved_payload)
+    scratch_parent = artifact_root / "_context_report_tmp"
+    parent_existed = scratch_parent.exists()
     nested_dir, nested_dir_source = _find_or_make_nested_dir(artifact_root)
     try:
         return _measure(
@@ -108,8 +111,12 @@ def reachability_row(
         )
     finally:
         # A measurement must not alter the artifact it measures: remove what we created.
+        # Only what this call made: the nested dir, and its parent if it did not exist before.
         if nested_dir_source == "created":
-            shutil.rmtree(artifact_root / "_context_report_tmp", ignore_errors=True)
+            shutil.rmtree(nested_dir, ignore_errors=True)
+            if not parent_existed:
+                with contextlib.suppress(OSError):
+                    scratch_parent.rmdir()
 
 
 def _measure(  # noqa: PLR0913 -- the run loop, split out so cleanup is a single finally

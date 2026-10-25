@@ -46,6 +46,25 @@ class Producer:
         return d
 
 
+def _refuse_links_leaving(root: Path) -> None:
+    """Refuse a tree holding a link that resolves outside it.
+
+    A linked directory is not walked by the digest but is read through by the producers, and a
+    linked file is hashed by its target: either way a row could come from bytes the digest does
+    not cover. Links that stay inside the tree point at bytes the digest already counts.
+    """
+    base = root.resolve()
+    for entry in root.rglob("*"):
+        if ".git" in entry.parts or not entry.is_symlink():
+            continue
+        if not entry.resolve().is_relative_to(base):
+            rel = entry.relative_to(root).as_posix()
+            raise ValueError(
+                f"{rel} is a link to a path outside {root.name!r}; the digest would not cover "
+                "what it points at. Replace it with the files themselves"
+            )
+
+
 def digest_path(path: str | Path) -> str:
     """sha256 of a file; for a directory, sha256 over sorted `relpath\\0sha256(content)\\n` lines.
 
@@ -56,6 +75,7 @@ def digest_path(path: str | Path) -> str:
         return hashlib.sha256(p.read_bytes()).hexdigest()
     if not p.is_dir():
         raise FileNotFoundError(path)
+    _refuse_links_leaving(p)
     lines = []
     for f in sorted(x for x in p.rglob("*") if x.is_file() and ".git" not in x.parts):
         lines.append(

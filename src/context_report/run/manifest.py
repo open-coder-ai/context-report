@@ -161,6 +161,13 @@ def _model_ref(raw: dict[str, Any]) -> ModelRef:
             f"model {ref.qualified!r}: provider {OPENAI_COMPATIBLE!r} needs a baseUrl "
             "(the server's API root, e.g. https://api.openai.com/v1)"
         )
+    if ref.provider == OPENAI_COMPATIBLE:
+        from context_report.efficacy.openai_backend import check_endpoint
+
+        try:
+            check_endpoint(ref.base_url or "", ref.api_key_env)
+        except ValueError as exc:
+            raise ManifestError(f"model {ref.qualified!r}: {exc}") from exc
     return ref
 
 
